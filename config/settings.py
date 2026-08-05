@@ -87,7 +87,7 @@ DATABASES = {
 }
 
 # Αν τρέχει στο Render (Production), συνδέσου στο Neon Postgres
-DATABASE_URL = os.environ.get('DATABASE_URL')
+DATABASE_URL = os.environ.get('DATABASE_URL') or read_secret ("d_b_url_neon.txt")
 
 if DATABASE_URL:
     DATABASES['default'] = dj_database_url.config(
