@@ -1,0 +1,67 @@
+{% extends 'homepage/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <!-- Επαναχρησιμοποιούμε το ίδιο CSS με την εγγραφή/σύνδεση -->
+    <link rel="stylesheet" href="{% static 'accounts/css/register.css' %}">
+{% endblock %}
+
+{% block title %}Επαλήθευση OTP | Turn On Learning{% endblock %}
+
+{% block content %}
+<main class="auth-wrapper">
+    <section class="auth-box">
+        
+        <header class="auth-header">
+            <h2 class="auth-title">Επαλήθευση Email</h2>
+            <p class="auth-subtitle">
+                Σας στείλαμε έναν 6ψήφιο κωδικό επιβεβαίωσης στο email σας. Παρακαλούμε εισάγετέ τον παρακάτω:
+            </p>
+        </header>
+
+        <!-- Εμφάνιση Μηνυμάτων (Σφάλματα / Πληροφορίες) -->
+        {% if messages %}
+            <div class="system-messages">
+                {% for message in messages %}
+                    <span class="status-badge {% if message.tags == 'error' %}status-error{% else %}status-success{% endif %}">
+                        {{ message }}
+                    </span>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Φόρμα Εισαγωγής OTP -->
+        <form method="post" class="auth-form">
+            {% csrf_token %}
+            
+            <div class="field-block">
+                <label for="otp_code" class="field-label">Κωδικός OTP</label>
+                <input 
+                    type="text" 
+                    name="otp_code" 
+                    id="otp_code" 
+                    maxlength="6" 
+                    class="auth-input" 
+                    placeholder="123456" 
+                    required 
+                    autocomplete="off" 
+                    autofocus
+                    style="text-align: center; letter-spacing: 6px; font-weight: bold; font-size: 1.3rem;"
+                >
+            </div>
+
+            <button type="submit" class="submit-action">
+                <span>Επιβεβαίωση & Ενεργοποίηση</span>
+            </button>
+        </form>
+
+        <footer class="auth-footer">
+            <p class="auth-switch">
+                Δεν λάβατε τον κωδικό; 
+                <a href="{% url 'accounts:register' %}" class="auth-link">Ξεκινήστε ξανά την εγγραφή</a>
+            </p>
+        </footer>
+
+    </section>
+</main>
+{% endblock %}

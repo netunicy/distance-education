@@ -1,0 +1,65 @@
+<!-- ================= FILTERS ================= -->
+
+<div class="filters">
+
+    <!-- STEP 1 -->
+
+    <div class="filter-step">
+
+        <h3 class="filter-title">
+            1. Επιλέξτε Εκπαιδευτική Βαθμίδα
+        </h3>
+
+        <div class="filter-container" id="level-container">
+
+            {% for value, label in school_levels %}
+                <button class="filter-btn" data-level="{{ value }}">
+                    {{ label }}
+                </button>
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+
+    <div class="filters-row">
+
+        <!-- STEP 2 -->
+
+        <div class="filter-step hidden" id="subject-step">
+
+            <h3 class="filter-title">
+                2. Επιλέξτε μάθημα
+            </h3>
+
+            <div class="filter-container" id="subject-container">
+
+            </div>
+
+        </div>
+
+        <!-- STEP 3 -->
+
+        <div class="filter-step hidden" id="class-step">
+
+            <h3 class="filter-title">
+                3. Επιλέξτε τάξη
+            </h3>
+
+            <div class="filter-container" id="class-container">
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div> <!-- Κλείνει το filters -->
+
+
+<div id="empty-message" class="empty-message">
+
+    Επιλέξτε βαθμίδα, μάθημα και τάξη.
+
+</div>

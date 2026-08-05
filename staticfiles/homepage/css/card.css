@@ -1,0 +1,214 @@
+/* ================= GRID ================= */
+.main_card{
+    display:grid;
+    grid-auto-flow:column;
+    grid-auto-columns:250px;
+    justify-content:center;
+    gap:20px;
+    padding:20px;
+}
+
+.card{
+    width:250px;
+
+    background:#fff;
+    border:1px solid #e8e8e8;
+    border-radius:12px;
+    overflow:hidden;
+
+    box-shadow:0 4px 12px rgba(0,0,0,.08);
+    transition:.25s;
+}
+
+.card:hover{
+    transform:translateY(-5px);
+    box-shadow:0 12px 25px rgba(0,0,0,.16);
+}
+
+.card a{
+    display:block;
+    color:#222;
+    text-decoration:none;
+}
+
+.card img:first-child{
+    width:100%;
+    height:auto;
+    object-fit:cover;
+    display:block;
+    border-bottom:1px solid #eee;
+}
+
+.card-body{
+    padding:12px;
+}
+
+.card h2{
+    margin:0;
+    text-align:center;
+    font-size:19px;
+    font-weight:700;
+    color:#222;
+}
+
+.book-info{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:8px;
+    margin:8px 0 10px;
+    flex-wrap:wrap;
+}
+
+.badge{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:3px 10px;
+    background:#1976d2;
+    color:#fff;
+    border-radius:20px;
+    font-size:10px;
+    font-weight:600;
+    line-height:1;
+}
+
+.book-info h3{
+    margin:0;
+    color:#666;
+    font-size:14px;
+    font-weight:500;
+    line-height:1;
+}
+
+.edition{
+    margin:0;
+    color:#1976d2;
+    font-size:13px;
+    font-weight:600;
+    line-height:1;
+}
+
+.has-tooltip{
+    margin:8px 0;
+    color:#555;
+    font-size:13px;
+    line-height:1.45;
+    display:-webkit-box;
+    -webkit-box-orient:vertical;
+    -webkit-line-clamp:2;
+    overflow:hidden;
+    cursor:pointer;
+}
+
+.card-footer{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:8px;
+    padding-top:10px;
+    border-top:1px solid #eee;
+}
+
+.prices{
+    display:flex;
+    gap:16px;
+}
+
+.price-item{
+    text-align:center;
+}
+
+.price-item small{
+    display:block;
+    margin-bottom:2px;
+    color:#888;
+    font-size:10px;
+    font-weight:400;
+}
+
+.price-item{
+    color:#1976d2;
+    font-size:15px;
+    font-weight:700;
+}
+
+.arrow{
+    width:34px;
+    height:34px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    border-radius:50%;
+    background:#1976d2;
+    color:#fff;
+    font-size:18px;
+    transition:.25s;
+}
+
+.card:hover .arrow{
+    transform:translateX(4px);
+}
+
+.custom-tooltip{
+    position:fixed;
+    width:320px;
+    background:#fff;
+    color:#333;
+    padding:15px;
+    border-radius:10px;
+    border:1px solid #ddd;
+    box-shadow:0 10px 25px rgba(0,0,0,.18);
+    line-height:1.6;
+    font-size:14px;
+    opacity:0;
+    visibility:hidden;
+    transition:.15s;
+    z-index:99999;
+    pointer-events:none;
+}
+
+.details-btn,
+.training-details-btn {
+    background:#fff;
+    color:#2b7cff;
+    border:2px solid #2b7cff;
+    margin-top: 2rem;
+}
+
+.details-btn:hover,
+.training-details-btn:hover {
+    background:#2b7cff;
+    color:#fff;
+}
+@media only screen and (min-width: 240px) and (max-width: 600px) and (orientation: portrait) {
+    .card{
+        width: calc(100% - 1rem);
+        max-width: none;
+        margin: 0.5rem;
+    }
+}
+
+@media only screen and (min-width: 481px) and (max-width: 950px) and (orientation: landscape) {
+   
+}
+
+@media only screen and (min-width: 601px) and (max-width: 1024px) and (orientation: portrait) {
+   
+}
+
+@media only screen and (min-width: 951px) and (max-width: 1366px) and (orientation: landscape) {
+    
+}
+
+@media only screen and (min-width: 1367px) and (max-width: 1599px) and (orientation: landscape) {
+   
+}
+
+@media only screen and (min-width: 1600px) and (max-width: 1920px) and (orientation: landscape) {
+    
+}
+
+@media only screen and (min-width: 1921px) {
+    
+}

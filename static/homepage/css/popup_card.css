@@ -1,0 +1,515 @@
+.modal{
+
+    display:none;
+    position:fixed;
+    inset:0;
+
+    background:rgba(0,0,0,.55);
+
+    z-index:9999;
+
+    overflow-y:auto;
+
+}
+
+.modal-content{
+
+    width:min(760px,92%);
+
+    max-height:calc(100vh - 80px);
+
+    overflow-y:auto;
+
+    background:#fff;
+
+    margin:40px auto;
+
+    border-radius:18px;
+
+    padding:30px 30px 60px;
+
+    position:relative;
+
+    box-shadow:0 20px 50px rgba(0,0,0,.18);
+
+}
+
+/* ===================================================
+   CLOSE BUTTON
+=================================================== */
+
+.close-modal{
+
+    position:absolute;
+
+    top:18px;
+    right:22px;
+
+    font-size:34px;
+
+    color:#777;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+}
+
+.close-modal:hover{
+
+    color:#2b7cff;
+
+}
+
+/* ===================================================
+   HEADER
+=================================================== */
+
+.popup-header{
+
+    display:flex;
+
+    gap:25px;
+
+    align-items:flex-start;
+
+    margin-bottom:30px;
+
+}
+
+.popup-image{
+
+    width:150px;
+
+    flex-shrink:0;
+
+}
+
+.popup-image img{
+
+    width:100%;
+
+    display:block;
+
+    border-radius:12px;
+
+    box-shadow:0 8px 20px rgba(0,0,0,.15);
+
+}
+
+.popup-details{
+
+    flex:1;
+
+}
+
+.popup-details h1{
+
+    margin:0 0 15px;
+
+    font-size:32px;
+
+    font-weight:700;
+
+    line-height:1.25;
+
+}
+
+/* ===================================================
+   BADGES
+=================================================== */
+
+.popup-info{
+
+    display:flex;
+
+    gap:10px;
+
+    flex-wrap:wrap;
+
+}
+
+.popup-info span{
+
+    background:#eef5ff;
+
+    color:#2b7cff;
+
+    border:1px solid #d8e7ff;
+
+    border-radius:30px;
+
+    padding:8px 14px;
+
+    font-size:13px;
+
+    font-weight:600;
+
+}
+
+/* ===================================================
+   SECTIONS
+=================================================== */
+
+.popup-section{
+
+    margin-top:30px;
+
+}
+
+.popup-section h2{
+
+    font-size:22px;
+
+    color:#2b7cff;
+
+    margin-bottom:15px;
+
+    border-bottom:2px solid #ededed;
+
+    padding-bottom:8px;
+
+}
+
+.popup-section p{
+
+    font-size:16px;
+
+    line-height:1.8;
+
+}
+
+/* ===================================================
+   FEATURES
+=================================================== */
+
+#popup-features{
+
+    font-size:16px;
+
+    line-height:2;
+
+}
+
+/* ===================================================
+   CHAPTERS
+=================================================== */
+
+.chapter-item{
+
+    padding:12px 0;
+
+    border-bottom:1px solid #ececec;
+
+    font-size:16px;
+
+}
+
+.chapter-item:last-child{
+
+    border-bottom:none;
+
+}
+
+/* ===================================================
+   BUTTONS
+=================================================== */
+
+.popup-buttons{
+
+    display:flex;
+
+    justify-content:flex-end;
+
+    gap:15px;
+
+    margin-top:35px;
+
+    padding-top:20px;
+
+    border-top:1px solid #ececec;
+
+}
+
+.popup-buttons button{
+
+    border:none;
+
+    border-radius:10px;
+
+    padding:14px 24px;
+
+    font-size:16px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+}
+
+#buy-chapter-btn{
+
+    background:#2b7cff;
+
+    color:#fff;
+
+}
+
+#buy-chapter-btn:hover{
+
+    background:#1f63d1;
+
+}
+
+#buy-book-btn{
+
+    background:#1b9b5f;
+
+    color:#fff;
+
+}
+
+#buy-book-btn:hover{
+
+    background:#147c4b;
+
+}
+
+.feature-item{
+
+    padding:8px 0;
+
+    font-size:16px;
+
+    line-height:1.7;
+
+}
+/* ===================================================
+   ACCORDION
+=================================================== */
+
+.chapter-item{
+
+    border:1px solid #e8e8e8;
+
+    border-radius:10px;
+
+    margin-bottom:12px;
+
+    overflow:hidden;
+
+}
+
+.chapter-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:15px 18px;
+
+    background:#f8f9fb;
+
+    cursor:pointer;
+
+    font-weight:600;
+
+    transition:.2s;
+
+}
+
+.chapter-header:hover{
+
+    background:#eef5ff;
+
+}
+
+.chapter-arrow{
+
+    font-size:18px;
+
+    color:#2b7cff;
+
+}
+
+.chapter-videos{
+
+    display:none;
+
+    padding:10px 18px 15px;
+
+    background:#fff;
+
+}
+
+.chapter-videos.open{
+
+    display:block;
+
+}
+
+.video-item{
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+
+    padding: .65rem 1rem;
+
+    border-bottom: 1px solid #ececec;
+
+    cursor: pointer;
+    transition: all .2s ease;
+}
+
+.video-item:last-child{
+    border-bottom: none;
+}
+
+.video-item:hover{
+    color: #2b7cff;
+    padding-left: 1.5rem;
+}
+
+.video-icon{
+    flex-shrink: 0;
+}
+
+.video-title{
+    flex: 1;
+}
+
+.video-title a{
+    color: inherit;
+    text-decoration: none;
+}
+
+.video-title a:hover{
+    color: inherit;
+    text-decoration: none;
+}
+
+.video-title a:visited{
+    color: inherit;
+}
+
+.video-lock{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 85px;
+
+    padding: .3rem .7rem;
+
+    border-radius: 50px;
+
+    font-size: .8rem;
+    font-weight: 600;
+
+    flex-shrink: 0;
+}
+
+.video-lock.free{
+    background: #e8f8ec;
+    color: #1f8f43;
+    border: 1px solid #b7e3c3;
+}
+
+.video-lock.locked{
+    background: #fff2f2;
+    color: #c62828;
+    border: 1px solid #efb3b3;
+}
+
+#buy-training-btn{
+    background:#2b7cff;
+    color:#fff;
+    border:2px solid #2b7cff;
+    padding:12px 24px;
+    border-radius:8px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+#buy-training-btn:hover{
+    background:#1565c0;
+    border-color:#1565c0;
+}
+
+#buy-training-btn:active{
+    background:#0d47a1;
+    border-color:#0d47a1;
+}
+
+@media only screen and (min-width:240px) and (max-width:600px) and (orientation:portrait){
+
+    .modal-content{
+        width:calc(100% - 1rem);
+        max-width:none;
+        margin:.5rem;
+        padding:1rem;
+        box-sizing:border-box;
+    }
+
+    .popup-header{
+        flex-direction:column;
+        align-items:center;
+        gap:1rem;
+        text-align:center;
+    }
+
+    .popup-image{
+        width:100%;
+        max-width:260px;
+    }
+
+    .popup-details h1{
+        font-size:1.8rem;
+        margin:.5rem 0 1rem;
+    }
+
+    .popup-info{
+        justify-content:center;
+        gap:.3rem;
+    }
+
+    .popup-info span{
+        padding:.45rem .9rem;
+        font-size:.8rem;
+    }
+
+    .popup-section h2{
+        font-size:1.4rem;
+    }
+
+    .popup-section p,
+    #popup-features,
+    .feature-item{
+        font-size:.95rem;
+    }
+
+    .chapter-header{
+        padding:.9rem 1rem;
+    }
+
+    .chapter-videos{
+        padding:.5rem 1rem 1rem;
+    }
+
+    .video-item{
+        gap:.5rem;
+    }
+
+    .popup-buttons{
+        flex-direction:column;
+    }
+
+    .popup-buttons button{
+        width:100%;
+    }
+
+}

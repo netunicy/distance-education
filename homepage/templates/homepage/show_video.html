@@ -1,0 +1,278 @@
+{% extends "homepage/base.html" %}
+
+{% block content %}
+
+<div class="video-page">
+
+    <section class="content-wrapper">
+
+        <!-- ==========================================
+                        MAIN CONTENT
+        =========================================== -->
+
+        <main class="main-content">
+
+            <!-- ==========================================
+                            HEADER
+            =========================================== -->
+
+            <div class="video-header-card">
+
+                <h1 class="book-title">
+
+                    {{ book.title }}
+
+                </h1>
+
+                <h2 class="chapter-title">
+
+                    {{ chapter.title }}
+
+                </h2>
+
+                <div class="video-info">
+
+                    <span>
+
+                        Δραστηριότητα:
+                        {{ video.activity_title }}
+
+                    </span>
+
+                    <span>
+
+                        Σελίδα:
+                        {{ video.page }}
+
+                    </span>
+
+                    {% if video.part %}
+
+                        <span>
+
+                            {{ video.get_part_display }}
+
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+            <!-- ==========================================
+                            PLAYER
+            =========================================== -->
+
+            <div class="player-wrapper">
+
+                <video
+                    id="video"
+                    controls
+                    controlsList="nodownload"
+                    disablePictureInPicture
+                    disableRemotePlayback
+                    preload="metadata">
+
+                </video>
+
+            </div>
+
+            <!-- ==========================================
+                        NAVIGATION
+            =========================================== -->
+
+            <div class="navigation-wrapper">
+
+                <div class="previous-wrapper">
+
+                    {% if previous_video %}
+
+                        <a href="#"
+                           class="previous-button">
+
+                            ◀ Previous
+
+                        </a>
+
+                    {% endif %}
+
+                </div>
+
+                <div class="next-wrapper">
+
+                    {% if next_video %}
+
+                        <a href="#"
+                           class="next-button">
+
+                            Next ▶
+
+                        </a>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+            <!-- ==========================================
+                        FOOTER
+            =========================================== -->
+
+            <div class="video-footer">
+
+                <span>
+
+                    Προβολές:
+                    {{ video.views }}
+
+                </span>
+
+            </div>
+
+        </main>
+
+        <!-- ==========================================
+                        PLAYLIST
+        =========================================== -->
+
+        <aside class="playlist-wrapper">
+
+            <div class="playlist-title">
+
+                Videos Κεφαλαίου
+
+            </div>
+
+            <ul class="playlist">
+
+                {% for item in chapter_videos %}
+                    
+                    <li>
+
+                        <a href="#"
+                           class="playlist-item">
+
+                            <div class="playlist-thumbnail">
+
+                                <img
+                                    src="https://videodelivery.net/{{ item.cloudflare_uid }}/thumbnails/thumbnail.jpg"
+                                    alt="{{ item.activity_title }}">
+
+                                <div class="playlist-play">
+
+                                    ▶
+
+                                </div>
+
+                            </div>
+
+                            <div class="playlist-content">
+
+                                <div class="playlist-video-title">
+
+                                    {{ item.activity_title }}
+
+                                </div>
+
+                                <div class="playlist-video-part">
+
+                                    Σελίδα {{ item.page }}
+
+                                    {% if item.part %}
+
+                                        • {{ item.get_part_display }}
+
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+                        </a>
+
+                    </li>
+
+                {% empty %}
+
+                    <li class="playlist-empty">
+
+                        Δεν υπάρχουν videos.
+
+                    </li>
+
+                {% endfor %}
+
+            </ul>
+
+        </aside>
+
+    </section>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.15.12/shaka-player.compiled.js"></script>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", async () => {
+
+    shaka.polyfill.installAll();
+
+    if (!shaka.Player.isBrowserSupported()) {
+
+        alert("Ο browser δεν υποστηρίζεται.");
+
+        return;
+
+    }
+
+    const video = document.getElementById("video");
+
+    const player = new shaka.Player(video);
+
+    player.addEventListener("error", function(event) {
+
+        console.error("Shaka Error:", event.detail);
+
+    });
+
+    try {
+
+        await player.load("{{ secure_video_url }}");
+
+    }
+
+    catch(error) {
+
+        console.error(error);
+
+    }
+
+});
+
+document.addEventListener("contextmenu", function(event) {
+
+    event.preventDefault();
+
+});
+
+document.addEventListener("keydown", function(e) {
+
+    if (
+        e.key === "F12" ||
+        (e.ctrlKey && e.shiftKey &&
+            ["I","J","C"].includes(e.key.toUpperCase())) ||
+        (e.ctrlKey && e.key.toUpperCase() === "U")
+    ) {
+
+        e.preventDefault();
+
+    }
+
+});
+
+</script>
+
+{% endblock %}

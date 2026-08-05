@@ -1,0 +1,78 @@
+<div class="main_card">
+
+    {% for training in trainings %}
+
+        <div class="card training-card"
+
+            data-id="{{ training.id }}"
+            data-category="{{ training.category }}"
+            data-training="{{ training.title }}"
+            data-level="{{ training.level }}"
+
+            data-title="{{ training.title }}"
+            data-description="{{ training.description }}"
+            data-price="{{ training.price }}">
+
+            <a href="#">
+
+                <img src="{{ training.image }}" alt="{{ training.alt }}">
+
+                <div class="card-body">
+
+                    <h2>{{ training.title }}</h2>
+
+                    <div class="book-info">
+
+                        <span class="badge">
+                            {{ training.category }}
+                        </span>
+
+                        <h3>
+                            {{ training.level }}
+                        </h3>
+
+                    </div>
+
+                    <p class="has-tooltip"
+                       data-tooltip="{{ training.description|striptags|escape }}">
+
+                        {{ training.description }}
+
+                    </p>
+
+                    <div class="card-footer">
+
+                        <div class="prices">
+
+                            {% if training.is_free %}
+
+                                <div class="price-item">
+                                    <strong>Δωρεάν</strong>
+                                </div>
+
+                            {% else %}
+
+                                <div class="price-item">
+                                    <small>Πλήρες πρόγραμμα</small><br>
+                                    €{{ training.price }}
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+                        <button class="training-details-btn">
+                            Περιεχόμενα
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </a>
+
+        </div>
+
+    {% endfor %}
+
+</div>

@@ -1,0 +1,48 @@
+{% extends 'homepage/base.html' %}
+
+{% block title %}
+Homepage
+{% endblock %}
+
+{% block content %}
+
+    <div id="school-section" class="reveal">
+
+        {% include 'homepage/components/filters_cards.html' %}
+
+    </div>
+
+    <div id="school-main-box" class="main-box">
+        {% include 'homepage/components/card.html' %}
+    </div>
+
+    {% if trainings %}
+
+        <div id="training-section" class="reveal">
+
+            {% include 'homepage/components/filters_cards_topics.html' %}
+
+        </div>
+
+        <div id="training-main-box" class="main-box">
+            {% include 'homepage/components/card_trainings.html' %}
+        </div>
+
+    {% endif %}
+
+    
+    {% include 'homepage/components/popup_card.html' %}
+
+    {% include 'homepage/components/popup_card_training.html' %}
+
+    <div class="information-section reveal">
+        {% include 'homepage/components/second_row_images.html' %}
+    </div>
+
+    <div class="reveal">
+        {% include 'homepage/footer.html' %}
+    </div>
+
+
+
+{% endblock %}

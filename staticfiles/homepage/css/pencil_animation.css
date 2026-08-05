@@ -1,0 +1,30 @@
+#pencil-engine{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 1;
+}
+
+
+#pencil-svg{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#animated-pencil{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 70px;
+    height: auto;
+    display: none;
+    transform-origin: center center;
+    user-select: none;
+}

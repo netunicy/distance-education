@@ -1,0 +1,25 @@
+<div class="information-container">
+
+    {% for page in second_row %}
+
+        {% if user.is_authenticated %}
+            <a href="{{ page.url }}" class="info-card">
+                <img src="{{ page.path_image }}" alt="{{ page.title }}">
+                <div class="info-overlay">
+                    <h2>{{ page.title }}</h2>
+                </div>
+            </a>
+        {% else %}
+
+            <a href="{{ page.url }}" class="info-card">
+                <img src="{{ page.path_image }}" alt="{{ page.title }}">
+                <div class="info-overlay">
+                    <h2>{{ page.title }}</h2>
+                </div>
+            </a>
+
+        {% endif %}
+
+    {% endfor %}
+
+</div>

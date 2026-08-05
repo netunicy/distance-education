@@ -1,0 +1,111 @@
+{% extends 'homepage/base.html' %}
+{% load static %}
+
+{% block title %}Ολοκλήρωση Εγγραφής{% endblock %}
+
+{% block content %}
+<!-- Φόρτωση του CSS -->
+<link rel="stylesheet" href="{% static 'accounts/css/register.css' %}">
+
+<style>
+    .social-signup-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 65vh;
+        padding: 20px;
+    }
+    .social-signup-card {
+        background: #ffffff;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        width: 100%;
+        max-width: 440px;
+    }
+    .social-signup-card h2 {
+        margin-bottom: 10px;
+        color: #222;
+        text-align: center;
+    }
+    .social-signup-card p {
+        color: #666;
+        font-size: 0.95rem;
+        margin-bottom: 25px;
+        text-align: center;
+        line-height: 1.4;
+    }
+    .social-signup-card .form-group {
+        margin-bottom: 18px;
+        text-align: left;
+    }
+    .social-signup-card label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: 600;
+        color: #444;
+    }
+    /* Μορφοποίηση στα inputs που παράγει το Allauth */
+    .social-signup-card input[type="text"],
+    .social-signup-card input[type="email"],
+    .social-signup-card input[type="password"] {
+        width: 100% !important;
+        padding: 12px !important;
+        border: 1px solid #ccc !important;
+        border-radius: 6px !important;
+        font-size: 1rem !important;
+        box-sizing: border-box !important;
+    }
+    .social-signup-card button[type="submit"] {
+        width: 100%;
+        padding: 12px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 10px;
+        transition: background 0.2s;
+    }
+    .social-signup-card button[type="submit"]:hover {
+        background-color: #0056b3;
+    }
+</style>
+
+<div class="social-signup-container">
+    <div class="social-signup-card">
+        <h2>Ολοκλήρωση Εγγραφής</h2>
+        <p>Πρόκειται να χρησιμοποιήσετε τον λογαριασμό σας για να συνδεθείτε. Παρακαλούμε επιβεβαιώστε τα στοιχεία σας:</p>
+
+        <form method="post" action="{% url 'socialaccount_signup' %}">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div style="color: #dc3545; margin-bottom: 15px;">
+                    {% for error in form.non_field_errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <div style="color: #dc3545; font-size: 0.85em; margin-top: 4px;">
+                            {% for error in field.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            <button type="submit">Εγγραφή &rarr;</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

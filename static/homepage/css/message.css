@@ -1,0 +1,20 @@
+.message {
+    position: fixed;
+    top:8rem;
+    right: 2rem;
+    transition: opacity .3s ease;
+}
+.message.success {
+    background-color: #67d36a;
+    color: white;
+    padding: 0.5rem;
+    border-radius: 5px;
+    font-size: 1.15rem;
+    font-weight: bold;
+}
+@media only screen and (min-width: 240px) and (max-width: 600px) and (orientation: portrait){
+    .message.success {
+        font-size: 1rem;
+        padding: 0.3rem;
+    }
+}

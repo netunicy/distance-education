@@ -1,0 +1,118 @@
+{% extends "homepage/base.html" %}
+
+{% block content %}
+
+<h1>Training Video</h1>
+
+<hr>
+
+<h2>Υλικό</h2>
+
+<p>
+    <strong>Τίτλος:</strong>
+    {{ material.title }}
+</p>
+
+<p>
+    <strong>Τύπος:</strong>
+    {{ material.get_material_type_display }}
+</p>
+
+<p>
+    <strong>Περιγραφή:</strong>
+    {{ material.description }}
+</p>
+
+<p>
+    <strong>Δωρεάν:</strong>
+    {{ material.is_free }}
+</p>
+
+<hr>
+
+<h2>Video</h2>
+
+<video
+    id="video"
+    controls
+    controlsList="nodownload"
+    disablePictureInPicture
+    disableRemotePlayback
+    preload="metadata"
+    width="900">
+</video>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.15.12/shaka-player.compiled.js"></script>
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", async () => {
+
+        shaka.polyfill.installAll();
+
+        if (!shaka.Player.isBrowserSupported()) {
+
+            alert("Ο browser δεν υποστηρίζεται.");
+
+            return;
+
+        }
+
+        const video = document.getElementById("video");
+
+        const player = new shaka.Player(video);
+
+        player.addEventListener("error", function(event) {
+
+            console.error("Shaka Error:", event.detail);
+
+        });
+
+        try {
+
+            await player.load("{{ secure_video_url }}");
+
+            console.log("Video loaded successfully.");
+
+        }
+
+        catch(error) {
+
+            console.error(error);
+
+        }
+
+    });
+
+</script>
+
+<script>
+
+    document.addEventListener("contextmenu", function(event) {
+
+        event.preventDefault();
+
+    });
+
+</script>
+
+<script>
+
+    document.addEventListener("keydown", function(e) {
+
+        if (
+            e.key === "F12" ||
+            (e.ctrlKey && e.shiftKey &&
+                ["I","J","C"].includes(e.key.toUpperCase())) ||
+            (e.ctrlKey && e.key.toUpperCase() === "U")
+        ) {
+
+            e.preventDefault();
+
+        }
+
+    });
+
+</script>
+
+{% endblock %}
