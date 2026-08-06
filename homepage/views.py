@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from homepage.models.training import Training
-from .models import Logo, Mycontexts,InformationPage
+from .models import Logo, Mycontexts,InformationPage,Informations
 from django.urls import reverse
 from django.contrib import messages
 from django.shortcuts import render
@@ -54,9 +54,10 @@ def homepage(request):
         if value in active_category_keys
     ]
 
-    second_row_images = InformationPage.objects.filter(
-        page__in=["refund_policy", "copyright_notice", "privacy_policy", "about_us", "faq", "terms_and_conditions", "announcements", "contact"]
-    )
+    cards = InformationPage.objects.all()
+    modals = Informations.objects.all()
+
+    second_row = zip(cards, modals)
 
     return render(request, "homepage/homepage.html", {
         "logo": logo,
@@ -66,7 +67,7 @@ def homepage(request):
         "school_classes": filtered_classes,
         "trainings": trainings,
         "training_categories": active_training_categories,
-        "second_row": second_row_images,
+        "second_row": second_row,
     })
 
 def search(request):
@@ -325,9 +326,6 @@ def show_video(request, video_id):
         "homepage/show_video.html",
         context,
     )
-
-def terms_and_conditions(request):
-    return redirect("homepage:homepage")
 
 def contact(request):
     return redirect("homepage:homepage")

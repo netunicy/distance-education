@@ -1,25 +1,31 @@
-<div class="information-container">
-
-    {% for page in second_row %}
-
-        {% if user.is_authenticated %}
-            <a href="{{ page.url }}" class="info-card">
-                <img src="{{ page.path_image }}" alt="{{ page.title }}">
-                <div class="info-overlay">
-                    <h2>{{ page.title }}</h2>
+<section class="information-section">
+    <div class="information-grid">
+        {% for card, info in second_row %}
+            <!-- ΚΑΡΤΑ (από το InformationPage) -->
+            <div class="information-card" onclick="openInfoModal('{{ info.id }}')">
+                <img src="{{ card.path_image }}" alt="{{ card.title }}">
+                <div class="information-overlay">
+                    <h3>{{ card.title }}</h3>
                 </div>
-            </a>
-        {% else %}
+            </div>
 
-            <a href="{{ page.url }}" class="info-card">
-                <img src="{{ page.path_image }}" alt="{{ page.title }}">
-                <div class="info-overlay">
-                    <h2>{{ page.title }}</h2>
+            <!-- POP-UP / MODAL (από το Informations) -->
+            <div id="info-modal-{{ info.id }}" class="information-modal">
+                <div class="information-modal-content">
+                    <button type="button" class="information-close" onclick="closeInfoModal('{{ info.id }}')">&times;</button>
+                    
+                    {% if info.image %}
+                        <img id="information-modal-image" src="{{ info.image }}" alt="{{ info.title }}">
+                    {% endif %}
+
+                    <div class="information-body">
+                        <h2 id="information-modal-title">{{ info.title }}</h2>
+                        <div id="information-modal-description">
+                            {{ info.description|safe }}
+                        </div>
+                    </div>
                 </div>
-            </a>
-
-        {% endif %}
-
-    {% endfor %}
-
-</div>
+            </div>
+        {% endfor %}
+    </div>
+</section>

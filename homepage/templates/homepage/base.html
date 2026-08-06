@@ -31,12 +31,13 @@
     <link rel="stylesheet" href="{% static 'homepage/css/card.css' %}">
     <link rel="stylesheet" href="{% static 'homepage/css/filters_cards.css' %}">
     <link rel="stylesheet" href="{% static 'homepage/css/popup_card.css' %}">
-    <link rel="stylesheet" href="{% static 'homepage/css/first_second_row_images.css' %}">
     <link rel="stylesheet" href="{% static 'homepage/css/reveal.css' %}">
     <link rel="stylesheet" href="{% static 'homepage/css/footer.css' %}">
     <link rel="stylesheet" href="{% static 'homepage/css/show_video.css' %}">
     <link rel="stylesheet" href="{% static 'homepage/css/show_training_video.css' %}">
-    {% block extra_css %}{% endblock %}
+    <link rel="stylesheet" href="{% static 'homepage/css/second_row_popup.css' %}">
+    {% block extra_head %}{% endblock %}
+
 
 </head>
 
@@ -70,6 +71,8 @@
     <script src="{% static 'homepage/javascript/popup_card_school.js' %}"></script>
     <script src="{% static 'homepage/javascript/main_box.js' %}"></script>
     <script src="{% static 'homepage/javascript/reveal.js' %}"></script>
+    <script src="{% static 'homepage/javascript/second_row_popup.js' %}"></script>
+    {% block extra_js %}{% endblock %}
 
 </body>
 

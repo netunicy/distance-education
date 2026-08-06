@@ -38,6 +38,8 @@ INSTALLED_APPS = [
 
     'django.contrib.sites',
 
+    'tinymce',
+
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -239,3 +241,65 @@ CSRF_TRUSTED_ORIGINS = [
     "https://turnonlearning.com",
     "https://distance-education.onrender.com",
 ]
+TINYMCE_DEFAULT_CONFIG = {
+    "height": 600,
+    "width": 960,
+    "language": "el",
+
+    "plugins": (
+        "advlist autolink lists link image charmap preview anchor "
+        "searchreplace visualblocks code fullscreen insertdatetime media "
+        "table help wordcount paste"
+    ),
+
+    "toolbar": (
+        "undo redo | bold italic underline strikethrough | "
+        "fontselect fontsizeselect formatselect | "
+        "alignleft aligncenter alignright alignjustify | "
+        "outdent indent | numlist bullist checklist | "
+        "removeformat | link image media | "
+        "fullscreen preview code"
+    ),
+
+    # -------------------------------
+    # PIXEL FONT SIZES στο dropdown
+    # -------------------------------
+    "fontsize_formats": "10px 12px 14px 16px 18px 20px 22px 24px 26px 28px 30px 32px 36px 40px 48px",
+
+    "style_formats": [
+        {"title": "10px", "inline": "span", "styles": {"font-size": "10px"}},
+        {"title": "12px", "inline": "span", "styles": {"font-size": "12px"}},
+        {"title": "14px", "inline": "span", "styles": {"font-size": "14px"}},
+        {"title": "16px", "inline": "span", "styles": {"font-size": "16px"}},
+        {"title": "18px", "inline": "span", "styles": {"font-size": "18px"}},
+        {"title": "20px", "inline": "span", "styles": {"font-size": "20px"}},
+        {"title": "22px", "inline": "span", "styles": {"font-size": "22px"}},
+        {"title": "24px", "inline": "span", "styles": {"font-size": "24px"}},
+        {"title": "26px", "inline": "span", "styles": {"font-size": "26px"}},
+        {"title": "28px", "inline": "span", "styles": {"font-size": "28px"}},
+        {"title": "30px", "inline": "span", "styles": {"font-size": "30px"}},
+        {"title": "32px", "inline": "span", "styles": {"font-size": "32px"}},
+        {"title": "36px", "inline": "span", "styles": {"font-size": "36px"}},
+        {"title": "40px", "inline": "span", "styles": {"font-size": "40px"}},
+        {"title": "48px", "inline": "span", "styles": {"font-size": "48px"}},
+    ],
+
+    "formats": {
+        "bold": {"inline": "strong", "remove": "all"},
+        "italic": {"inline": "em", "remove": "all"},
+        "underline": {"inline": "u", "remove": "all"},
+        "strikethrough": {"inline": "del", "remove": "all"},
+    },
+
+    "forced_root_block": "p",
+    "force_br_newlines": False,
+    "force_p_newlines": True,
+
+    "paste_as_text": True,
+
+    "menubar": "file edit view insert format tools table help",
+    "image_advtab": True,
+    "branding": False,
+    "toolbar_mode": "wrap",
+    "contextmenu": "link image table",
+}
