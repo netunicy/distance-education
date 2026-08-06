@@ -6,3 +6,4 @@ from .training import Training
 from .TrainingContent import TrainingContent
 from .TrainingMaterial import TrainingMaterial
 from .image_cards import InformationPage
+from .informations import Informations
