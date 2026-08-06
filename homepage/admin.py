@@ -8,6 +8,7 @@ from .models import (
     TrainingContent,
     TrainingMaterial,
     InformationPage,
+    Informations,
 )
 from .forms import (
     TrainingMaterialAdminForm,
@@ -19,6 +20,7 @@ admin.site.register(Mycontexts)
 admin.site.register(Chapter)
 admin.site.register(TrainingContent)
 admin.site.register(InformationPage)
+admin.site.register(Informations)
 
 @admin.register(TrainingMaterial)
 class TrainingMaterialAdmin(admin.ModelAdmin):
