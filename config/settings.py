@@ -20,7 +20,7 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY") or read_secret("secret_key.txt"
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'dinstance-education.onrender.com',
+    'distance-education.onrender.com',
     'turnonlearning.com',
     'www.turnonlearning.com',
     'localhost',
@@ -237,5 +237,5 @@ MAILTRAP_TOKEN = os.environ.get("MAILTRAP_KEY") or read_secret ("mailtrap_key.tx
 CSRF_TRUSTED_ORIGINS = [
     "https://www.turnonlearning.com",
     "https://turnonlearning.com",
-    "https://dinstance-education.onrender.com",
+    "https://distance-education.onrender.com",
 ]
