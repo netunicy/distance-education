@@ -7,10 +7,12 @@ import mailtrap as mt
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from .forms import EmailOrUsernameLoginForm
+from homepage.models import Logo
 
 # accounts/views.py
 
 def login_view(request):
+    logo=Logo.objects.all()
     if request.user.is_authenticated:
         return redirect("homepage:homepage")
 
@@ -24,13 +26,14 @@ def login_view(request):
     else:
         form = EmailOrUsernameLoginForm()
 
-    return render(request, "accounts/login.html", {"form": form})
+    return render(request, "accounts/login.html", {"form": form, "logo": logo})
 
 
 # ==========================================
 # 2. REGISTER VIEW (Step 1: Create & Send OTP)
 # ==========================================
 def register_view(request):
+    logo=Logo.objects.all()
     """Δημιουργεί μη ενεργό χρήστη και στέλνει OTP μέσω Mailtrap."""
     if request.user.is_authenticated:
         return redirect("homepage:homepage")
@@ -95,7 +98,7 @@ def register_view(request):
     else:
         form = RegisterForm()
 
-    return render(request, "accounts/register.html", {"form": form})
+    return render(request, "accounts/register.html", {"form": form, "logo": logo})
 
 
 # ==========================================
