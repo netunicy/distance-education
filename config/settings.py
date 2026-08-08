@@ -38,6 +38,8 @@ INSTALLED_APPS = [
 
     'django.contrib.sites',
 
+    'cloudinary',
+
     'tinymce',
 
     'allauth',
@@ -136,7 +138,6 @@ USE_TZ = True
 STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / "static",]
 STATIC_ROOT = BASE_DIR / "staticfiles"
-
 
 CLOUDINARY_CLOUD_NAME = (
     os.environ.get("CLOUDINARY_CLOUD_NAME")

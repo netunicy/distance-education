@@ -1,7 +1,7 @@
 from django.db import models
 
 from homepage.helpers.slug import generate_unique_slug
-
+from cloudinary.models import CloudinaryField
 
 class Schoolcontexts(models.Model):
 
@@ -65,14 +65,14 @@ class Schoolcontexts(models.Model):
 
     description = models.TextField(
         max_length=10000,
-        null=True,
         blank=True,
+        null=True,
     )
 
-    image = models.CharField(
-        max_length=1000,
-        null=True,
+    image = CloudinaryField(
+        "image",
         blank=True,
+        null=True,
     )
 
     alt = models.CharField(
@@ -112,15 +112,57 @@ class Schoolcontexts(models.Model):
                 name="unique_context_per_class_level_edition",
             ),
         ]
+    def get_cloudinary_folder(self):
 
+        subject_paths = {
+            self.SubjectLesson.GREEK: "ellinika",
+            self.SubjectLesson.MATHS: "mathimatika",
+            self.SubjectLesson.HISTORY: "istoria",
+            self.SubjectLesson.PHYSICS: "fysiki",
+        }
+
+        class_paths = {
+            self.ClassLevel.A: "a",
+            self.ClassLevel.B: "b",
+            self.ClassLevel.G: "g",
+            self.ClassLevel.D: "d",
+            self.ClassLevel.E: "e",
+            self.ClassLevel.ST: "st",
+        }
+
+        level_paths = {
+            self.LevelType.ΔΗΜΟΤΙΚΟ: "dimotikou",
+            self.LevelType.ΓΥΜΝΑΣΙΟ: "gymnasiou",
+            self.LevelType.ΛΥΚΕΙΟ: "lykeiou",
+        }
+
+        subject = subject_paths.get(
+            self.subject_lesson,
+            "other"
+        )
+
+        school_class = class_paths.get(
+            self.class_is,
+            "other"
+        )
+
+        level = level_paths.get(
+            self.stage,
+            "other"
+        )
+
+        return f"{subject}/{school_class}-{level}/book-images"
     def save(self, *args, **kwargs):
+        # 1. Παραγωγή/έλεγχος του slug
         if not self.slug:
             self.slug = generate_unique_slug(
                 model=Schoolcontexts,
                 value=self.title,
                 instance=self,
             )
+
         super().save(*args, **kwargs)
+
     def __str__(self):
         return (
             f"{self.get_subject_lesson_display()} – "
