@@ -3,7 +3,7 @@ from django.db import models
 from homepage.helpers.slug import generate_unique_slug
 
 
-class Mycontexts(models.Model):
+class Schoolcontexts(models.Model):
 
     class LevelType(models.TextChoices):
         # Εκπαίδευση
@@ -97,7 +97,7 @@ class Mycontexts(models.Model):
     )
 
     class Meta:
-        verbose_name_plural = "My Contexts"
+        verbose_name_plural = "School Contexts"
         ordering = ["subject_lesson"]
 
         constraints = [
@@ -115,7 +115,7 @@ class Mycontexts(models.Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = generate_unique_slug(
-                model=Mycontexts,
+                model=Schoolcontexts,
                 value=self.title,
                 instance=self,
             )

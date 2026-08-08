@@ -1,4 +1,4 @@
-from homepage.models import Video 
+from homepage.models import SchoolVideo 
 
 def get_previous_video(video):
     #Επιστρέφει το προηγούμενο video του βιβλίου.
@@ -28,13 +28,13 @@ def get_next_video(video):
 def get_book_videos(book):
     #Επιστρέφει όλα τα videos του βιβλίου με τη σωστή σειρά ταξινόμησης.
     # Αναζητά όλα τα videos του βιβλίου
-    book_videos = Video.objects.filter(chapter__context=book)
+    book_videos = SchoolVideo.objects.filter(chapter__context=book)
     # Επιστρέφει όλα τα videos
     return book_videos
 
 def get_videos_by_chapter(chapter):
     # Αναζητά όλα τα videos του συγκεκριμένου chapter
-    chapter_videos = Video.objects.filter(chapter=chapter)
+    chapter_videos = SchoolVideo.objects.filter(chapter=chapter)
 
     # Επιστρέφει τα videos
     return chapter_videos

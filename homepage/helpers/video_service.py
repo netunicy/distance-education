@@ -4,7 +4,7 @@
 
 from django.shortcuts import get_object_or_404
 
-from homepage.models import Video
+from homepage.models.school_video import SchoolVideo
 
 
 # ==========================================
@@ -27,7 +27,7 @@ def get_video(video_id):
     # Αν δεν βρεθεί εμφανίζει 404.
     video = get_object_or_404(
 
-        Video,
+        SchoolVideo,
 
         id=video_id
 

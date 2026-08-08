@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from homepage.models.training import Training
-from .models import Logo, Mycontexts,InformationPage,Informations
+from .models import Logo, Schoolcontexts,InformationPage,Informations
 from django.urls import reverse
 from django.contrib import messages
 from django.shortcuts import render
@@ -8,7 +8,7 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404,redirect
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from homepage.models.TrainingMaterial import TrainingMaterial
+from homepage.models.Training_video import TrainingVideo
 from homepage.cloudflare.signed_playback import create_signed_playback_url
 from django.http import HttpResponse
 from homepage.context_builder import build_base_context
@@ -25,24 +25,24 @@ def homepage(request):
     logo = Logo.objects.all()
     messages.success(request, "Welcome to the Homepage!")
     
-    contexts = Mycontexts.objects.prefetch_related("chapters")
+    contexts = Schoolcontexts.objects.prefetch_related("chapters")
 
-    # Διόρθωση με τα πραγματικά ονόματα πεδίων του μοντέλου Mycontexts:
+    # Διόρθωση με τα πραγματικά ονόματα πεδίων του μοντέλου Schoolcontexts:
     active_levels = contexts.values_list("stage", flat=True).distinct()
     active_subjects = contexts.values_list("subject_lesson", flat=True).distinct()
     active_classes = contexts.values_list("class_is", flat=True).distinct()
 
     # Φιλτράρισμα των choices
     filtered_levels = [
-        (val, label) for val, label in Mycontexts.LevelType.choices 
+        (val, label) for val, label in Schoolcontexts.LevelType.choices 
         if val in active_levels
     ]
     filtered_subjects = [
-        (val, label) for val, label in Mycontexts.SubjectLesson.choices 
+        (val, label) for val, label in Schoolcontexts.SubjectLesson.choices 
         if val in active_subjects
     ]
     filtered_classes = [
-        (val, label) for val, label in Mycontexts.ClassLevel.choices 
+        (val, label) for val, label in Schoolcontexts.ClassLevel.choices 
         if val in active_classes
     ]
 
@@ -75,7 +75,7 @@ def search(request):
 
 def book_contents(request, book_id):
 
-    book = get_object_or_404(Mycontexts, id=book_id)
+    book = get_object_or_404(Schoolcontexts, id=book_id)
 
     includes = []
 
@@ -164,7 +164,7 @@ def training_contents(request, training_id):
     for content in training.training_contents.prefetch_related("materials").order_by("order"):
 
         # Πρώτο δωρεάν video της ενότητας
-        free_video = content.materials.filter(material_type=TrainingMaterial.MaterialType.VIDEO,is_free=True,).first()
+        free_video = content.materials.filter(material_type=TrainingVideo.MaterialType.VIDEO,is_free=True,).first()
 
         contents.append({
 
@@ -227,7 +227,7 @@ def show_training_video(request, material_id):
 
     # Αναζητά το εκπαιδευτικό υλικό
     material = get_object_or_404(
-        TrainingMaterial,
+        TrainingVideo,
         id=material_id,
     )
 

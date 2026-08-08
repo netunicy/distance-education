@@ -1,10 +1,10 @@
 from django.db import models
 
 from homepage.helpers.slug import generate_unique_slug
-from .chapter import Chapter
+from .school_chapter import Chapter
 
 
-class Video(models.Model):
+class SchoolVideo(models.Model):
 
     class CloudflareStatus(models.TextChoices):
         PENDING = "pending", "Pending"
@@ -101,8 +101,8 @@ class Video(models.Model):
 
     class Meta:
 
-        verbose_name = "Video"
-        verbose_name_plural = "Videos"
+        verbose_name = "School Video"
+        verbose_name_plural = "School Videos"
 
         ordering = (
             "chapter__order",
@@ -144,7 +144,7 @@ class Video(models.Model):
                 value = f"{value}-{self.part}"
 
             self.slug = generate_unique_slug(
-                model=Video,
+                model=SchoolVideo,
                 value=value,
                 instance=self,
                 chapter=self.chapter,

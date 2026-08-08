@@ -1,35 +1,35 @@
 from django.contrib import admin
 from .models import (
     Logo,
-    Mycontexts,
+    Schoolcontexts,
     Chapter,
-    Video,
+    SchoolVideo,
     Training,
     TrainingContent,
-    TrainingMaterial,
+    TrainingVideo,
     InformationPage,
     Informations,
 )
 from .forms import (
-    TrainingMaterialAdminForm,
+    TrainingVideoAdminForm,
     VideoAdminForm,
 )
 
 admin.site.register(Logo)
-admin.site.register(Mycontexts)
+admin.site.register(Schoolcontexts)
 admin.site.register(Chapter)
 admin.site.register(TrainingContent)
 admin.site.register(InformationPage)
 admin.site.register(Informations)
 
-@admin.register(TrainingMaterial)
-class TrainingMaterialAdmin(admin.ModelAdmin):
+@admin.register(TrainingVideo)
+class TrainingVideoAdmin(admin.ModelAdmin):
     exclude = ("slug",)
-    form = TrainingMaterialAdminForm
+    form = TrainingVideoAdminForm
     
 
-@admin.register(Video)
-class VideosAdmin(admin.ModelAdmin):
+@admin.register(SchoolVideo)
+class SchoolVideoAdmin(admin.ModelAdmin):
 
     form = VideoAdminForm
 

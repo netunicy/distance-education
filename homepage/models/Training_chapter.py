@@ -14,8 +14,8 @@ class TrainingContent(models.Model):
     class Meta:
 
         ordering = ["order"]
-        verbose_name = "Training Content"
-        verbose_name_plural = "Training Contents"
+        verbose_name = "Training Chapter"
+        verbose_name_plural = "Training Chapters"
 
         constraints = [
             models.UniqueConstraint(

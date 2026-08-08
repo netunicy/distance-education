@@ -1,9 +1,9 @@
 from django.db import models
 from homepage.helpers.slug import generate_unique_slug
-from homepage.models.TrainingContent import TrainingContent
+from homepage.models.Training_chapter import TrainingContent
 
 
-class TrainingMaterial(models.Model):
+class TrainingVideo(models.Model):
 
     class MaterialType(models.TextChoices):
         VIDEO = "video", "Video"
@@ -36,6 +36,8 @@ class TrainingMaterial(models.Model):
     class Meta:
 
         ordering = ["order"]
+        verbose_name = "Training Video"
+        verbose_name_plural = "Training Videos"
 
         constraints = [
 
@@ -56,7 +58,7 @@ class TrainingMaterial(models.Model):
         if not self.slug:
 
             self.slug = generate_unique_slug(
-                model=TrainingMaterial,
+                model=TrainingVideo,
                 value=self.title,
                 instance=self,
                 training_content=self.training_content,

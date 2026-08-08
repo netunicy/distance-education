@@ -1,13 +1,13 @@
 from django.db import models
 
 from homepage.helpers.slug import generate_unique_slug
-from .school import Mycontexts
+from .school import Schoolcontexts
 
 
 class Chapter(models.Model):
 
     context = models.ForeignKey(
-        Mycontexts,
+        Schoolcontexts,
         on_delete=models.CASCADE,
         related_name="chapters",
     )
@@ -28,8 +28,8 @@ class Chapter(models.Model):
 
         ordering = ["order"]
 
-        verbose_name = "Chapter"
-        verbose_name_plural = "Chapters"
+        verbose_name = "School Chapter"
+        verbose_name_plural = "School Chapters"
 
         constraints = [
 
