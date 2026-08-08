@@ -97,7 +97,8 @@ class Schoolcontexts(models.Model):
     )
 
     class Meta:
-        verbose_name_plural = "School Contexts"
+        verbose_name = "School"
+        verbose_name_plural = "Schools"
         ordering = ["subject_lesson"]
 
         constraints = [

@@ -11,7 +11,8 @@ class Informations(models.Model):
     description = HTMLField(null=True, blank=True)
 
     class Meta:
-        verbose_name_plural = 'Company Informations'
+        verbose_name = "Legal Information"
+        verbose_name_plural = "Legal Information"
         ordering = ['id']
 
     def __str__(self):

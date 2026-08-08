@@ -10,8 +10,8 @@ class InformationPage(models.Model):
 
     class Meta:
         ordering = ["order"]
-        verbose_name = "Σελίδα Πληροφόρησης"
-        verbose_name_plural = "Σελίδες Πληροφόρησης"
+        verbose_name = "Card for Legal Information"
+        verbose_name_plural = "Cards for Legal Information"
 
     def __str__(self):
         return self.title
