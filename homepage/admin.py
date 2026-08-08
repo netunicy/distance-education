@@ -15,6 +15,7 @@ from .forms import (
     VideoAdminForm,
 )
 import cloudinary.uploader
+from cloudinary.models import CloudinaryResource
 
 admin.site.register(Logo)
 admin.site.register(Chapter)
@@ -31,26 +32,23 @@ class SchoolcontextsAdmin(admin.ModelAdmin):
 
         uploaded_image = request.FILES.get("image")
 
-        # Αποθηκεύουμε πρώτα τα υπόλοιπα στοιχεία
-        # χωρίς να αφήσουμε το CloudinaryField να κάνει
-        # το upload της νέας εικόνας μόνο του.
+        old_image = None
+
+        if uploaded_image and obj.pk:
+            old_obj = Schoolcontexts.objects.filter(
+                pk=obj.pk
+            ).first()
+
+            if old_obj:
+                old_image = old_obj.image
+
+        # Δεν αφήνουμε το CloudinaryField να ανεβάσει
+        # μόνο του τη νέα εικόνα
         if uploaded_image:
-
-            old_image = None
-
-            if obj.pk:
-                old_obj = Schoolcontexts.objects.filter(
-                    pk=obj.pk
-                ).first()
-
-                if old_obj:
-                    old_image = old_obj.image
-
             obj.image = old_image
 
         super().save_model(request, obj, form, change)
 
-        # Κάνουμε εμείς το upload στο σωστό Cloudinary folder
         if uploaded_image:
 
             folder = obj.get_cloudinary_folder()
@@ -61,13 +59,20 @@ class SchoolcontextsAdmin(admin.ModelAdmin):
                 resource_type="image",
             )
 
-            obj.image = result["public_id"]
+            resource = CloudinaryResource(
+                public_id=result["public_id"],
+                version=result["version"],
+                format=result["format"],
+                resource_type=result["resource_type"],
+                type=result["type"],
+            )
 
-            # update() για να μην ξανατρέξει το save()
+            obj.image = resource
+
             Schoolcontexts.objects.filter(
                 pk=obj.pk
             ).update(
-                image=result["public_id"]
+                image=resource
             )
 @admin.register(TrainingVideo)
 class TrainingVideoAdmin(admin.ModelAdmin):

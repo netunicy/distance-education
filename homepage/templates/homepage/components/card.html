@@ -11,58 +11,56 @@
             data-edition="{{ i.edition }}"
             data-price-chapter="{{ i.price_chapter }}"
             data-price-all="{{ i.price_all }}">
-            <a href="#">
-                <img src="{{ i.image }}" alt="{{ i.alt }}">
-                <div class="card-body">
-                    <h2>{{ i.subject_lesson }}</h2>
-                    
-                    <div class="book-info">
+            <img src="{{ i.image.url }}" alt="{{ i.alt }}">
+            <div class="card-body">
+                <h2>{{ i.subject_lesson }}</h2>
+                
+                <div class="book-info">
 
-                        <span class="badge">
-                            {{ i.stage }}
-                        </span>
+                    <span class="badge">
+                        {{ i.stage }}
+                    </span>
 
-                        <h3>
-                            {{ i.class_is }}
-                        </h3>
+                    <h3>
+                        {{ i.class_is }}
+                    </h3>
 
-                        {% if i.edition %}
-                            <div class="edition">
-                                {{ i.edition }}
+                    {% if i.edition %}
+                        <div class="edition">
+                            {{ i.edition }}
+                        </div>
+                    {% endif %}
+
+                </div>
+                <p class="has-tooltip"
+                    data-tooltip="{{ i.description|striptags|escape }}">
+                    {{ i.description }}
+                </p>
+                <div class="card-footer">
+                    <div class="prices">
+                        {% if i.price_chapter %}
+                            <div class="price-item">
+                                <small>Κεφάλαιο</small><br>
+                                €{{ i.price_chapter }}
                             </div>
                         {% endif %}
-
+                        {% if i.price_all %}
+                            <div class="price-item">
+                                <small>Πλήρες βιβλίο</small><br>
+                                €{{ i.price_all }}
+                            </div>
+                        {% endif %}
+                        {% if not i.price_chapter and not i.price_all %}
+                            <div class="price-item">
+                                <strong>Δωρεάν</strong>
+                            </div>
+                        {% endif %}
                     </div>
-                    <p class="has-tooltip"
-                       data-tooltip="{{ i.description|striptags|escape }}">
-                        {{ i.description }}
-                    </p>
-                    <div class="card-footer">
-                        <div class="prices">
-                            {% if i.price_chapter %}
-                                <div class="price-item">
-                                    <small>Κεφάλαιο</small><br>
-                                    €{{ i.price_chapter }}
-                                </div>
-                            {% endif %}
-                            {% if i.price_all %}
-                                <div class="price-item">
-                                    <small>Πλήρες βιβλίο</small><br>
-                                    €{{ i.price_all }}
-                                </div>
-                            {% endif %}
-                            {% if not i.price_chapter and not i.price_all %}
-                                <div class="price-item">
-                                    <strong>Δωρεάν</strong>
-                                </div>
-                            {% endif %}
-                        </div>
-                        <button class="details-btn">
-                            Περιεχόμενα
-                        </button>
-                    </div>
+                    <button class="details-btn">
+                        Περιεχόμενα
+                    </button>
                 </div>
-            </a>
+            </div>
         </div>
     {% endfor %}
 </div>
