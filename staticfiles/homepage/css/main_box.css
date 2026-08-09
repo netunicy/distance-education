@@ -1,8 +1,79 @@
-.main-box{
-    margin:auto;
-    padding:1rem;
-    border:1px solid #e7dede;
-    border-radius:10px;
-    box-shadow:0 4px 12px rgba(0,0,0,.2);
-    box-sizing:border-box;
+.main-box {
+    width: fit-content;
+    max-width: 100%;
+    margin: auto;
+    padding: 0;
+    border: 1px solid #e7dede;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,.2);
+    box-sizing: border-box;
+}
+
+@media only screen and (min-width: 240px) and (max-width: 600px) and (orientation: portrait) {
+
+    .main-box {
+        width: 100%;
+        max-width: 90%;
+    }
+
+}
+
+@media only screen and (min-width: 481px) and (max-width: 1024px) and (orientation: landscape) {
+    .main-box {
+        width: fit-content;
+        max-width: 90%;
+        padding: 0;
+        margin: 0 auto;
+        box-sizing: border-box;
+    }
+}
+
+@media only screen and (min-width: 601px) and (max-width: 1024px) and (orientation: portrait) {
+    .main-box {
+        width: fit-content;
+        max-width: 95%;
+        padding: 0;
+        margin: 0 auto;
+        box-sizing: border-box;
+    }
+}
+
+@media only screen and (min-width: 951px) and (max-width: 1366px) and (orientation: landscape) {
+    .main-box {
+        width: fit-content;
+        max-width: 95%;
+        padding: 0;
+        margin: 0 auto;
+        box-sizing: border-box;
+    } 
+}
+
+@media only screen and (min-width: 1367px) and (max-width: 1599px) and (orientation: landscape) {
+    .main-box {
+        width: fit-content;
+        max-width: 90%;
+        padding: 0;
+        margin: 0 auto;
+        box-sizing: border-box;
+    } 
+}
+
+@media only screen and (min-width: 1600px) and (max-width: 1920px) and (orientation: landscape) {
+    .main-box {
+        width: fit-content;
+        max-width: 98%;
+        padding: 0;
+        margin: 0 auto;
+        box-sizing: border-box;
+    } 
+}
+
+@media only screen and (min-width: 1921px) {
+    .main-box {
+        width: fit-content;
+        max-width: 98%;
+        margin: 0 auto;
+        padding: 0;
+        box-sizing: border-box;
+    }
 }
