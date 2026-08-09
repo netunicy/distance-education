@@ -1,0 +1,107 @@
+/* ==========================================
+   Guest Menu
+========================================== */
+
+.guest-menu {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+/* ==========================================
+   Common Buttons
+========================================== */
+
+.btn {
+    padding: 0.35rem 1rem;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.15rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color .25s ease;
+}
+
+/* ==========================================
+   User Menu
+========================================== */
+
+.user-menu {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    display: inline-block;
+    z-index: 1000;
+}
+
+/* ==========================================
+   Username Button
+========================================== */
+
+.user-name {
+    background: #3B5EA8;
+    color: white;
+    min-width: 180px;
+    text-align: center;
+}
+
+.user-name:hover {
+    background: #2F4E8C;
+}
+
+.register-btn, .login-btn {
+    background: #3B5EA8;
+    color: white;
+    text-align: center;
+}
+
+.register-btn{
+    position:absolute;
+    top:2rem;
+    right:7.5rem;
+    width: auto;
+}
+
+.login-btn{
+    position:absolute;
+    top:2rem;
+    right:1.5rem;
+    width: auto;
+}
+
+.register-btn:hover, .login-btn:hover {
+    background: #2F4E8C;
+}
+/* ==========================================
+   Dropdown
+========================================== */
+
+.menu-content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: white;
+    border-radius: 0 0 6px 6px;
+    box-shadow: 0 8px 20px rgba(0,0,0,.15);
+    overflow: hidden;
+}
+
+.user-menu:hover .menu-content {
+    display: block;
+}
+
+.menu-content a {
+    display: block;
+    padding: 12px 16px;
+    text-decoration: none;
+    color: #333;
+    background: white;
+    transition: background-color .2s;
+}
+
+.menu-content a:hover {
+    background: #f2f2f2;
+}

@@ -8,16 +8,14 @@
     padding:20px;
 }
 
-.card{
-    width:250px;
-
-    background:#fff;
-    border:1px solid #e8e8e8;
-    border-radius:12px;
-    overflow:hidden;
-
-    box-shadow:0 4px 12px rgba(0,0,0,.08);
-    transition:.25s;
+.card {
+    width: 250px;
+    background: #fff;
+    border: 1px solid #e8e8e8;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,.08);
+    transition: .25s;
 }
 
 .card:hover{
