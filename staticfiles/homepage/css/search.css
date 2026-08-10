@@ -50,34 +50,34 @@
     filter: brightness(0) invert(1);
 }
 
-@media only screen and (min-width:240px) and (max-width:600px) and (orientation:portrait){
+@media only screen and (min-width: 240px) and (max-width: 600px) and (orientation: portrait) {
 
-    .search-form{
-        width:140px;
-        left:65%;
-        right:auto;
-        transform:translateX(-50%);
-        top:4rem;
+    .search-form {
+        width: 140px;
+        top: 4rem;
+        right: 1rem;
+        left: auto;
+        transform: none;
     }
 
-    .search-button{
-        width:30px;
+    .search-button {
+        width: 30px;
     }
 
-    .search-input{
-        padding:0 .5rem;
-        font-size:.7rem;
+    .search-input {
+        padding: 0 .5rem;
+        font-size: .7rem;
     }
-
 }
 
 @media only screen and (min-width: 481px) and (max-width: 1024px) and (orientation: landscape) {
+
     .search-form {
         width: 200px;
-        left: 85%;
-        right: auto;
-        transform: translateX(-50%);
         top: 4rem;
+        right: 1.5rem;
+        left: auto;
+        transform: none;
     }
 
     .search-button {

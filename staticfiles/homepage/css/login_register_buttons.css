@@ -3,10 +3,17 @@
 ========================================== */
 
 .guest-menu {
+    position: absolute;
+    top: 2rem;
+    right: 1.5rem;
+
     display: flex;
     gap: 1rem;
     align-items: center;
+
+    z-index: 1000;
 }
+
 
 /* ==========================================
    Common Buttons
@@ -23,6 +30,28 @@
     transition: background-color .25s ease;
 }
 
+
+/* ==========================================
+   Register / Login
+========================================== */
+
+.register-btn,
+.login-btn {
+    background: #3B5EA8;
+    color: white;
+    text-align: center;
+
+    /* ΟΧΙ position:absolute */
+    /* ΟΧΙ top */
+    /* ΟΧΙ right */
+}
+
+.register-btn:hover,
+.login-btn:hover {
+    background: #2F4E8C;
+}
+
+
 /* ==========================================
    User Menu
 ========================================== */
@@ -30,10 +59,11 @@
 .user-menu {
     position: absolute;
     top: 2rem;
-    right: 2rem;
+    right: 1.5rem;
     display: inline-block;
     z-index: 1000;
 }
+
 
 /* ==========================================
    Username Button
@@ -50,29 +80,7 @@
     background: #2F4E8C;
 }
 
-.register-btn, .login-btn {
-    background: #3B5EA8;
-    color: white;
-    text-align: center;
-}
 
-.register-btn{
-    position:absolute;
-    top:2rem;
-    right:7.5rem;
-    width: auto;
-}
-
-.login-btn{
-    position:absolute;
-    top:2rem;
-    right:1.5rem;
-    width: auto;
-}
-
-.register-btn:hover, .login-btn:hover {
-    background: #2F4E8C;
-}
 /* ==========================================
    Dropdown
 ========================================== */
@@ -85,7 +93,7 @@
     width: 100%;
     background: white;
     border-radius: 0 0 6px 6px;
-    box-shadow: 0 8px 20px rgba(0,0,0,.15);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, .15);
     overflow: hidden;
 }
 
@@ -106,42 +114,46 @@
     background: #f2f2f2;
 }
 
-@media only screen and (max-width: 600px) and (orientation: portrait) {
+
+/* ==========================================
+   MOBILE PORTRAIT
+========================================== */
+
+@media only screen and (min-width: 240px) and (max-width: 600px) and (orientation: portrait) {
+
+    .guest-menu {
+        top: 1.5rem;
+        right: 1rem;
+        gap: 0.5rem;
+    }
 
     .user-menu {
         top: 1.5rem;
-        right: 1.5rem;
+        right: 1rem;
     }
 
-    .register-btn{
-        top:1.5rem;
-        right:6rem;
+    .register-btn,
+    .login-btn {
         padding: 0.3rem 0.6rem;
     }
-
-    .login-btn{
-        top:1.5rem;
-        right:1rem;
-        padding: 0.3rem 0.6rem;
-    }
-
 }
 
+
+/* ==========================================
+   MOBILE / TABLET LANDSCAPE
+========================================== */
+
 @media only screen and (min-width: 481px) and (max-width: 1024px) and (orientation: landscape) {
-    
+
+    .guest-menu {
+        top: 1.5rem;
+        right: 1.5rem;
+        gap: 1rem;
+    }
+
     .user-menu {
         top: 6rem;
         right: 1.5rem;
-    }
-
-    .register-btn{
-        top:1.5rem;
-        right:7.5rem;
-    }
-
-    .login-btn{
-        top:1.5rem;
-        right:1.5rem;
     }
 }
 
