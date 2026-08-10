@@ -12,20 +12,127 @@
     font-size: 1.15rem;
     font-weight: bold;
 }
-@media only screen and (min-width: 240px) and (max-width: 600px) and (orientation: portrait){
+/* ==========================================
+   MOBILE - PORTRAIT
+   240px - 600px
+========================================== */
+
+@media only screen and (min-width: 240px) and (max-width: 600px) and (orientation: portrait) {
+
     .message.success {
         font-size: 1rem;
         padding: 0.3rem;
-        top:7rem;
-        right: 1rem;
-    }
-}
 
-@media only screen and (min-width: 481px) and (max-width: 1024px) and (orientation: landscape) {
-    .message.success {
-        font-size: 1.1rem;
-        padding: 0.4rem;
         top: 7rem;
         right: 1rem;
     }
+
+}
+
+
+/* ==========================================
+   MOBILE / TABLET - LANDSCAPE
+   481px - 1024px
+========================================== */
+
+@media only screen and (min-width: 481px) and (max-width: 1024px) and (orientation: landscape) {
+
+    .message.success {
+        font-size: 1rem;
+        padding: 0.35rem;
+
+        top: 7rem;
+        right: 1.5rem;
+    }
+
+}
+
+
+/* ==========================================
+   TABLET - PORTRAIT
+   601px - 1024px
+========================================== */
+
+@media only screen and (min-width: 601px) and (max-width: 1024px) and (orientation: portrait) {
+
+    .message.success {
+        font-size: 1rem;
+        padding: 0.35rem;
+
+        top: 7.5rem;
+        right: 1.5rem;
+    }
+
+}
+
+
+/* ==========================================
+   SMALL LAPTOP
+   1025px - 1366px
+========================================== */
+
+@media only screen and (min-width: 1025px) and (max-width: 1366px) and (orientation: landscape) {
+
+    .message.success {
+        font-size: 1.05rem;
+        padding: 0.4rem;
+
+        top: 7.5rem;
+        right: 2rem;
+    }
+
+}
+
+
+/* ==========================================
+   LAPTOP
+   1367px - 1599px
+========================================== */
+
+@media only screen and (min-width: 1367px) and (max-width: 1599px) and (orientation: landscape) {
+
+    .message.success {
+        font-size: 1.1rem;
+        padding: 0.4rem;
+
+        top: 7.5rem;
+        right: 2rem;
+    }
+
+}
+
+
+/* ==========================================
+   DESKTOP
+   1600px - 1920px
+========================================== */
+
+@media only screen and (min-width: 1600px) and (max-width: 1920px) and (orientation: landscape) {
+
+    .message.success {
+        font-size: 1.1rem;
+        padding: 0.45rem;
+
+        top: 8rem;
+        right: 2.5rem;
+    }
+
+}
+
+
+/* ==========================================
+   LARGE DESKTOP
+   1921px+
+========================================== */
+
+@media only screen and (min-width: 1921px) {
+
+    .message.success {
+        font-size: 1.15rem;
+        padding: 0.5rem;
+
+        top: 8rem;
+        right: 3rem;
+    }
+
 }

@@ -214,6 +214,41 @@
 
 @media only screen and (min-width: 601px) and (max-width: 1024px) and (orientation: portrait) {
 
+    .search-form,
+    .search-form.nologin {
+        width: 200px;
+        height: 33px;
+
+        top: 4.5rem;
+        right: 1.5rem;
+
+        left: auto;
+        transform: none;
+    }
+
+    .search-input {
+        flex: 1 1 auto;
+
+        min-width: 0;
+
+        padding: 0 .7rem;
+
+        font-size: .8rem;
+    }
+
+    .search-button {
+        flex: 0 0 35px;
+
+        width: 35px;
+
+        padding: 0;
+    }
+
+    .search-button img {
+        width: 20px;
+        height: 20px;
+    }
+
 }
 
 
@@ -223,6 +258,38 @@
 ========================================== */
 
 @media only screen and (min-width: 1025px) and (max-width: 1366px) and (orientation: landscape) {
+
+    .search-form,
+    .search-form.nologin {
+        width: 220px;
+        height: 33px;
+
+        top: 4.5rem;
+        right: 2rem;
+
+        left: auto;
+        transform: none;
+    }
+
+    .search-input {
+        flex: 1 1 auto;
+        min-width: 0;
+
+        padding: 0 .8rem;
+        font-size: .9rem;
+    }
+
+    .search-button {
+        flex: 0 0 40px;
+
+        width: 40px;
+        padding: 0;
+    }
+
+    .search-button img {
+        width: 20px;
+        height: 20px;
+    }
 
 }
 
@@ -234,6 +301,38 @@
 
 @media only screen and (min-width: 1367px) and (max-width: 1599px) and (orientation: landscape) {
 
+    .search-form,
+    .search-form.nologin {
+        width: 240px;
+        height: 33px;
+
+        top: 4.5rem;
+        right: 2rem;
+
+        left: auto;
+        transform: none;
+    }
+
+    .search-input {
+        flex: 1 1 auto;
+        min-width: 0;
+
+        padding: 0 .9rem;
+        font-size: .95rem;
+    }
+
+    .search-button {
+        flex: 0 0 45px;
+
+        width: 45px;
+        padding: 0;
+    }
+
+    .search-button img {
+        width: 21px;
+        height: 21px;
+    }
+
 }
 
 
@@ -244,6 +343,38 @@
 
 @media only screen and (min-width: 1600px) and (max-width: 1920px) and (orientation: landscape) {
 
+    .search-form,
+    .search-form.nologin {
+        width: 250px;
+        height: 33px;
+
+        top: 5rem;
+        right: 2.5rem;
+
+        left: auto;
+        transform: none;
+    }
+
+    .search-input {
+        flex: 1 1 auto;
+        min-width: 0;
+
+        padding: 0 1rem;
+        font-size: 1rem;
+    }
+
+    .search-button {
+        flex: 0 0 50px;
+
+        width: 50px;
+        padding: 0;
+    }
+
+    .search-button img {
+        width: 22px;
+        height: 22px;
+    }
+
 }
 
 
@@ -253,5 +384,37 @@
 ========================================== */
 
 @media only screen and (min-width: 1921px) {
+
+    .search-form,
+    .search-form.nologin {
+        width: 270px;
+        height: 35px;
+
+        top: 5rem;
+        right: 3rem;
+
+        left: auto;
+        transform: none;
+    }
+
+    .search-input {
+        flex: 1 1 auto;
+        min-width: 0;
+
+        padding: 0 1rem;
+        font-size: 1rem;
+    }
+
+    .search-button {
+        flex: 0 0 50px;
+
+        width: 50px;
+        padding: 0;
+    }
+
+    .search-button img {
+        width: 22px;
+        height: 22px;
+    }
 
 }
