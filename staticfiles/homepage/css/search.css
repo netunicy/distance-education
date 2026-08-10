@@ -54,9 +54,10 @@
 
     .search-form{
         width:140px;
-        left:63%;
+        left:68%;
         right:auto;
         transform:translateX(-50%);
+        top:4rem;
     }
 
     .search-button{
@@ -68,4 +69,23 @@
         font-size:.7rem;
     }
 
+}
+
+@media only screen and (min-width: 481px) and (max-width: 1024px) and (orientation: landscape) {
+    .search-form {
+        width: 200px;
+        left: 85%;
+        right: auto;
+        transform: translateX(-50%);
+        top: 4rem;
+    }
+
+    .search-button {
+        width: 35px;
+    }
+
+    .search-input {
+        padding: 0 .7rem;
+        font-size: .8rem;
+    }
 }

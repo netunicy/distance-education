@@ -16,5 +16,16 @@
     .message.success {
         font-size: 1rem;
         padding: 0.3rem;
+        top:7rem;
+        right: 1.5rem;
+    }
+}
+
+@media only screen and (min-width: 481px) and (max-width: 1024px) and (orientation: landscape) {
+    .message.success {
+        font-size: 1.1rem;
+        padding: 0.4rem;
+        top: 7rem;
+        right: 1.5rem;
     }
 }
