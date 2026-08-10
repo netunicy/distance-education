@@ -115,12 +115,14 @@
 
     .register-btn{
         top:1.5rem;
-        right:7.5rem;
+        right:6rem;
+        padding: 0.3rem 0.6rem;
     }
 
     .login-btn{
         top:1.5rem;
-        right:1.5rem;
+        right:1rem;
+        padding: 0.3rem 0.6rem;
     }
 
 }
