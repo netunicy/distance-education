@@ -1,91 +1,257 @@
-.search-form{
+/* ==========================================
+   Search Form
+========================================== */
+
+.search-form {
     display: flex;
     align-items: center;
+
     width: 250px;
     height: 33px;
+
     position: absolute;
     top: 5rem;
     right: 2.5rem;
+
+    box-sizing: border-box;
 }
-.search-form.nologin{
+
+
+/* ==========================================
+   Search Form - Not Logged In
+========================================== */
+
+.search-form.nologin {
     right: 2rem;
 }
 
+
+/* ==========================================
+   Search Input
+========================================== */
+
 .search-input {
-    flex: 1;
+    flex: 1 1 auto;
+
+    /* Important for flex containers */
+    min-width: 0;
+
     height: 100%;
+
     padding: 0 1rem;
+
     border: 1px solid #d1d5db;
     border-right: none;
+
     border-radius: 8px 0 0 8px;
+
     outline: none;
+
     font-size: 1rem;
+
+    box-sizing: border-box;
+
     transition: border-color .25s ease;
 }
+
 
 .search-input:focus {
     border-color: #3B5EA8;
 }
 
+
+/* ==========================================
+   Search Button
+========================================== */
+
 .search-button {
     display: flex;
     justify-content: center;
     align-items: center;
+
+    flex: 0 0 50px;
+
     width: 50px;
     height: 100%;
+
+    padding: 0;
+
     border: none;
+
     border-radius: 0 8px 8px 0;
+
     background: #3B5EA8;
+
     cursor: pointer;
+
+    box-sizing: border-box;
+
     transition: background-color .25s ease;
 }
+
 
 .search-button:hover {
     background: #2F4E8C;
 }
 
+
+/* ==========================================
+   Search Icon
+========================================== */
+
 .search-button img {
+    display: block;
+
     width: 22px;
     height: 22px;
+
+    max-width: 100%;
+
     filter: brightness(0) invert(1);
 }
 
+
+/* ==========================================
+   MOBILE - PORTRAIT
+   240px - 600px
+========================================== */
+
 @media only screen and (min-width: 240px) and (max-width: 600px) and (orientation: portrait) {
 
-    .search-form {
+    .search-form,
+    .search-form.nologin {
         width: 140px;
+        height: 33px;
+
         top: 4rem;
         right: 1rem;
+
         left: auto;
         transform: none;
     }
 
-    .search-button {
-        width: 30px;
-    }
 
     .search-input {
+        flex: 1 1 auto;
+
+        min-width: 0;
+
         padding: 0 .5rem;
+
         font-size: .7rem;
     }
+
+
+    .search-button {
+        flex: 0 0 30px;
+
+        width: 30px;
+
+        padding: 0;
+    }
+
+
+    .search-button img {
+        width: 18px;
+        height: 18px;
+    }
+
 }
+
+
+/* ==========================================
+   MOBILE / TABLET - LANDSCAPE
+   481px - 1024px
+========================================== */
 
 @media only screen and (min-width: 481px) and (max-width: 1024px) and (orientation: landscape) {
 
-    .search-form {
+    .search-form,
+    .search-form.nologin {
         width: 200px;
+        height: 33px;
+
         top: 4rem;
         right: 1.5rem;
+
         left: auto;
         transform: none;
     }
 
-    .search-button {
-        width: 35px;
-    }
 
     .search-input {
+        flex: 1 1 auto;
+
+        min-width: 0;
+
         padding: 0 .7rem;
+
         font-size: .8rem;
     }
+
+
+    .search-button {
+        flex: 0 0 35px;
+
+        width: 35px;
+
+        padding: 0;
+    }
+
+
+    .search-button img {
+        width: 20px;
+        height: 20px;
+    }
+
+}
+
+
+/* ==========================================
+   TABLET - PORTRAIT
+   601px - 1024px
+========================================== */
+
+@media only screen and (min-width: 601px) and (max-width: 1024px) and (orientation: portrait) {
+
+}
+
+
+/* ==========================================
+   SMALL LAPTOP
+   1025px - 1366px
+========================================== */
+
+@media only screen and (min-width: 1025px) and (max-width: 1366px) and (orientation: landscape) {
+
+}
+
+
+/* ==========================================
+   LAPTOP
+   1367px - 1599px
+========================================== */
+
+@media only screen and (min-width: 1367px) and (max-width: 1599px) and (orientation: landscape) {
+
+}
+
+
+/* ==========================================
+   DESKTOP
+   1600px - 1920px
+========================================== */
+
+@media only screen and (min-width: 1600px) and (max-width: 1920px) and (orientation: landscape) {
+
+}
+
+
+/* ==========================================
+   LARGE DESKTOP
+   1921px+
+========================================== */
+
+@media only screen and (min-width: 1921px) {
+
 }

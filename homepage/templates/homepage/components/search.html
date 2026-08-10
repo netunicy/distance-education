@@ -1,6 +1,8 @@
 {% load static %}
+
 {% if user.is_authenticated %}
-    <form action="{% url 'homepage:search' %}" method="GET" class="search-form">
+
+    <form method="get" class="search-form">
 
         <input
             type="search"
@@ -10,25 +12,26 @@
             autocomplete="off">
 
         <button type="submit" class="search-button">
-            <img src="{% static 'homepage/icons/search.svg' %}"
-                alt="Search">
+            <img src="{% static 'homepage/icons/search.svg' %}" alt="Search">
         </button>
 
     </form>
-{% else %}
-    <form action="{% url 'homepage:search' %}" method="GET" class="search-form nologin">
 
-            <input
-                type="search"
-                name="q"
-                class="search-input"
-                placeholder="Search..."
-                autocomplete="off">
+    {% else %}
 
-            <button type="submit" class="search-button">
-                <img src="{% static 'homepage/icons/search.svg' %}"
-                    alt="Search">
-            </button>
+    <form method="get" class="search-form nologin">
 
-        </form>
+        <input
+            type="search"
+            name="q"
+            class="search-input"
+            placeholder="Search..."
+            autocomplete="off">
+
+        <button type="submit" class="search-button">
+            <img src="{% static 'homepage/icons/search.svg' %}" alt="Search">
+        </button>
+
+    </form>
+
 {% endif %}

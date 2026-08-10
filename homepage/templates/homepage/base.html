@@ -1,6 +1,7 @@
 {% load static %}
+
 <!DOCTYPE html>
-<html lang="el">
+<html lang="en">
 
 <head>
 
@@ -9,58 +10,108 @@
 
     <!-- Responsive -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+
+    <!-- Google Material Symbols -->
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined">
 
     <!-- Title -->
     <title>{% block title %}Platform Name{% endblock %}</title>
 
     <!-- SEO -->
-    <meta name="description" content="{% block meta_description %}{% endblock %}">
-    <meta name="keywords" content="{% block meta_keywords %}{% endblock %}">
+    <meta name="description"
+          content="{% block meta_description %}{% endblock %}">
+
+    <meta name="keywords"
+          content="{% block meta_keywords %}{% endblock %}">
 
     <!-- Favicon -->
-    <link rel="icon" href="{% static 'homepage/images/favicon.ico' %}">
+    <link rel="icon"
+          href="{% static 'homepage/images/favicon.ico' %}">
 
-    <!-- Global CSS -->
-    <link rel="stylesheet" href="{% static 'homepage/css/base.css' %}">
-    <link rel="stylesheet" href="{% static 'homepage/css/message.css' %}">
-    <link rel="stylesheet" href="{% static 'homepage/css/logo.css' %}">
-    <link rel="stylesheet" href="{% static 'homepage/css/login_register_buttons.css' %}?v=2">
-    <link rel="stylesheet" href="{% static 'homepage/css/search.css' %}?v=2">
-    <link rel="stylesheet" href="{% static 'homepage/css/main_box.css' %}">
-    <link rel="stylesheet" href="{% static 'homepage/css/school_training_cards2.css' %}">
-    <link rel="stylesheet" href="{% static 'homepage/css/filters_cards2.css' %}">
-    <link rel="stylesheet" href="{% static 'homepage/css/school_training_popup2.css' %}">
-    <link rel="stylesheet" href="{% static 'homepage/css/reveal.css' %}">
-    <link rel="stylesheet" href="{% static 'homepage/css/footer.css' %}">
-    <link rel="stylesheet" href="{% static 'homepage/css/show_video.css' %}">
-    <link rel="stylesheet" href="{% static 'homepage/css/show_training_video.css' %}">
-    <link rel="stylesheet" href="{% static 'homepage/css/legal_cards_popup.css' %}">
-    <link rel="stylesheet" href="{% static 'accounts/css/register.css' %}">
-    <link rel="stylesheet" href="{% static 'homepage/css/title_for_legal_cards.css' %}">
-    {% block extra_head %}{% endblock %}
 
+    <!-- ==========================================
+         Global CSS
+    ========================================== -->
+
+    <link rel="stylesheet"
+          href="{% static 'homepage/css/base.css' %}">
+
+    <link rel="stylesheet"
+          href="{% static 'homepage/css/message.css' %}">
+
+    <link rel="stylesheet"
+          href="{% static 'homepage/css/logo.css' %}">
+
+    <link rel="stylesheet"
+          href="{% static 'homepage/css/login_register_buttons.css' %}?v=2">
+
+    <link rel="stylesheet"
+          href="{% static 'homepage/css/search.css' %}?v=2">
+
+    <link rel="stylesheet"
+          href="{% static 'homepage/css/main_box.css' %}">
+
+    <link rel="stylesheet"
+          href="{% static 'homepage/css/school_training_cards2.css' %}">
+
+    <link rel="stylesheet"
+          href="{% static 'homepage/css/filters_cards2.css' %}">
+
+    <link rel="stylesheet"
+          href="{% static 'homepage/css/school_training_popup2.css' %}">
+
+    <link rel="stylesheet"
+          href="{% static 'homepage/css/reveal.css' %}">
+
+    <link rel="stylesheet"
+          href="{% static 'homepage/css/footer.css' %}">
+
+    <link rel="stylesheet"
+          href="{% static 'homepage/css/show_video.css' %}">
+
+    <link rel="stylesheet"
+          href="{% static 'homepage/css/show_training_video.css' %}">
+
+    <link rel="stylesheet"
+          href="{% static 'homepage/css/legal_cards_popup.css' %}">
+
+    <link rel="stylesheet"
+          href="{% static 'accounts/css/register.css' %}">
+
+    <link rel="stylesheet"
+          href="{% static 'homepage/css/title_for_legal_cards.css' %}">
+
+    {% block extra_head %}
+    {% endblock %}
 
 </head>
 
+
 <body>
-    <script>
-        alert(
-            "width: " + window.innerWidth +
-            "\nheight: " + window.innerHeight +
-            "\ndpr: " + window.devicePixelRatio
-        );
-    </script>
-    
+
+
+    <!-- ==========================================
+         Header
+    ========================================== -->
+
     <header>
+
         {% include 'homepage/components/logo.html' %}
+
+        {% include 'homepage/components/login_register_buttons.html' %}
+
         {% include 'homepage/components/search.html' %}
+
+        {% include 'homepage/components/messages.html' %}
+
     </header>
 
-    
-    {% include 'homepage/components/login_register_buttons.html' %}
-    {% include 'homepage/components/messages.html' %}
-    
+
+    <!-- ==========================================
+         Main Content
+    ========================================== -->
+
     <main>
 
         {% block content %}
@@ -68,19 +119,40 @@
 
     </main>
 
+
+    <!-- ==========================================
+         Footer
+    ========================================== -->
+
     <footer>
 
     </footer>
-    
+
+
+    <!-- ==========================================
+         JavaScript
+    ========================================== -->
+
     <script src="{% static 'homepage/javascript/message.js' %}"></script>
+
     <script src="{% static 'homepage/javascript/cards_window.js' %}"></script>
+
     <script src="{% static 'homepage/javascript/filters_cards.js' %}"></script>
+
     <script src="{% static 'homepage/javascript/filters_cards_topics.js' %}"></script>
+
     <script src="{% static 'homepage/javascript/popup_card_training.js' %}"></script>
+
     <script src="{% static 'homepage/javascript/popup_card_school.js' %}"></script>
+
     <script src="{% static 'homepage/javascript/reveal.js' %}"></script>
+
     <script src="{% static 'homepage/javascript/second_row_popup.js' %}"></script>
-    {% block extra_js %}{% endblock %}
+
+
+    {% block extra_js %}
+    {% endblock %}
+
 
 </body>
 
