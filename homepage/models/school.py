@@ -24,6 +24,7 @@ class Schoolcontexts(models.Model):
         D = "Δ΄ Τάξη", "Δ΄ Τάξη"
         E = "Ε΄ Τάξη", "Ε΄ Τάξη"
         ST = "ΣΤ΄ Τάξη", "ΣΤ΄ Τάξη"
+        A_ST = "Α΄- ΣΤ΄ Τάξη", "Α΄- ΣΤ΄ Τάξη"
 
     title = models.CharField(max_length=1000, null=True, blank=True)
 
