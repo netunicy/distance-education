@@ -1,42 +1,42 @@
 <div class="main_card">
 
-    {% for training in trainings %}
+    {% for topic in topics %}
 
         <div class="card training-card"
 
-            data-id="{{ training.id }}"
-            data-category="{{ training.category }}"
-            data-training="{{ training.title }}"
-            data-level="{{ training.level }}"
+            data-id="{{ topic.id }}"
+            data-category="{{ topic.category }}"
+            data-training="{{ topic.title }}"
+            data-level="{{ topic.level }}"
 
-            data-title="{{ training.title }}"
-            data-description="{{ training.description }}"
-            data-price="{{ training.price }}">
+            data-title="{{ topic.title }}"
+            data-description="{{ topic.description }}"
+            data-price="{{ topic.price }}">
 
             <a href="#">
 
-                <img src="{{ training.image }}" alt="{{ training.alt }}">
+                <img src="{{ topic.image }}" alt="{{ topic.alt }}">
 
                 <div class="card-body">
 
-                    <h2>{{ training.title }}</h2>
+                    <h2>{{ topic.title }}</h2>
 
                     <div class="book-info">
 
                         <span class="badge">
-                            {{ training.category }}
+                            {{ topic.category }}
                         </span>
 
                         <h3>
-                            {{ training.level }}
+                            {{ topic.level }}
                         </h3>
 
                     </div>
 
                     <p class="has-tooltip"
-                       data-tooltip="{{ training.description|striptags|escape }}">
+                       data-tooltip="{{ topic.description|striptags|escape }}">
 
-                        {{ training.description }}
+                        {{ topic.description }}
 
                     </p>
 
@@ -44,7 +44,7 @@
 
                         <div class="prices">
 
-                            {% if training.is_free %}
+                            {% if topic.is_free %}
 
                                 <div class="price-item">
                                     <strong>Δωρεάν</strong>
@@ -54,7 +54,7 @@
 
                                 <div class="price-item">
                                     <small>Πλήρες πρόγραμμα</small><br>
-                                    €{{ training.price }}
+                                    €{{ topic.price }}
                                 </div>
 
                             {% endif %}
