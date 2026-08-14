@@ -1,0 +1,364 @@
+/* ================= GRID ================= */
+.main_card {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: stretch;
+    gap: 20px;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.card {
+    width: 300px;
+    flex: 0 0 300px;
+    background: #fff;
+    border: 1px solid #e8e8e8;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,.08);
+    transition: .25s;
+    box-sizing: border-box;
+}
+
+.card:hover{
+    transform:translateY(-5px);
+    box-shadow:0 12px 25px rgba(0,0,0,.16);
+}
+
+.card a{
+    display:block;
+    color:#222;
+    text-decoration:none;
+}
+
+.card img:first-child{
+    width:100%;
+    height:auto;
+    object-fit:cover;
+    display:block;
+    border-bottom:1px solid #eee;
+}
+
+.card-body{
+    padding:12px;
+}
+
+.card h2{
+    margin:0;
+    text-align:center;
+    font-size:19px;
+    font-weight:700;
+    color:#222;
+}
+
+.book-info{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:8px;
+    margin:8px 0 10px;
+    flex-wrap:wrap;
+}
+
+.badge{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:3px 10px;
+    background:#1976d2;
+    color:#fff;
+    border-radius:20px;
+    font-size:10px;
+    font-weight:600;
+    line-height:1;
+}
+
+.book-info h3{
+    margin:0;
+    color:#666;
+    font-size:14px;
+    font-weight:500;
+    line-height:1;
+}
+
+.edition {
+    flex-basis: 100%;
+    width: 100%;
+    margin: 0;
+    color: #1976d2;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1;
+    text-align: center;
+}
+
+.has-tooltip{
+    margin:8px 0;
+    color:#555;
+    font-size:13px;
+    line-height:1.45;
+    display:-webkit-box;
+    -webkit-box-orient:vertical;
+    -webkit-line-clamp:3;
+    overflow:hidden;
+    cursor:pointer;
+}
+
+.card-footer{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:8px;
+    padding-top:10px;
+    border-top:1px solid #eee;
+}
+
+.prices{
+    display:flex;
+    gap:16px;
+}
+
+.price-item{
+    text-align:center;
+}
+
+.price-item small{
+    display:block;
+    margin-bottom:2px;
+    color:#888;
+    font-size:10px;
+    font-weight:400;
+}
+
+.price-item{
+    color:#1976d2;
+    font-size:15px;
+    font-weight:700;
+}
+
+.arrow{
+    width:34px;
+    height:34px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    border-radius:50%;
+    background:#1976d2;
+    color:#fff;
+    font-size:18px;
+    transition:.25s;
+}
+
+.card:hover .arrow{
+    transform:translateX(4px);
+}
+
+.custom-tooltip{
+    position:fixed;
+    width:320px;
+    background:#fff;
+    color:#333;
+    padding:15px;
+    border-radius:10px;
+    border:1px solid #ddd;
+    box-shadow:0 10px 25px rgba(0,0,0,.18);
+    line-height:1.6;
+    font-size:14px;
+    opacity:0;
+    visibility:hidden;
+    transition:.15s;
+    z-index:99999;
+    pointer-events:none;
+}
+
+.details-btn,
+.training-details-btn {
+    background:#fff;
+    color:#2b7cff;
+    border:2px solid #2b7cff;
+    margin-top: 2rem;
+}
+
+.details-btn:hover,
+.training-details-btn:hover {
+    background:#2b7cff;
+    color:#fff;
+}
+@media only screen and (min-width: 240px) and (max-width: 600px) and (orientation: portrait) {
+    
+    .main_card {
+        display: grid;
+        /* 1 κάρτα ανά σειρά, πλάτος 90% */
+        grid-template-columns: 90%;
+        /* κεντράρισμα */
+        justify-content: center;
+        gap: 20px;
+        padding: 10px;
+        width: 100%;
+        margin: 0;
+        box-sizing: border-box;
+    }
+
+    .card {
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        box-sizing: border-box;
+    }
+
+}
+
+@media only screen and (min-width: 481px) and (max-width: 1024px) and (orientation: landscape) {
+
+    .main-box {
+        width: fit-content;
+        max-width: 98%;
+        margin: 0 auto;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    .main_card {
+        display: grid;
+
+        /* Υποχρεωτικά 2 κάρτες */
+        grid-template-columns: repeat(2, 350px);
+
+        justify-content: center;
+
+        gap: 20px;
+        padding: 20px;
+
+        margin: 0;
+        box-sizing: border-box;
+    }
+
+    .card {
+        width: 350px;
+        max-width: 350px;
+        margin: 0;
+        box-sizing: border-box;
+    }
+
+}
+
+@media only screen and (min-width: 601px) and (max-width: 1024px) and (orientation: portrait) {
+    .main_card {
+        display: grid;
+
+        /* 2 κάρτες ανά σειρά */
+        grid-template-columns: repeat(2, 320px);
+
+        justify-content: center;
+
+        gap: 20px;
+        padding: 20px;
+
+        margin: 0;
+        box-sizing: border-box;
+    }
+
+    .card {
+        width: 320px;
+        max-width: 320px;
+        margin: 0;
+        box-sizing: border-box;
+    }
+}
+
+@media only screen and (min-width: 1025px) and (max-width: 1366px) and (orientation: landscape) {
+    .main_card {
+        display: grid;
+
+        /* Μέχρι 3 κάρτες ανά σειρά */
+        grid-template-columns: repeat(3, 300px);
+
+        gap: 20px;
+        padding: 20px;
+
+        justify-content: center;
+        margin: 0;
+        box-sizing: border-box;
+    }
+
+    .card {
+        width: 300px;
+        max-width: 300px;
+        margin: 0;
+        box-sizing: border-box;
+    }
+}
+
+@media only screen and (min-width: 1367px) and (max-width: 1599px) and (orientation: landscape) {
+    
+    .main_card {
+        display: inline-grid;
+
+        /* Οι κάρτες τοποθετούνται οριζόντια */
+        grid-auto-flow: column;
+
+        /* Κάθε κάρτα 300px */
+        grid-auto-columns: 300px;
+
+        gap: 25px;
+        padding: 20px;
+
+        margin: 0;
+        box-sizing: border-box;
+    }
+
+    .card {
+        width: 300px;
+        max-width: 300px;
+        margin: 0;
+        box-sizing: border-box;
+    }
+}
+
+@media only screen and (min-width: 1600px) and (max-width: 1920px) and (orientation: landscape) {
+    .main_card {
+        display: inline-grid;
+        /* Οι κάρτες μπαίνουν οριζόντια */
+        grid-auto-flow: column;
+        /* Κάθε κάρτα 350px */
+        grid-auto-columns: 350px;
+        gap: 20px;
+        padding: 20px;
+        margin: 0;
+        box-sizing: border-box;
+    }
+
+    .card {
+        width: 350px;
+        max-width: 350px;
+        margin: 0;
+        box-sizing: border-box;
+    }
+}
+
+@media only screen and (min-width: 1921px) {
+    .main_card {
+        display: grid;
+
+        /* Δημιουργεί μόνο όσες στήλες χρειάζονται */
+        grid-template-columns: repeat(auto-fit, 350px);
+
+        /* Μέχρι 6 κάρτες */
+        max-width: 2200px;
+
+        gap: 20px;
+        padding: 20px;
+
+        justify-content: center;
+
+        box-sizing: border-box;
+    }
+
+    .card {
+        width: 350px;
+        max-width: 350px;
+        margin: 0;
+        box-sizing: border-box;
+    }
+}
