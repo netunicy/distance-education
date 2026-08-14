@@ -28,8 +28,6 @@ class Topics(models.Model):
     duration = models.CharField(max_length=100,blank=True)
     includes = models.TextField(blank=True,help_text="Ένα στοιχείο ανά γραμμή.")
     price = models.DecimalField(max_digits=8,decimal_places=2,default=0)
-    is_free = models.BooleanField(default=False)
-    is_published = models.BooleanField(default=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 

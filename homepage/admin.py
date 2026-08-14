@@ -124,15 +124,11 @@ class TopicsAdmin(admin.ModelAdmin):
         "category",
         "level",
         "price",
-        "is_free",
-        "is_published",
     )
 
     list_filter = (
         "category",
         "level",
-        "is_free",
-        "is_published",
     )
 
     search_fields = (
