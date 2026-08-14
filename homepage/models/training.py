@@ -5,6 +5,7 @@ class Training(models.Model):
 
     class Category(models.TextChoices):
         PROGRAMMING = "Programming", "Programming"
+        MATHEMATICS = "Mathematics", "Μαθηματικά"
         EDUCATION = "Education", "Education"
         LANGUAGES = "Languages", "Languages"
         BUSINESS = "Business", "Business"
