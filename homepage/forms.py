@@ -4,7 +4,7 @@ import uuid
 
 from django import forms
 
-from .models import TrainingVideo, SchoolVideo
+from .models import TopicsVideo, SchoolVideo
 
 from homepage.helpers.media.processor import VideoProcessor
 from homepage.helpers.media.training_cloudinary_path import (
@@ -12,10 +12,10 @@ from homepage.helpers.media.training_cloudinary_path import (
 )
 
 
-class TrainingVideoAdminForm(forms.ModelForm):
+class TopicsVideoAdminForm(forms.ModelForm):
 
     class Meta:
-        model = TrainingVideo
+        model = TopicsVideo
         fields = "__all__"
 
     def save(self, commit=True):

@@ -1,9 +1,9 @@
 from django.db import models
 from homepage.helpers.slug import generate_unique_slug
-from homepage.models.Training_chapter import TrainingContent
+from homepage.models.topics_chapter import TopicsContent
 
 
-class TrainingVideo(models.Model):
+class TopicsVideo(models.Model):
 
     class MaterialType(models.TextChoices):
         VIDEO = "video", "Video"
@@ -14,7 +14,7 @@ class TrainingVideo(models.Model):
         LINK = "link", "External Link"
         QUIZ = "quiz", "Quiz"
 
-    training_content = models.ForeignKey(TrainingContent,on_delete=models.CASCADE,related_name="materials",)
+    topics_content = models.ForeignKey(TopicsContent,on_delete=models.CASCADE,related_name="materials")
     material_type = models.CharField(max_length=20,choices=MaterialType.choices,)
     title = models.CharField(max_length=250)
     slug = models.SlugField(max_length=250,blank=True,db_index=True,)
@@ -36,18 +36,18 @@ class TrainingVideo(models.Model):
     class Meta:
 
         ordering = ["order"]
-        verbose_name = "Training Video"
-        verbose_name_plural = "Training Videos"
+        verbose_name = "Topic Video"
+        verbose_name_plural = "Topic Videos"
 
         constraints = [
 
             models.UniqueConstraint(
-                fields=["training_content", "slug"],
+                fields=["topics_content", "slug"],
                 name="unique_material_slug_per_content",
             ),
 
             models.UniqueConstraint(
-                fields=["training_content", "order"],
+                fields=["topics_content", "order"],
                 name="unique_material_order_per_content",
             ),
 
@@ -58,10 +58,10 @@ class TrainingVideo(models.Model):
         if not self.slug:
 
             self.slug = generate_unique_slug(
-                model=TrainingVideo,
+                model=TopicsVideo,
                 value=self.title,
                 instance=self,
-                training_content=self.training_content,
+                topics_content=self.topics_content,
             )
 
         super().save(*args, **kwargs)

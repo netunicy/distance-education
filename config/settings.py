@@ -170,10 +170,15 @@ CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN = (os.environ.get("CLOUDFLARE_STREAM_CUSTOM
 
 
 # Προαιρετικές ρυθμίσεις για το allauth (αν χρησιμοποιείς το email για login)
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_USERNAME_REQUIRED = False
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
-ACCOUNT_EMAIL_VERIFICATION = 'optional'
+ACCOUNT_LOGIN_METHODS = {"email"}
+
+ACCOUNT_SIGNUP_FIELDS = [
+    "email*",
+    "password1*",
+    "password2*",
+]
+
+ACCOUNT_EMAIL_VERIFICATION = "optional"
 
 # 1. Παίρνουμε την τιμή από το περιβάλλον ή το αρχείο
 CLIENT_ID = os.environ.get("CLIENT_ID") or read_secret ("cliend_id_google_login.txt")

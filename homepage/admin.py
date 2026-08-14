@@ -4,14 +4,14 @@ from .models import (
     Schoolcontexts,
     Chapter,
     SchoolVideo,
-    Training,
-    TrainingContent,
-    TrainingVideo,
+    Topics,
+    TopicsContent,
+    TopicsVideo,
     InformationPage,
     Informations,
 )
 from .forms import (
-    TrainingVideoAdminForm,
+    TopicsVideoAdminForm,
     VideoAdminForm,
 )
 import cloudinary.uploader
@@ -19,7 +19,7 @@ from cloudinary.models import CloudinaryResource
 
 admin.site.register(Logo)
 admin.site.register(Chapter)
-admin.site.register(TrainingContent)
+admin.site.register(TopicsContent)
 admin.site.register(InformationPage)
 admin.site.register(Informations)
 
@@ -74,10 +74,10 @@ class SchoolcontextsAdmin(admin.ModelAdmin):
             ).update(
                 image=resource
             )
-@admin.register(TrainingVideo)
-class TrainingVideoAdmin(admin.ModelAdmin):
+@admin.register(TopicsVideo)
+class TopicsVideoAdmin(admin.ModelAdmin):
     exclude = ("slug",)
-    form = TrainingVideoAdminForm
+    form = TopicsVideoAdminForm
     
 
 @admin.register(SchoolVideo)
@@ -116,8 +116,8 @@ class SchoolVideoAdmin(admin.ModelAdmin):
     def book(self, obj):
         return obj.chapter.context
     
-@admin.register(Training)
-class TrainingAdmin(admin.ModelAdmin):
+@admin.register(Topics)
+class TopicsAdmin(admin.ModelAdmin):
 
     list_display = (
         "title",

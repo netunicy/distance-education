@@ -2,8 +2,8 @@ from .logo import Logo
 from .school import Schoolcontexts
 from .school_chapter import Chapter
 from .school_video import SchoolVideo
-from .training import Training
-from .Training_chapter import TrainingContent
-from .Training_video import TrainingVideo
+from .topics import Topics
+from .topics_chapter import TopicsContent
+from .topics_video import TopicsVideo
 from .image_cards import InformationPage
 from .informations import Informations

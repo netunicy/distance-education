@@ -1,7 +1,7 @@
 from django.db import models
 from homepage.helpers.slug import generate_unique_slug
 
-class Training(models.Model):
+class Topics(models.Model):
 
     class Category(models.TextChoices):
         PROGRAMMING = "Programming", "Programming"
@@ -35,8 +35,8 @@ class Training(models.Model):
 
     class Meta:
         ordering = ["title"]
-        verbose_name = "Training"
-        verbose_name_plural = "Trainings"
+        verbose_name = "Topic"
+        verbose_name_plural = "Topics"
 
 
     def save(self, *args, **kwargs):
@@ -44,7 +44,7 @@ class Training(models.Model):
         if not self.slug:
 
             self.slug = generate_unique_slug(
-                model=Training,
+                model=Topics,
                 value=self.title,
                 instance=self,
             )

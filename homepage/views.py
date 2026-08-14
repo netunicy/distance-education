@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from homepage.models.training import Training
+from homepage.models.topics import Topics
 from .models import Logo, Schoolcontexts,InformationPage,Informations
 from django.urls import reverse
 from django.contrib import messages
@@ -8,7 +8,7 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404,redirect
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from homepage.models.Training_video import TrainingVideo
+from homepage.models.topics_video import TopicsVideo
 from homepage.cloudflare.signed_playback import create_signed_playback_url
 from django.http import HttpResponse
 from homepage.context_builder import build_base_context
@@ -47,10 +47,10 @@ def homepage(request):
     ]
 
     # Training logic
-    trainings = Training.objects.prefetch_related("training_contents").filter(is_published=True)
-    active_category_keys = trainings.values_list("category", flat=True).distinct()
-    active_training_categories = [
-        (value, label) for value, label in Training.Category.choices 
+    topics = Topics.objects.prefetch_related("topics_contents").filter(is_published=True)
+    active_category_keys = topics.values_list("category", flat=True).distinct()
+    active_topics_categories = [
+        (value, label) for value, label in Topics.Category.choices 
         if value in active_category_keys
     ]
 
@@ -65,8 +65,8 @@ def homepage(request):
         "school_levels": filtered_levels,
         "school_subjects": filtered_subjects,
         "school_classes": filtered_classes,
-        "trainings": trainings,
-        "training_categories": active_training_categories,
+        "trainings": Topics,
+        "training_categories": active_topics_categories,
         "second_row": second_row,
     })
 
@@ -143,7 +143,7 @@ def training_contents(request, training_id):
     # Αναζήτηση Προγράμματος
     # ==========================================
 
-    training = get_object_or_404(Training,id=training_id,is_published=True,)
+    topics = get_object_or_404(Topics,id=training_id,is_published=True,)
 
     # ==========================================
     # Τι περιλαμβάνει
@@ -151,7 +151,7 @@ def training_contents(request, training_id):
 
     includes = [
         line.strip()
-        for line in training.includes.splitlines()
+        for line in topics.includes.splitlines()
         if line.strip()
     ]
 
@@ -161,10 +161,10 @@ def training_contents(request, training_id):
 
     contents = []
 
-    for content in training.training_contents.prefetch_related("materials").order_by("order"):
+    for content in topics.topics_contents.prefetch_related("materials").order_by("order"):
 
         # Πρώτο δωρεάν video της ενότητας
-        free_video = content.materials.filter(material_type=TrainingVideo.MaterialType.VIDEO,is_free=True,).first()
+        free_video = content.materials.filter(material_type=TopicsVideo.MaterialType.VIDEO,is_free=True,).first()
 
         contents.append({
 
@@ -196,21 +196,21 @@ def training_contents(request, training_id):
 
     return JsonResponse({
 
-        "id": training.id,
+        "id": topics.id,
 
-        "title": training.title,
+        "title": topics.title,
 
-        "slug": training.slug,
+        "slug": topics.slug,
 
-        "description": training.description,
+        "description": topics.description,
 
-        "category": training.category,
+        "category": topics.category,
 
-        "level": training.level,
+        "level": topics.level,
 
-        "image": training.image,
+        "image": topics.image,
 
-        "price": training.price,
+        "price": topics.price,
 
         "includes": includes,
 
@@ -227,7 +227,7 @@ def show_training_video(request, material_id):
 
     # Αναζητά το εκπαιδευτικό υλικό
     material = get_object_or_404(
-        TrainingVideo,
+        TopicsVideo,
         id=material_id,
     )
 
