@@ -47,7 +47,7 @@ def homepage(request):
     ]
 
     # Training logic
-    topics = Topics.objects.prefetch_related("topics_contents").filter(is_published=True)
+    topics = Topics.objects.prefetch_related("topics_contents").all()
     active_category_keys = topics.values_list("category", flat=True).distinct()
     active_topics_categories = [
         (value, label) for value, label in Topics.Category.choices 
