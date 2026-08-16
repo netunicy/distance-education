@@ -13,63 +13,59 @@
             data-description="{{ topic.description }}"
             data-price="{{ topic.price }}">
 
-            <a href="#">
+            <img src="{{ topic.image.url }}" alt="{{ topic.alt }}">
 
-                <img src="{{ topic.image }}" alt="{{ topic.alt }}">
+            <div class="card-body">
 
-                <div class="card-body">
+                <h2>{{ topic.title }}</h2>
 
-                    <h2>{{ topic.title }}</h2>
+                <div class="book-info">
 
-                    <div class="book-info">
+                    <span class="badge">
+                        {{ topic.get_category_display }}
+                    </span>
 
-                        <span class="badge">
-                            {{ topic.category }}
-                        </span>
-
-                        <h3>
-                            {{ topic.level }}
-                        </h3>
-
-                    </div>
-
-                    <p class="has-tooltip"
-                       data-tooltip="{{ topic.description|striptags|escape }}">
-
-                        {{ topic.description }}
-
-                    </p>
-
-                    <div class="card-footer">
-
-                        <div class="prices">
-
-                            {% if topic.is_free %}
-
-                                <div class="price-item">
-                                    <strong>Δωρεάν</strong>
-                                </div>
-
-                            {% else %}
-
-                                <div class="price-item">
-                                    <small>Πλήρες πρόγραμμα</small><br>
-                                    €{{ topic.price }}
-                                </div>
-
-                            {% endif %}
-
-                        </div>
-
-                        <button class="topics-details-btn">
-                            Περιεχόμενα
-                        </button>
-
-                    </div>
+                    <h3>
+                        Επίπεδο: {{ topic.get_level_display }}
+                    </h3>
 
                 </div>
 
-            </a>
+                <p class="has-tooltip"
+                    data-tooltip="{{ topic.description|striptags|escape }}">
+
+                    {{ topic.description }}
+
+                </p>
+
+                <div class="card-footer">
+
+                    <div class="prices">
+
+                        {% if topic.is_free %}
+
+                            <div class="price-item">
+                                <strong>Δωρεάν</strong>
+                            </div>
+
+                        {% else %}
+
+                            <div class="price-item">
+                                <medium>Πλήρες πρόγραμμα</medium>
+                                €{{ topic.price }}
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                    <button class="topics-details-btn">
+                        Περιεχόμενα
+                    </button>
+
+                </div>
+
+            </div>
 
         </div>
 

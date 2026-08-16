@@ -125,6 +125,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 card.style.display = "none";
             });
 
+            topicsMainBox.style.display = "none";
             emptyMessage.style.display = "block";
 
             classStep.classList.add("hidden");
@@ -165,7 +166,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
             button.className = "filter-btn";
             button.dataset.class = className;
-            button.textContent = className;
+
+            const levelLabels = {
+                "Beginner": "Βασικό",
+                "Intermediate": "Ενδιάμεσο",
+                "Advanced": "Προχωρημένο"
+            };
+
+            button.textContent = levelLabels[className] || className;
 
             classContainer.appendChild(button);
 

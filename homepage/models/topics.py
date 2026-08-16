@@ -13,9 +13,9 @@ class Topics(models.Model):
         OTHER = "Other", "Other"
 
     class Level(models.TextChoices):
-        BEGINNER = "Beginner", "Beginner"
-        INTERMEDIATE = "Intermediate", "Intermediate"
-        ADVANCED = "Advanced", "Advanced"
+        BEGINNER = "Beginner", "Βασικό"
+        INTERMEDIATE = "Intermediate", "Ενδιάμεσο"
+        ADVANCED = "Advanced", "Προχωρημένο"
  
 
     title = models.CharField(max_length=250)
