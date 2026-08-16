@@ -105,7 +105,7 @@ def book_contents(request, book_id):
         "stage": book.stage,
         "class": book.class_is,
         "edition": book.edition,
-        "image": book.image,
+        "image": book.image.url if book.image else "",
         "price_chapter": book.price_chapter,
         "price_all": book.price_all,
 
@@ -147,13 +147,16 @@ def book_contents(request, book_id):
 
     })
 
-def training_contents(request, training_id):
+def topics_contents(request, topics_id):
 
     # ==========================================
-    # Αναζήτηση Προγράμματος
+    # Αναζήτηση Topics
     # ==========================================
 
-    topics = get_object_or_404(Topics,id=training_id,is_published=True,)
+    topic = get_object_or_404(
+        Topics,
+        id=topics_id,
+    )
 
     # ==========================================
     # Τι περιλαμβάνει
@@ -161,20 +164,102 @@ def training_contents(request, training_id):
 
     includes = [
         line.strip()
-        for line in topics.includes.splitlines()
+        for line in topic.includes.splitlines()
         if line.strip()
     ]
 
     # ==========================================
-    # Περιεχόμενα Προγράμματος
+    # Περιεχόμενα Topics
     # ==========================================
 
     contents = []
 
-    for content in topics.topics_contents.prefetch_related("materials").order_by("order"):
+    for content in (
+        topic.topics_contents
+        .prefetch_related(
+            "materials",
+            "school_videos",
+        )
+        .order_by("order")
+    ):
 
-        # Πρώτο δωρεάν video της ενότητας
-        free_video = content.materials.filter(material_type=TopicsVideo.MaterialType.VIDEO,is_free=True,).first()
+        videos = []
+
+        # ======================================
+        # Topics Videos
+        # ======================================
+
+        for video in (
+            content.materials
+            .filter(
+                material_type=TopicsVideo.MaterialType.VIDEO
+            )
+            .order_by("order")
+        ):
+
+            videos.append({
+
+                "id": video.id,
+
+                "title": video.title,
+
+                "is_free": video.is_free,
+
+                "url": (
+                    reverse(
+                        "homepage:show_topics_video",
+                        args=[video.id],
+                    )
+                    if video.is_free else ""
+                ),
+
+                "source": "topics",
+
+            })
+
+        # ======================================
+        # School Videos
+        # ======================================
+
+        for video in (
+            content.school_videos
+            .select_related("chapter")
+            .order_by(
+                "chapter__order",
+                "page",
+                "part",
+            )
+        ):
+
+            # Τίτλος School Video
+            title = video.activity_title.strip()
+
+            if not title:
+                title = f"Σελίδα {video.page}"
+
+            videos.append({
+
+                "id": video.id,
+
+                "title": title,
+
+                "is_free": video.is_free,
+
+                "url": (
+                    reverse(
+                        "homepage:show_video",
+                        args=[video.id],
+                    )
+                    if video.is_free else ""
+                ),
+
+                "source": "school",
+
+            })
+
+        # ======================================
+        # Ενότητα
+        # ======================================
 
         contents.append({
 
@@ -186,17 +271,7 @@ def training_contents(request, training_id):
 
             "description": content.description,
 
-            # Υπάρχει δωρεάν video;
-            "has_free_video": free_video is not None,
-
-            # URL δωρεάν video
-            "video_url": (
-                reverse(
-                    "homepage:show_training_video",
-                    args=[free_video.id],
-                )
-                if free_video else ""
-            ),
+            "videos": videos,
 
         })
 
@@ -206,21 +281,24 @@ def training_contents(request, training_id):
 
     return JsonResponse({
 
-        "id": topics.id,
+        "id": topic.id,
 
-        "title": topics.title,
+        "title": topic.title,
 
-        "slug": topics.slug,
+        "slug": topic.slug,
 
-        "description": topics.description,
+        "description": topic.description,
 
-        "category": topics.category,
+        "category": topic.get_category_display(),
 
-        "level": topics.level,
+        "level": topic.get_level_display(),
 
-        "image": topics.image,
+        "image": (
+            topic.image.url
+            if topic.image else ""
+        ),
 
-        "price": topics.price,
+        "price": str(topic.price),
 
         "includes": includes,
 
@@ -229,36 +307,25 @@ def training_contents(request, training_id):
     })
 
 @login_required
-def show_training_video(request, material_id):
+def show_topics_video(request, material_id):
 
-    # ==========================================
-    # Αναζήτηση Training Material
-    # ==========================================
-
-    # Αναζητά το εκπαιδευτικό υλικό
     material = get_object_or_404(
         TopicsVideo,
         id=material_id,
     )
 
-    # Δημιουργεί το προστατευμένο Cloudflare Signed Playback URL
     secure_video_url = create_signed_playback_url(
         material.cloudflare_uid,
     )
 
     context = {
-
-        # Το εκπαιδευτικό υλικό
         "material": material,
-
-        # Το προστατευμένο video
         "secure_video_url": secure_video_url,
-
     }
 
     return render(
         request,
-        "homepage/show_training_video.html",
+        "homepage/show_topics_video.html",
         context,
     )
 

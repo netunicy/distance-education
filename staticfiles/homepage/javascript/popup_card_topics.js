@@ -1,18 +1,22 @@
-const trainingModal = document.getElementById("trainingModal");
-const trainingCloseBtn = trainingModal.querySelector(".close-modal");
+const topicsModal = document.getElementById("topicsModal");
+const topicsCloseBtn = topicsModal.querySelector(".close-modal");
 
-document.querySelectorAll(".training-details-btn").forEach(btn => {
+document.querySelectorAll(".topics-details-btn").forEach(btn => {
 
-    btn.addEventListener("click", () => {
+    btn.addEventListener("click", (e) => {
 
-        const card = btn.closest(".training-card");
-        const trainingId = card.dataset.id;
+        // Επειδή το button μπορεί να βρίσκεται μέσα σε <a>
+        e.preventDefault();
+        e.stopPropagation();
 
-        fetch(`/training/${trainingId}/`)
+        const card = btn.closest(".topics-card");
+        const topicsId = card.dataset.id;
+
+        fetch(`/topics/${topicsId}/`)
             .then(response => {
 
                 if (!response.ok) {
-                    throw new Error("Failed to load training.");
+                    throw new Error("Failed to load topics.");
                 }
 
                 return response.json();
@@ -25,26 +29,29 @@ document.querySelectorAll(".training-details-btn").forEach(btn => {
                 // HEADER
                 // ==========================
 
-                document.getElementById("training-popup-image").src = data.image;
-                document.getElementById("training-popup-image").alt = data.title;
+                document.getElementById("topics-popup-image").src = data.image;
+                document.getElementById("topics-popup-image").alt = data.title;
 
-                document.getElementById("training-popup-title").textContent = data.title;
+                document.getElementById("topics-popup-title").textContent = data.title;
 
-                document.getElementById("training-popup-category").textContent = data.category;
-                document.getElementById("training-popup-level").textContent = data.level;
+                document.getElementById("topics-popup-category").textContent = data.category;
+                document.getElementById("topics-popup-level").textContent = data.level;
+
 
                 // ==========================
                 // DESCRIPTION
                 // ==========================
 
-                document.getElementById("training-popup-description").textContent =
+                document.getElementById("topics-popup-description").textContent =
                     data.description;
+
 
                 // ==========================
                 // FEATURES
                 // ==========================
 
-                const features = document.getElementById("training-popup-features");
+                const features =
+                    document.getElementById("topics-popup-features");
 
                 features.innerHTML = "";
 
@@ -70,69 +77,53 @@ document.querySelectorAll(".training-details-btn").forEach(btn => {
 
                 }
 
+
                 // ==========================
                 // CONTENTS
                 // ==========================
 
-                const contents = document.getElementById("training-popup-contents");
+                const contents =
+                    document.getElementById("topics-popup-contents");
 
                 contents.innerHTML = "";
 
-                if (data.contents.length === 0) {
+                data.contents.forEach(content => {
 
-                    contents.innerHTML = `
-                        <div class="feature-item">
-                            Δεν υπάρχουν διαθέσιμες ενότητες.
-                        </div>
-                    `;
+                    let videosHtml = "";
 
-                } else {
+                    // ==========================
+                    // VIDEOS
+                    // ==========================
 
-                    data.contents.forEach(content => {
+                    content.videos.forEach(video => {
 
-                        contents.innerHTML += `
+                        videosHtml += `
 
-                            <div class="chapter-item">
+                            <div class="video-item">
 
-                                <div class="chapter-header">
+                                <span class="video-icon">
+                                    🎥
+                                </span>
 
-                                    <span>
-                                        ${content.order}. ${content.title}
-                                    </span>
+                                <span class="video-title">
 
-                                    <span class="video-lock ${content.has_free_video ? 'free' : 'locked'}">
-                                        ${content.has_free_video ? '🔓 Unlocked' : '🔒 Locked'}
-                                    </span>
+                                    ${
+                                        video.is_free
 
-                                </div>
+                                            ? `<a href="${video.url}">
+                                                ${video.title}
+                                               </a>`
 
-                                ${content.description ? `
-                                    <div class="chapter-videos open">
+                                            : video.title
+                                    }
 
-                                        <div class="video-item">
+                                </span>
 
-                                            <span class="video-title">
+                                <span class="video-lock ${video.is_free ? 'free' : 'locked'}">
 
-                                                ${
-                                                    content.has_free_video
+                                    ${video.is_free ? '🔓 Free' : '🔒 Locked'}
 
-                                                    ?
-
-                                                    `<a href="${content.video_url}">
-                                                        ${content.description}
-                                                    </a>`
-
-                                                    :
-
-                                                    content.description
-                                                }
-
-                                            </span>
-
-                                        </div>
-
-                                    </div>
-                                ` : ""}
+                                </span>
 
                             </div>
 
@@ -140,28 +131,84 @@ document.querySelectorAll(".training-details-btn").forEach(btn => {
 
                     });
 
-                }
+
+                    // ==========================
+                    // CONTENT
+                    // ==========================
+
+                    contents.innerHTML += `
+
+                        <div class="chapter-item">
+
+                            <div class="chapter-header">
+
+                                <span>
+
+                                    ${content.order}. ${content.title}
+
+                                </span>
+
+                                <span class="chapter-arrow">
+
+                                    ▶
+
+                                </span>
+
+                            </div>
+
+                            <div class="chapter-videos">
+
+                                ${videosHtml}
+
+                            </div>
+
+                        </div>
+
+                    `;
+
+                });
+
 
                 // ==========================
-                // OPEN / CLOSE DESCRIPTION
+                // OPEN MODAL
                 // ==========================
 
-                document.querySelectorAll("#training-popup-contents .chapter-header")
+                topicsModal.style.display = "block";
+
+
+                // ==========================
+                // ACCORDION
+                // ==========================
+
+                document
+                    .querySelectorAll("#topics-popup-contents .chapter-header")
                     .forEach(header => {
 
                         header.addEventListener("click", () => {
 
-                            const body = header.nextElementSibling;
+                            const videos =
+                                header.nextElementSibling;
 
-                            if (!body) return;
+                            const arrow =
+                                header.querySelector(".chapter-arrow");
 
-                            body.classList.toggle("open");
+                            if (videos.classList.contains("open")) {
+
+                                videos.classList.remove("open");
+
+                                arrow.textContent = "▶";
+
+                            } else {
+
+                                videos.classList.add("open");
+
+                                arrow.textContent = "▼";
+
+                            }
 
                         });
 
                     });
-
-                trainingModal.style.display = "block";
 
             })
 
@@ -177,24 +224,43 @@ document.querySelectorAll(".training-details-btn").forEach(btn => {
 
 });
 
-trainingCloseBtn.addEventListener("click", () => {
-    trainingModal.style.display = "none";
+
+// ==========================
+// CLOSE BUTTON
+// ==========================
+
+topicsCloseBtn.addEventListener("click", () => {
+
+    topicsModal.style.display = "none";
+
 });
+
+
+// ==========================
+// CLICK OUTSIDE MODAL
+// ==========================
 
 window.addEventListener("click", (e) => {
 
-    if (e.target === trainingModal) {
+    if (e.target === topicsModal) {
 
-        trainingModal.style.display = "none";
+        topicsModal.style.display = "none";
 
     }
 
 });
 
-const buyTrainingBtn = document.getElementById("buy-training-btn");
 
-buyTrainingBtn.addEventListener("click", () => {
+// ==========================
+// BUY TOPICS
+// ==========================
 
-    window.location.href = buyTrainingBtn.dataset.url;
+const buyTopicsBtn =
+    document.getElementById("buy-topics-btn");
+
+buyTopicsBtn.addEventListener("click", () => {
+
+    window.location.href =
+        buyTopicsBtn.dataset.url;
 
 });

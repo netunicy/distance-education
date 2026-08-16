@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<h1>Training Video</h1>
+<h1>Topics Video</h1>
 
 <hr>
 
@@ -16,11 +16,6 @@
 <p>
     <strong>Τύπος:</strong>
     {{ material.get_material_type_display }}
-</p>
-
-<p>
-    <strong>Περιγραφή:</strong>
-    {{ material.description }}
 </p>
 
 <p>
@@ -103,7 +98,7 @@
         if (
             e.key === "F12" ||
             (e.ctrlKey && e.shiftKey &&
-                ["I","J","C"].includes(e.key.toUpperCase())) ||
+                ["I", "J", "C"].includes(e.key.toUpperCase())) ||
             (e.ctrlKey && e.key.toUpperCase() === "U")
         ) {
 

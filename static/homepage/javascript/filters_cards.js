@@ -1,6 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-    const cards = [...document.querySelectorAll(".card")];
+    const mainBox = document.getElementById("school-main-box");
+
+    const cards = [...mainBox.querySelectorAll(".card")];
 
     const levelButtons = document.querySelectorAll("#level-container .filter-btn");
 
@@ -11,8 +13,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const classContainer = document.getElementById("class-container");
 
     const emptyMessage = document.getElementById("empty-message");
-
-    const mainBox = document.getElementById("school-main-box");
 
     let selectedLevel = "";
     let selectedSubject = "";

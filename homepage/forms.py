@@ -7,9 +7,6 @@ from django import forms
 from .models import TopicsVideo, SchoolVideo
 
 from homepage.helpers.media.processor import VideoProcessor
-from homepage.helpers.media.training_cloudinary_path import (
-    training_cloudinary_path,
-)
 
 
 class TopicsVideoAdminForm(forms.ModelForm):
@@ -46,16 +43,14 @@ class TopicsVideoAdminForm(forms.ModelForm):
                     for chunk in obj.video_file.chunks():
                         destination.write(chunk)
 
-                asset_folder, public_id = training_cloudinary_path(obj)
-
                 response = processor.process(
                     input_file=temp_input,
                     meta={
-                        "section": "Training",
-                        "category": obj.training_content.training.category,
-                        "level": obj.training_content.training.level,
-                        "training": obj.training_content.training.slug,
-                        "content": obj.training_content.slug,
+                        "section": "Topics",
+                        "category": obj.topics_content.topics.category,
+                        "level": obj.topics_content.topics.level,
+                        "topics": obj.topics_content.topics.slug,
+                        "content": obj.topics_content.slug,
                         "material": obj.slug,
                     }
                 )

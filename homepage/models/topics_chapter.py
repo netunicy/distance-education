@@ -6,9 +6,9 @@ from homepage.models.topics import Topics
 class TopicsContent(models.Model):
 
     topics = models.ForeignKey(Topics,on_delete=models.CASCADE,related_name="topics_contents",)
-    content = models.CharField(max_length=200,help_text="Περιεχόμενο του topics",)
-    slug = models.SlugField(max_length=200,blank=True,db_index=True,)
-    description = models.TextField(blank=True,help_text="Περιγραφή του topics",)
+    content = models.CharField(max_length=1000,help_text="Τίτλος Περιεχομένου π.χ 'Εισαγωγή στη Γεωμετρία' ",)
+    slug = models.SlugField(max_length=1000,blank=True,db_index=True,)
+    description = models.CharField(max_length=1000,blank=True,help_text="Περιγραφή του video. Γραψε μια συντομη περιγραφή π.χ 'Γεωμετρια - Θεωρια'.",)
     order = models.PositiveIntegerField(default=1)
 
     class Meta:
