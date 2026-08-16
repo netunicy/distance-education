@@ -1,6 +1,6 @@
 from django.db import models
 from homepage.helpers.slug import generate_unique_slug
-
+from cloudinary.models import CloudinaryField
 class Topics(models.Model):
 
     class Category(models.TextChoices):
@@ -23,13 +23,10 @@ class Topics(models.Model):
     category = models.CharField(max_length=50,choices=Category.choices,default=Category.OTHER)
     level = models.CharField(max_length=30,choices=Level.choices,default=Level.BEGINNER)
     description = models.TextField(blank=True)
-    image = models.CharField(max_length=1000,blank=True,null=True)
+    image = CloudinaryField("image",blank=True,null=True)
     alt = models.CharField(max_length=1000,blank=True,null=True)
-    duration = models.CharField(max_length=100,blank=True)
-    includes = models.TextField(blank=True,help_text="Ένα στοιχείο ανά γραμμή.")
+    includes = models.TextField(blank=True,help_text="Τι περιλαμβάνει. Ένα στοιχείο ανά γραμμή.")
     price = models.DecimalField(max_digits=8,decimal_places=2,default=0)
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ["title"]

@@ -8,12 +8,14 @@
             1. Επιλέξτε Κατηγορία Επιμόρφωσης
         </h3>
 
-        <div class="filter-container" id="training-level-container">
+        <div class="filter-container" id="topics-level-container">
 
-            {% for value, label in training_categories %}
+            {% for value, label in topics_categories %}
+
                 <button class="filter-btn" data-level="{{ value }}">
                     {{ label }}
                 </button>
+
             {% endfor %}
 
         </div>
@@ -24,13 +26,13 @@
 
         <!-- STEP 2 -->
 
-        <div class="filter-step hidden" id="training-subject-step">
+        <div class="filter-step hidden" id="topics-subject-step">
 
             <h3 class="filter-title">
                 2. Επιλέξτε πρόγραμμα
             </h3>
 
-            <div class="filter-container" id="training-subject-container">
+            <div class="filter-container" id="topics-subject-container">
 
             </div>
 
@@ -38,13 +40,13 @@
 
         <!-- STEP 3 -->
 
-        <div class="filter-step hidden" id="training-class-step">
+        <div class="filter-step hidden" id="topics-class-step">
 
             <h3 class="filter-title">
                 3. Επιλέξτε επίπεδο
             </h3>
 
-            <div class="filter-container" id="training-class-container">
+            <div class="filter-container" id="topics-class-container">
 
             </div>
 
@@ -54,7 +56,7 @@
 
 </div>
 
-<div id="training-empty-message" class="empty-message">
+<div id="topics-empty-message" class="empty-message">
 
     Επιλέξτε κατηγορία, πρόγραμμα και επίπεδο.
 

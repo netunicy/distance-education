@@ -16,16 +16,18 @@ Homepage
         {% include 'homepage/components/school_cards.html' %}
     </div>
 
-    {% if trainings %}
+    {% if topics %}
 
-        <div id="training-section" class="reveal">
+        <div id="topics-section" class="reveal">
 
             {% include 'homepage/components/filters_topics_section.html' %}
 
         </div>
 
-        <div id="training-main-box" class="main-box">
+        <div id="topics-main-box" class="main-box">
+
             {% include 'homepage/components/topics_cards.html' %}
+
         </div>
 
     {% endif %}

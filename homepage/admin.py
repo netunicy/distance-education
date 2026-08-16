@@ -135,8 +135,3 @@ class TopicsAdmin(admin.ModelAdmin):
         "title",
         "description",
     )
-
-    readonly_fields = (
-        "created",
-        "updated",
-    )

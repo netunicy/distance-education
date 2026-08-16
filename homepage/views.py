@@ -24,7 +24,7 @@ from homepage.helpers.access_control import can_view_video
 def homepage(request):
     logo = Logo.objects.all()
     messages.success(request, "Welcome to the Homepage!")
-    
+
     contexts = Schoolcontexts.objects.prefetch_related("chapters")
 
     # Διόρθωση με τα πραγματικά ονόματα πεδίων του μοντέλου Schoolcontexts:
@@ -34,23 +34,31 @@ def homepage(request):
 
     # Φιλτράρισμα των choices
     filtered_levels = [
-        (val, label) for val, label in Schoolcontexts.LevelType.choices 
+        (val, label) for val, label in Schoolcontexts.LevelType.choices
         if val in active_levels
     ]
+
     filtered_subjects = [
-        (val, label) for val, label in Schoolcontexts.SubjectLesson.choices 
+        (val, label) for val, label in Schoolcontexts.SubjectLesson.choices
         if val in active_subjects
     ]
+
     filtered_classes = [
-        (val, label) for val, label in Schoolcontexts.ClassLevel.choices 
+        (val, label) for val, label in Schoolcontexts.ClassLevel.choices
         if val in active_classes
     ]
 
-    # Training logic
+    # Topics logic
     topics = Topics.objects.prefetch_related("topics_contents").all()
-    active_category_keys = topics.values_list("category", flat=True).distinct()
+
+    active_category_keys = topics.values_list(
+        "category",
+        flat=True
+    ).distinct()
+
     active_topics_categories = [
-        (value, label) for value, label in Topics.Category.choices 
+        (value, label)
+        for value, label in Topics.Category.choices
         if value in active_category_keys
     ]
 
@@ -65,8 +73,10 @@ def homepage(request):
         "school_levels": filtered_levels,
         "school_subjects": filtered_subjects,
         "school_classes": filtered_classes,
-        "trainings": Topics,
-        "training_categories": active_topics_categories,
+
+        "topics": topics,
+        "topics_categories": active_topics_categories,
+
         "second_row": second_row,
     })
 

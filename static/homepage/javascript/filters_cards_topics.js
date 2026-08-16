@@ -1,23 +1,24 @@
 console.log("filters_cards_topics.js loaded");
+
 document.addEventListener("DOMContentLoaded", () => {
 
-    const trainingMainBox = document.getElementById("training-main-box");
+    const topicsMainBox = document.getElementById("topics-main-box");
 
-    const cards = [...trainingMainBox.querySelectorAll(".training-card")];
+    const cards = [...topicsMainBox.querySelectorAll(".topics-card")];
 
-    const levelButtons = document.querySelectorAll("#training-level-container .filter-btn");
+    const levelButtons = document.querySelectorAll("#topics-level-container .filter-btn");
 
-    const subjectStep = document.getElementById("training-subject-step");
-    const classStep = document.getElementById("training-class-step");
+    const subjectStep = document.getElementById("topics-subject-step");
+    const classStep = document.getElementById("topics-class-step");
 
-    const subjectContainer = document.getElementById("training-subject-container");
-    const classContainer = document.getElementById("training-class-container");
+    const subjectContainer = document.getElementById("topics-subject-container");
+    const classContainer = document.getElementById("topics-class-container");
 
-    const emptyMessage = document.getElementById("training-empty-message");
-    const mainBox = document.getElementById("training-main-box");
+    const emptyMessage = document.getElementById("topics-empty-message");
+    const mainBox = document.getElementById("topics-main-box");
 
     let selectedCategory = "";
-    let selectedTraining = "";
+    let selectedTopics = "";
     let selectedLevel = "";
 
     // ============================================
@@ -28,11 +29,10 @@ document.addEventListener("DOMContentLoaded", () => {
     classStep.classList.add("hidden");
 
     cards.forEach(card => {
-
         card.style.display = "none";
-
     });
-    trainingMainBox.style.display = "none";
+
+    topicsMainBox.style.display = "none";
 
     // ============================================
     // Εμφάνιση καρτών
@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const show =
                 card.dataset.category === selectedCategory &&
-                card.dataset.training === selectedTraining &&
+                card.dataset.topics === selectedTopics &&
                 card.dataset.level === selectedLevel;
 
             card.style.display = show ? "" : "none";
@@ -60,12 +60,12 @@ document.addEventListener("DOMContentLoaded", () => {
         if (found) {
 
             emptyMessage.style.display = "none";
-            trainingMainBox.style.display = "";
+            topicsMainBox.style.display = "";
 
         } else {
 
             emptyMessage.style.display = "block";
-            trainingMainBox.style.display = "none";
+            topicsMainBox.style.display = "none";
 
         }
 
@@ -84,9 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
         cards.forEach(card => {
 
             if (card.dataset.category === selectedCategory) {
-
-                subjects.add(card.dataset.training);
-
+                subjects.add(card.dataset.topics);
             }
 
         });
@@ -96,7 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const button = document.createElement("button");
 
             button.className = "filter-btn";
-            button.dataset.training = subject;
+            button.dataset.topics = subject;
             button.textContent = subject;
 
             subjectContainer.appendChild(button);
@@ -120,13 +118,11 @@ document.addEventListener("DOMContentLoaded", () => {
             button.classList.add("active");
 
             selectedCategory = button.dataset.level;
-            selectedTraining = "";
+            selectedTopics = "";
             selectedLevel = "";
 
             cards.forEach(card => {
-
                 card.style.display = "none";
-
             });
 
             emptyMessage.style.display = "block";
@@ -156,11 +152,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (
                 card.dataset.category === selectedCategory &&
-                card.dataset.training === selectedTraining
+                card.dataset.topics === selectedTopics
             ) {
-
                 classes.add(card.dataset.level);
-
             }
 
         });
@@ -197,13 +191,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 button.classList.add("active");
 
-                selectedTraining = button.dataset.training;
+                selectedTopics = button.dataset.topics;
                 selectedLevel = "";
 
                 cards.forEach(card => {
-
                     card.style.display = "none";
-
                 });
 
                 emptyMessage.style.display = "block";
