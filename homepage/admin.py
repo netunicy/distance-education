@@ -108,7 +108,12 @@ class SchoolVideoAdmin(admin.ModelAdmin):
         "page",
         "part",
     )
+
     exclude = ("slug",)
+
+    filter_horizontal = (
+        "topics_contents",
+    )
 
     list_per_page = 30
 

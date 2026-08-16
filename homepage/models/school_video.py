@@ -2,6 +2,7 @@ from django.db import models
 
 from homepage.helpers.slug import generate_unique_slug
 from .school_chapter import Chapter
+from .topics_chapter import TopicsContent
 
 
 class SchoolVideo(models.Model):
@@ -25,14 +26,32 @@ class SchoolVideo(models.Model):
         PART8 = "8", "8ο Μέρος"
         PART9 = "9", "9ο Μέρος"
 
-    # Το chapter στο οποίο ανήκει το video
+    # ==========================================
+    # School Chapter
+    # ==========================================
+
     chapter = models.ForeignKey(
         Chapter,
         on_delete=models.CASCADE,
         related_name="videos",
     )
 
-    # Περιγραφή της δραστηριότητας
+    # ==========================================
+    # Topics Chapters
+    # Προαιρετική σύνδεση του ίδιου video
+    # με ένα ή περισσότερα TopicsContent
+    # ==========================================
+
+    topics_contents = models.ManyToManyField(
+        TopicsContent,
+        related_name="school_videos",
+        blank=True,
+    )
+
+    # ==========================================
+    # Περιγραφή δραστηριότητας
+    # ==========================================
+
     activity_title = models.CharField(
         max_length=200,
         blank=True,
@@ -43,20 +62,28 @@ class SchoolVideo(models.Model):
         ),
     )
 
+    # ==========================================
     # Slug
+    # ==========================================
+
     slug = models.SlugField(
         blank=True,
         db_index=True,
     )
-    
 
+    # ==========================================
     # Αριθμός σελίδας
+    # ==========================================
+
     page = models.PositiveSmallIntegerField(
         default=1,
         help_text="Αριθμός σελίδας του βιβλίου",
     )
 
+    # ==========================================
     # Μέρος video
+    # ==========================================
+
     part = models.CharField(
         max_length=2,
         choices=Part.choices,
@@ -64,12 +91,19 @@ class SchoolVideo(models.Model):
         blank=True,
     )
 
+    # ==========================================
     # Προσωρινό upload
+    # ==========================================
+
     video_file = models.FileField(
         upload_to="temp/",
         blank=True,
         null=True,
     )
+
+    # ==========================================
+    # Cloudflare
+    # ==========================================
 
     cloudflare_uid = models.CharField(
         max_length=64,
@@ -89,15 +123,27 @@ class SchoolVideo(models.Model):
         default=False,
         editable=False,
     )
-    
+
+    # ==========================================
     # Προβολές
+    # ==========================================
+
     views = models.PositiveIntegerField(
         default=0,
         editable=False,
     )
 
+    # ==========================================
     # Δωρεάν
-    is_free = models.BooleanField(default=False)
+    # ==========================================
+
+    is_free = models.BooleanField(
+        default=False,
+    )
+
+    # ==========================================
+    # Meta
+    # ==========================================
 
     class Meta:
 
@@ -131,6 +177,10 @@ class SchoolVideo(models.Model):
 
         ]
 
+    # ==========================================
+    # Save
+    # ==========================================
+
     def save(self, *args, **kwargs):
 
         if not self.slug:
@@ -151,6 +201,10 @@ class SchoolVideo(models.Model):
             )
 
         super().save(*args, **kwargs)
+
+    # ==========================================
+    # String representation
+    # ==========================================
 
     def __str__(self):
 
