@@ -62,9 +62,22 @@
 
         <div class="popup-buttons">
 
-            <button id="buy-chapter-btn">
-                Αγορά Κεφαλαίου
-            </button>
+            <div class="chapter-purchase">
+
+                <div id="chapter-buy-selection" style="display: none;">
+                    <select id="chapter-select">
+                        <option value="">Επίλεξε κεφάλαιο</option>
+                    </select>
+                    <button id="chapter-payment-btn" style="display: none;">
+                        Συνέχεια στην πληρωμή
+                    </button>
+                </div>
+                
+                <button id="buy-chapter-btn">
+                    Αγορά Κεφαλαίου
+                </button>
+
+            </div>
 
             <button id="buy-book-btn">
                 Αγορά Βιβλίου

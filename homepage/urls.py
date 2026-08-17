@@ -1,5 +1,6 @@
 from django.urls import path
 from homepage import views
+from homepage.helpers.stripe_pay import chapter_stripe_payment
 
 app_name = "homepage"
 
@@ -14,4 +15,6 @@ urlpatterns = [
     # Προβολή εκπαιδευτικού βίντεο
     path("video/<int:video_id>/",views.show_video,name="show_video"),
     path("topics/video/<int:material_id>/",views.show_topics_video,name="show_topics_video"),
+
+    path("chapter-payment/<int:book_id>/<int:chapter_id>/",chapter_stripe_payment,name="chapter_payment",),
 ]

@@ -3,6 +3,7 @@ from pathlib import Path
 import cloudinary
 import os
 import dj_database_url
+import stripe
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -309,3 +310,7 @@ TINYMCE_DEFAULT_CONFIG = {
     "toolbar_mode": "wrap",
     "contextmenu": "link image table",
 }
+STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY") or read_secret("stripe_key.txt")
+STRIPE_PUBLISHABLE_KEY = os.environ.get("STRIPE_PUBLISHABLE_KEY") or read_secret("stripe_publishable.txt")
+
+stripe.api_key = STRIPE_SECRET_KEY

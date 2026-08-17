@@ -1,11 +1,18 @@
 const modal = document.getElementById("packageModal");
 const closeBtn = document.querySelector(".close-modal");
+const buyChapterBtn = document.getElementById("buy-chapter-btn");
+const chapterBuySelection = document.getElementById("chapter-buy-selection");
+const chapterSelect = document.getElementById("chapter-select");
+const chapterPaymentBtn = document.getElementById("chapter-payment-btn");
+
+let currentBookId = null;
 document.querySelectorAll(".details-btn").forEach(btn => {
 
     btn.addEventListener("click", () => {
 
         const card = btn.closest(".card");
         const bookId = card.dataset.id;
+        currentBookId = bookId;
 
         fetch(`/book/${bookId}/`)
             .then(response => {
@@ -19,6 +26,13 @@ document.querySelectorAll(".details-btn").forEach(btn => {
             })
 
             .then(data => {
+
+                chapterBuySelection.style.display = "none";
+
+                chapterSelect.value = "";
+                chapterSelect.style.display = "block";
+
+                chapterPaymentBtn.style.display = "none";
 
                 // Ο υπόλοιπος κώδικάς σου...
 
@@ -73,6 +87,24 @@ document.querySelectorAll(".details-btn").forEach(btn => {
                     });
 
                 }
+
+                // ==========================
+                // CHAPTER BUY SELECT
+                // ==========================
+
+                chapterSelect.innerHTML = `
+                    <option value="">Επίλεξε κεφάλαιο</option>
+                `;
+
+                data.chapters.forEach(chapter => {
+
+                    chapterSelect.innerHTML += `
+                        <option value="${chapter.id}">
+                            ${chapter.order}. ${chapter.title}
+                        </option>
+                    `;
+
+                });
                 // ==========================
                 // CHAPTERS
                 // ==========================
@@ -178,6 +210,62 @@ document.querySelectorAll(".details-btn").forEach(btn => {
     });
 
 });
+
+buyChapterBtn.addEventListener("click", () => {
+
+    if (chapterBuySelection.style.display === "none") {
+
+        chapterBuySelection.style.display = "block";
+
+    } else {
+
+        chapterBuySelection.style.display = "none";
+
+    }
+
+});
+
+// ==========================================
+// ΕΠΙΛΟΓΗ ΚΕΦΑΛΑΙΟΥ
+// ==========================================
+
+chapterSelect.addEventListener("change", () => {
+
+    const chapterId = chapterSelect.value;
+
+    if (chapterId) {
+
+        // Κρύβουμε τη λίστα
+        chapterSelect.style.display = "none";
+
+        // Εμφανίζουμε το κουμπί πληρωμής
+        chapterPaymentBtn.style.display = "block";
+
+    }
+
+});
+
+// ==========================================
+// ΣΥΝΕΧΕΙΑ ΣΤΗΝ ΠΛΗΡΩΜΗ
+// ==========================================
+
+chapterPaymentBtn.addEventListener("click", () => {
+
+    const chapterId = chapterSelect.value;
+
+    if (!currentBookId || !chapterId) {
+        return;
+    }
+
+    window.location.href =
+        `/chapter-payment/${currentBookId}/${chapterId}/`;
+
+});
+
+
+// ==========================================
+// ΚΛΕΙΣΙΜΟ POPUP
+// ==========================================
 
 closeBtn.addEventListener("click", () => {
 

@@ -1,6 +1,8 @@
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 from homepage.models.topics import Topics
 from .models import Logo, Schoolcontexts,InformationPage,Informations
+from homepage.models.school_chapter import Chapter
 from django.urls import reverse
 from django.contrib import messages
 from django.shortcuts import render
@@ -404,24 +406,48 @@ def show_video(request, video_id):
         context,
     )
 
-def contact(request):
-    return redirect("homepage:homepage")
+@login_required
+def chapter_payment(request, book_id, chapter_id):
 
-def announcements(request):
-    return redirect("homepage:homepage")
+    # ==========================================
+    # Βιβλίο
+    # ==========================================
 
-def faq(request):
-    return redirect("homepage:homepage")
+    book = get_object_or_404(
+        Schoolcontexts,
+        id=book_id,
+    )
 
-def about_us(request):
-    return redirect("homepage:homepage")
+    # ==========================================
+    # Κεφάλαιο
+    # ==========================================
 
-def privacy_policy(request):
-    return redirect("homepage:homepage")
+    chapter = get_object_or_404(
+        Chapter,
+        id=chapter_id,
+        context=book,
+    )
 
-def copyright_notice(request):
-    return redirect("homepage:homepage")
+    # ==========================================
+    # Προσωρινός έλεγχος
+    # ==========================================
 
-def refund_policy(request):
-    return redirect("homepage:homepage")
+    print("BOOK:", book)
+    print("BOOK ID:", book.id)
 
+    print("CHAPTER:", chapter)
+    print("CHAPTER ID:", chapter.id)
+
+    print("PRICE:", book.price_chapter)
+
+    return HttpResponse(
+        f"""
+        Βιβλίο: {book}<br>
+        Book ID: {book.id}<br><br>
+
+        Κεφάλαιο: {chapter.title}<br>
+        Chapter ID: {chapter.id}<br><br>
+
+        Τιμή κεφαλαίου: £{book.price_chapter}
+        """
+    )
