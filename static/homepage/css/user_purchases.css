@@ -1,0 +1,346 @@
+/* ===================================================
+   USER PURCHASES SECTION
+=================================================== */
+
+.purchases-section {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 2rem 1rem;
+}
+
+
+/* ===================================================
+   TITLE
+=================================================== */
+
+.purchases-title-wrap {
+    text-align: center;
+    margin-bottom: 32px;
+    padding: 10px 20px;
+}
+
+.purchases-title {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1f2937;
+    letter-spacing: -0.5px;
+}
+
+.purchases-title::after {
+    content: "";
+    display: block;
+    width: 70px;
+    height: 3px;
+    margin: 12px auto 0;
+    background: #2563eb;
+    border-radius: 10px;
+}
+
+.purchases-subtitle {
+    margin: 14px auto 0;
+    max-width: 650px;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #6b7280;
+}
+
+
+/* ===================================================
+   GRID
+=================================================== */
+
+.purchases-grid {
+    display: grid;
+    grid-template-columns: repeat(
+        auto-fit,
+        minmax(280px, 320px)
+    );
+
+    justify-content: center;
+
+    gap: 1.5rem;
+
+    width: 100%;
+    margin: 0 auto;
+}
+
+
+/* ===================================================
+   CARD
+=================================================== */
+
+.purchase-card {
+    width: 100%;
+
+    background: #ffffff;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+
+    overflow: hidden;
+
+    box-shadow: 0 8px 25px rgba(0, 0, 0, .07);
+
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease;
+}
+
+.purchase-card:hover {
+    transform: translateY(-4px);
+
+    box-shadow: 0 14px 32px rgba(0, 0, 0, .11);
+}
+
+
+/* ===================================================
+   IMAGE
+=================================================== */
+
+.purchase-card-image {
+    width: 100%;
+    height: 220px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 1.2rem;
+
+    background: #f8f9fb;
+
+    box-sizing: border-box;
+}
+
+.purchase-card-image img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: contain;
+
+    display: block;
+}
+
+
+/* ===================================================
+   CONTENT
+=================================================== */
+
+.purchase-card-content {
+    padding: 1.3rem;
+}
+
+
+/* ===================================================
+   BOOK TITLE
+=================================================== */
+
+.purchase-card-title {
+    margin: 0 0 1rem;
+
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1.4;
+
+    color: #1f2937;
+}
+
+
+/* ===================================================
+   BOOK INFORMATION
+=================================================== */
+
+.purchase-card-info {
+    display: flex;
+    flex-wrap: wrap;
+
+    gap: .4rem;
+
+    margin-bottom: .8rem;
+}
+
+.purchase-card-info span {
+    padding: .35rem .65rem;
+
+    background: #eef5ff;
+
+    border: 1px solid #d8e7ff;
+    border-radius: 20px;
+
+    color: #2b7cff;
+
+    font-size: .75rem;
+    font-weight: 600;
+}
+
+
+/* ===================================================
+   EDITION
+=================================================== */
+
+.purchase-edition {
+    margin-bottom: 1rem;
+
+    font-size: .9rem;
+    line-height: 1.5;
+
+    color: #6b7280;
+}
+
+
+/* ===================================================
+   PURCHASE ACCESS
+=================================================== */
+
+.purchase-access {
+    margin-top: 1rem;
+
+    padding: .9rem 1rem;
+
+    background: #f8f9fb;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: .35rem;
+}
+
+.purchase-label {
+    font-size: .75rem;
+    font-weight: 600;
+
+    text-transform: uppercase;
+
+    color: #6b7280;
+}
+
+.purchase-access strong {
+    font-size: .95rem;
+    line-height: 1.5;
+
+    color: #1f2937;
+}
+
+
+/* ===================================================
+   PURCHASE DATE
+=================================================== */
+
+.purchase-date {
+    margin-top: 1rem;
+
+    font-size: .82rem;
+
+    color: #9ca3af;
+}
+
+
+/* ===================================================
+   BUTTON
+=================================================== */
+
+.purchase-card-actions {
+    margin-top: 1.3rem;
+}
+
+.purchase-open-btn {
+    width: 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 12px 18px;
+
+    box-sizing: border-box;
+
+    background: #2b7cff;
+    color: #ffffff;
+
+    border-radius: 10px;
+
+    font-size: .95rem;
+    font-weight: 600;
+
+    text-decoration: none;
+
+    cursor: pointer;
+
+    transition: .25s;
+}
+
+.purchase-open-btn:hover {
+    background: #1f63d1;
+    color: #ffffff;
+    text-decoration: none;
+}
+
+
+/* ===================================================
+   NO PURCHASES
+=================================================== */
+
+.purchases-empty {
+    width: min(500px, 100%);
+
+    margin: 0 auto;
+
+    padding: 2rem;
+
+    box-sizing: border-box;
+
+    background: #f8f9fb;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+
+    text-align: center;
+
+    color: #6b7280;
+}
+
+.purchases-empty p {
+    margin: 0;
+}
+
+
+/* ===================================================
+   MOBILE
+=================================================== */
+
+@media only screen and (min-width: 240px) and (max-width: 600px) {
+
+    .purchases-section {
+        padding: 1.5rem .5rem;
+    }
+
+    .purchases-title {
+        font-size: 1.6rem;
+    }
+
+    .purchases-subtitle {
+        font-size: .9rem;
+    }
+
+    .purchases-grid {
+        grid-template-columns: minmax(0, 1fr);
+
+        gap: 1rem;
+    }
+
+    .purchase-card {
+        width: 100%;
+        max-width: 380px;
+
+        margin: 0 auto;
+    }
+
+    .purchase-card-image {
+        height: 200px;
+    }
+
+}

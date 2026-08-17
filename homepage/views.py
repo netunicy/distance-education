@@ -32,6 +32,7 @@ from homepage.models.school import Schoolcontexts
 from homepage.models.school_chapter import Chapter
 from homepage.models.user_purchases import UserPurchase
 
+
 def homepage(request):
     logo = Logo.objects.all()
     messages.success(request, "Welcome to the Homepage!")
@@ -78,6 +79,21 @@ def homepage(request):
 
     second_row = zip(cards, modals)
 
+    if request.user.is_authenticated:
+        user_purchases = (
+            UserPurchase.objects
+            .filter(user=request.user)
+            .select_related(
+                "book",
+                "chapter",
+            )
+            .order_by("-purchased_at")
+        )
+
+    else:
+
+        user_purchases = UserPurchase.objects.none()
+
     return render(request, "homepage/homepage.html", {
         "logo": logo,
         "contexts": contexts,
@@ -89,6 +105,8 @@ def homepage(request):
         "topics_categories": active_topics_categories,
 
         "second_row": second_row,
+
+        "user_purchases": user_purchases,
     })
 
 def search(request):

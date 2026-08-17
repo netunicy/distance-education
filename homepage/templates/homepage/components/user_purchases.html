@@ -1,0 +1,189 @@
+{% if user.is_authenticated %}
+
+<section class="purchases-section">
+
+    <!-- ==========================================
+         TITLE
+    ========================================== -->
+
+    <div class="purchases-title-wrap">
+
+        <h2 class="purchases-title">
+            Οι Αγορές μου
+        </h2>
+
+        <p class="purchases-subtitle">
+            Δείτε τα βιβλία και τα κεφάλαια που έχετε αγοράσει
+            και αποκτήστε πρόσβαση στο εκπαιδευτικό σας υλικό.
+        </p>
+
+    </div>
+
+
+    <!-- ==========================================
+         PURCHASE CARDS
+    ========================================== -->
+
+    {% if user_purchases %}
+
+        <div class="purchases-grid">
+
+            {% for purchase in user_purchases %}
+
+                <div class="purchase-card">
+
+
+                    <!-- IMAGE -->
+
+                    <div class="purchase-card-image">
+
+                        {% if purchase.book.image %}
+
+                            <img
+                                src="{{ purchase.book.image.url }}"
+                                alt="{{ purchase.book.alt|default:purchase.book.title }}"
+                            >
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- CONTENT -->
+
+                    <div class="purchase-card-content">
+
+
+                        <!-- TITLE -->
+
+                        <h3 class="purchase-card-title">
+                            {{ purchase.book.title }}
+                        </h3>
+
+
+                        <!-- BOOK INFORMATION -->
+
+                        <div class="purchase-card-info">
+
+                            <span>
+                                {{ purchase.book.stage }}
+                            </span>
+
+                            <span>
+                                {{ purchase.book.subject_lesson }}
+                            </span>
+
+                            <span>
+                                {{ purchase.book.class_is }}
+                            </span>
+
+                        </div>
+
+
+                        <!-- EDITION -->
+
+                        {% if purchase.book.edition %}
+
+                            <div class="purchase-edition">
+
+                                {{ purchase.book.edition }}
+
+                            </div>
+
+                        {% endif %}
+
+
+                        <!-- PURCHASE TYPE -->
+
+                        <div class="purchase-access">
+
+                            {% if purchase.chapter %}
+
+                                <span class="purchase-label">
+                                    Κεφάλαιο
+                                </span>
+
+                                <strong>
+                                    {{ purchase.chapter.title }}
+                                </strong>
+
+                            {% else %}
+
+                                <span class="purchase-label">
+                                    Πρόσβαση
+                                </span>
+
+                                <strong>
+                                    Ολόκληρο το βιβλίο
+                                </strong>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- DATE -->
+
+                        <div class="purchase-date">
+
+                            Αγορά:
+                            {{ purchase.purchased_at|date:"d/m/Y" }}
+
+                        </div>
+
+
+                        <!-- BUTTON -->
+
+                        <div class="purchase-card-actions">
+
+                            {% if purchase.chapter %}
+
+                                <a
+                                    href="#"
+                                    class="purchase-open-btn"
+                                >
+                                    Προβολή Κεφαλαίου
+                                </a>
+
+                            {% else %}
+
+                                <a
+                                    href="#"
+                                    class="purchase-open-btn"
+                                >
+                                    Προβολή Βιβλίου
+                                </a>
+
+                            {% endif %}
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+
+    {% else %}
+
+        <!-- ==========================================
+             NO PURCHASES
+        ========================================== -->
+
+        <div class="purchases-empty">
+
+            <p>
+                Δεν έχετε πραγματοποιήσει ακόμη κάποια αγορά.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</section>
+
+{% endif %}
