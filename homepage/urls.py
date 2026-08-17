@@ -17,4 +17,6 @@ urlpatterns = [
     path("topics/video/<int:material_id>/",views.show_topics_video,name="show_topics_video"),
 
     path("chapter-payment/<int:book_id>/<int:chapter_id>/",chapter_stripe_payment,name="chapter_payment",),
+
+    path("pay_success/", views.pay_success, name="pay_success"),
 ]

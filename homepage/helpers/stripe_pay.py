@@ -78,7 +78,10 @@ def chapter_stripe_payment(request, book_id, chapter_id):
                 "chapter_id": str(chapter.id),
             },
 
-            success_url="https://www.turnonlearning.com/pay_success/",
+            success_url=(
+                    "https://www.turnonlearning.com/pay_success/"
+                    "?session_id={CHECKOUT_SESSION_ID}"
+                ),
             cancel_url="https://www.turnonlearning.com/pay_cancel/",
         )
 

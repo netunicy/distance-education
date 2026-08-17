@@ -7,3 +7,4 @@ from .topics_chapter import TopicsContent
 from .topics_video import TopicsVideo
 from .image_cards import InformationPage
 from .informations import Informations
+from .user_purchases import UserPurchase

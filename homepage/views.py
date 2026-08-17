@@ -2,7 +2,6 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from homepage.models.topics import Topics
 from .models import Logo, Schoolcontexts,InformationPage,Informations
-from homepage.models.school_chapter import Chapter
 from django.urls import reverse
 from django.contrib import messages
 from django.shortcuts import render
@@ -22,6 +21,16 @@ from homepage.helpers.navigation import get_next_video
 from homepage.helpers.navigation import get_videos_by_chapter
 from homepage.helpers.video_security import create_secure_url
 from homepage.helpers.access_control import can_view_video
+
+import stripe
+
+from django.conf import settings
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404, render
+
+from homepage.models.school import Schoolcontexts
+from homepage.models.school_chapter import Chapter
+from homepage.models.user_purchases import UserPurchase
 
 def homepage(request):
     logo = Logo.objects.all()
@@ -450,4 +459,130 @@ def chapter_payment(request, book_id, chapter_id):
 
         Τιμή κεφαλαίου: £{book.price_chapter}
         """
+    )
+
+@login_required
+def pay_success(request):
+
+    # ==========================================
+    # Stripe Session ID
+    # ==========================================
+
+    session_id = request.GET.get("session_id")
+
+    if not session_id:
+        return render(
+            request,
+            "payment_error.html",
+            {
+                "error_message": "Δεν βρέθηκε η συναλλαγή."
+            },
+        )
+
+    # ==========================================
+    # Stripe
+    # ==========================================
+
+    stripe.api_key = settings.STRIPE_SECRET_KEY
+
+    try:
+
+        session = stripe.checkout.Session.retrieve(
+            session_id
+        )
+
+    except stripe.error.StripeError:
+
+        return render(
+            request,
+            "payment_error.html",
+            {
+                "error_message": "Δεν ήταν δυνατή η επιβεβαίωση της πληρωμής."
+            },
+        )
+
+    # ==========================================
+    # Έλεγχος πληρωμής
+    # ==========================================
+
+    if session.payment_status != "paid":
+
+        return render(
+            request,
+            "payment_error.html",
+            {
+                "error_message": "Η πληρωμή δεν έχει ολοκληρωθεί."
+            },
+        )
+
+    # ==========================================
+    # Metadata
+    # ==========================================
+
+    metadata = session.metadata
+
+    user_id = metadata.get("user_id")
+    book_id = metadata.get("book_id")
+    chapter_id = metadata.get("chapter_id")
+
+    # ==========================================
+    # Έλεγχος χρήστη
+    # ==========================================
+
+    if str(request.user.id) != user_id:
+
+        return render(
+            request,
+            "payment_error.html",
+            {
+                "error_message": "Η συναλλαγή δεν ανήκει στον συγκεκριμένο χρήστη."
+            },
+        )
+
+    # ==========================================
+    # Βιβλίο
+    # ==========================================
+
+    book = get_object_or_404(
+        Schoolcontexts,
+        id=book_id,
+    )
+
+    # ==========================================
+    # Κεφάλαιο
+    # ==========================================
+
+    chapter = get_object_or_404(
+        Chapter,
+        id=chapter_id,
+        context=book,
+    )
+
+    # ==========================================
+    # Καταχώριση αγοράς
+    # ==========================================
+
+    purchase, created = UserPurchase.objects.get_or_create(
+
+        stripe_session_id=session.id,
+
+        defaults={
+            "user": request.user,
+            "book": book,
+            "chapter": chapter,
+            "amount_paid": session.amount_total,
+        },
+    )
+
+    # ==========================================
+    # Success
+    # ==========================================
+
+    return render(
+        request,
+        "pay_success.html",
+        {
+            "purchase": purchase,
+            "created": created,
+        },
     )

@@ -1,0 +1,318 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+
+    /* ==========================================
+       PAYMENT SUCCESS
+    ========================================== */
+
+    .payment-success-wrapper {
+        min-height: 70vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 2rem 1rem;
+        box-sizing: border-box;
+    }
+
+    .payment-success-card {
+        width: 100%;
+        max-width: 520px;
+
+        background: #ffffff;
+
+        border: 1px solid #e8e8e8;
+        border-radius: 18px;
+
+        padding: 2.5rem;
+
+        text-align: center;
+
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08);
+
+        box-sizing: border-box;
+    }
+
+
+    /* ==========================================
+       SUCCESS ICON
+    ========================================== */
+
+    .payment-success-icon {
+        width: 70px;
+        height: 70px;
+
+        margin: 0 auto 1.5rem;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 50%;
+
+        background: #e8f8ec;
+        color: #1f8f43;
+
+        font-size: 2rem;
+        font-weight: 700;
+    }
+
+
+    /* ==========================================
+       TITLE
+    ========================================== */
+
+    .payment-success-card h1 {
+        margin: 0 0 1rem;
+
+        font-size: 1.8rem;
+
+        color: #222222;
+    }
+
+    .payment-success-card > p {
+        margin: 0;
+
+        font-size: 1rem;
+        line-height: 1.7;
+
+        color: #666666;
+    }
+
+
+    /* ==========================================
+       PURCHASE INFORMATION
+    ========================================== */
+
+    .purchase-info {
+        margin-top: 1.8rem;
+
+        padding: 1.2rem;
+
+        background: #f8f9fb;
+
+        border: 1px solid #e8e8e8;
+        border-radius: 12px;
+
+        text-align: left;
+    }
+
+    .purchase-info-row {
+        padding: .7rem 0;
+
+        border-bottom: 1px solid #e8e8e8;
+
+        font-size: .95rem;
+        line-height: 1.5;
+
+        color: #555555;
+    }
+
+    .purchase-info-row:last-child {
+        border-bottom: none;
+    }
+
+    .purchase-info-row strong {
+        color: #222222;
+    }
+
+
+    /* ==========================================
+       SUCCESS MESSAGE
+    ========================================== */
+
+    .payment-success-message {
+        margin-top: 1.5rem;
+
+        padding: 1rem 1.2rem;
+
+        background: #effaf2;
+
+        border: 1px solid #bfe3c8;
+        border-radius: 10px;
+
+        color: #237a3b;
+
+        font-size: .95rem;
+        line-height: 1.6;
+    }
+
+
+    /* ==========================================
+       BUTTON
+    ========================================== */
+
+    .payment-success-actions {
+        margin-top: 2rem;
+
+        display: flex;
+        justify-content: center;
+    }
+
+    .payment-success-btn {
+        display: inline-block;
+
+        padding: 14px 24px;
+
+        background: #2b7cff;
+        color: #ffffff;
+
+        border: none;
+        border-radius: 10px;
+
+        font-family: inherit;
+        font-size: 16px;
+        font-weight: 600;
+
+        text-decoration: none;
+
+        cursor: pointer;
+
+        transition: .25s;
+    }
+
+    .payment-success-btn:hover {
+        background: #1f63d1;
+
+        color: #ffffff;
+
+        text-decoration: none;
+    }
+
+
+    /* ==========================================
+       MOBILE
+    ========================================== */
+
+    @media only screen and (max-width: 600px) {
+
+        .payment-success-wrapper {
+            padding: 1rem;
+        }
+
+        .payment-success-card {
+            padding: 2rem 1.2rem;
+        }
+
+        .payment-success-card h1 {
+            font-size: 1.5rem;
+        }
+
+        .payment-success-icon {
+            width: 60px;
+            height: 60px;
+
+            font-size: 1.7rem;
+        }
+
+        .purchase-info {
+            padding: 1rem;
+        }
+
+        .payment-success-btn {
+            width: 100%;
+
+            box-sizing: border-box;
+        }
+
+    }
+
+</style>
+
+
+<div class="payment-success-wrapper">
+
+    <div class="payment-success-card">
+
+        <!-- SUCCESS ICON -->
+
+        <div class="payment-success-icon">
+            ✓
+        </div>
+
+
+        <!-- TITLE -->
+
+        <h1>
+            Η πληρωμή ολοκληρώθηκε!
+        </h1>
+
+        <p>
+            Η αγορά σας καταχωρίστηκε με επιτυχία.
+        </p>
+
+
+        <!-- PURCHASE INFORMATION -->
+
+        <div class="purchase-info">
+
+            <div class="purchase-info-row">
+
+                <strong>Βιβλίο:</strong>
+
+                {{ purchase.book.title }}
+
+            </div>
+
+
+            {% if purchase.chapter %}
+
+                <div class="purchase-info-row">
+
+                    <strong>Κεφάλαιο:</strong>
+
+                    {{ purchase.chapter.title }}
+
+                </div>
+
+            {% else %}
+
+                <div class="purchase-info-row">
+
+                    <strong>Αγορά:</strong>
+
+                    Ολόκληρο βιβλίο
+
+                </div>
+
+            {% endif %}
+
+
+            <div class="purchase-info-row">
+
+                <strong>Ημερομηνία:</strong>
+
+                {{ purchase.purchased_at|date:"d/m/Y H:i" }}
+
+            </div>
+
+        </div>
+
+
+        <!-- MESSAGE -->
+
+        <div class="payment-success-message">
+
+            Η πρόσβαση στο εκπαιδευτικό υλικό
+            έχει ενεργοποιηθεί στον λογαριασμό σας.
+
+        </div>
+
+
+        <!-- BUTTON -->
+
+        <div class="payment-success-actions">
+
+            <a href="/" class="payment-success-btn">
+                Επιστροφή στην αρχική
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
