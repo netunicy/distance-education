@@ -455,18 +455,6 @@ def chapter_payment(request, book_id, chapter_id):
         context=book,
     )
 
-    # ==========================================
-    # Προσωρινός έλεγχος
-    # ==========================================
-
-    print("BOOK:", book)
-    print("BOOK ID:", book.id)
-
-    print("CHAPTER:", chapter)
-    print("CHAPTER ID:", chapter.id)
-
-    print("PRICE:", book.price_chapter)
-
     return HttpResponse(
         f"""
         Βιβλίο: {book}<br>
@@ -489,6 +477,7 @@ def pay_success(request):
     session_id = request.GET.get("session_id")
 
     if not session_id:
+
         return render(
             request,
             "payment_error.html",
@@ -497,11 +486,18 @@ def pay_success(request):
             },
         )
 
+
     # ==========================================
-    # Stripe
+    # Stripe Settings
     # ==========================================
 
     stripe.api_key = settings.STRIPE_SECRET_KEY
+    stripe.api_version = "2025-03-31.basil"
+
+
+    # ==========================================
+    # Ανάκτηση Stripe Session
+    # ==========================================
 
     try:
 
@@ -509,15 +505,19 @@ def pay_success(request):
             session_id
         )
 
-    except stripe.error.StripeError:
+    except stripe.error.StripeError as e:
+
+        print("STRIPE ERROR:", e)
 
         return render(
             request,
             "payment_error.html",
             {
-                "error_message": "Δεν ήταν δυνατή η επιβεβαίωση της πληρωμής."
+                "error_message":
+                    "Δεν ήταν δυνατή η επιβεβαίωση της πληρωμής."
             },
         )
+
 
     # ==========================================
     # Έλεγχος πληρωμής
@@ -529,9 +529,11 @@ def pay_success(request):
             request,
             "payment_error.html",
             {
-                "error_message": "Η πληρωμή δεν έχει ολοκληρωθεί."
+                "error_message":
+                    "Η πληρωμή δεν έχει ολοκληρωθεί."
             },
         )
+
 
     # ==========================================
     # Metadata
@@ -543,19 +545,38 @@ def pay_success(request):
     book_id = metadata.get("book_id")
     chapter_id = metadata.get("chapter_id")
 
+
     # ==========================================
-    # Έλεγχος χρήστη
+    # Έλεγχος Metadata
     # ==========================================
 
-    if str(request.user.id) != user_id:
+    if not user_id or not book_id or not chapter_id:
 
         return render(
             request,
             "payment_error.html",
             {
-                "error_message": "Η συναλλαγή δεν ανήκει στον συγκεκριμένο χρήστη."
+                "error_message":
+                    "Δεν βρέθηκαν τα στοιχεία της αγοράς."
             },
         )
+
+
+    # ==========================================
+    # Έλεγχος Χρήστη
+    # ==========================================
+
+    if str(request.user.id) != str(user_id):
+
+        return render(
+            request,
+            "payment_error.html",
+            {
+                "error_message":
+                    "Η συναλλαγή δεν ανήκει στον συγκεκριμένο χρήστη."
+            },
+        )
+
 
     # ==========================================
     # Βιβλίο
@@ -565,6 +586,7 @@ def pay_success(request):
         Schoolcontexts,
         id=book_id,
     )
+
 
     # ==========================================
     # Κεφάλαιο
@@ -576,24 +598,92 @@ def pay_success(request):
         context=book,
     )
 
-    # ==========================================
-    # Καταχώριση αγοράς
-    # ==========================================
-
-    purchase, created = UserPurchase.objects.get_or_create(
-
-        stripe_session_id=session.id,
-
-        defaults={
-            "user": request.user,
-            "book": book,
-            "chapter": chapter,
-            "amount_paid": session.amount_total,
-        },
-    )
 
     # ==========================================
-    # Success
+    # Ποσό πληρωμής
+    # ==========================================
+
+    amount_paid = session.amount_total
+
+    if amount_paid is None:
+
+        return render(
+            request,
+            "payment_error.html",
+            {
+                "error_message":
+                    "Δεν ήταν δυνατή η επιβεβαίωση του ποσού."
+            },
+        )
+
+
+    # ==========================================
+    # Καταχώριση Αγοράς
+    # ==========================================
+
+    try:
+
+        purchase, created = UserPurchase.objects.get_or_create(
+
+            stripe_session_id=session.id,
+
+            defaults={
+                "user": request.user,
+                "book": book,
+                "chapter": chapter,
+                "amount_paid": amount_paid,
+            },
+        )
+
+    except Exception as e:
+
+        print("DATABASE PURCHASE ERROR:", e)
+
+        return render(
+            request,
+            "payment_error.html",
+            {
+                "error_message":
+                    "Η πληρωμή ολοκληρώθηκε, αλλά παρουσιάστηκε "
+                    "πρόβλημα κατά την καταχώριση της αγοράς."
+            },
+        )
+
+
+    # ==========================================
+    # Έλεγχος υπάρχουσας αγοράς
+    # ==========================================
+
+    if purchase.user_id != request.user.id:
+
+        return render(
+            request,
+            "payment_error.html",
+            {
+                "error_message":
+                    "Παρουσιάστηκε πρόβλημα κατά την "
+                    "επιβεβαίωση της αγοράς."
+            },
+        )
+
+
+    # ==========================================
+    # Debug
+    # ==========================================
+
+    print("==========================================")
+    print("PAYMENT SUCCESS")
+    print("USER:", request.user.id)
+    print("BOOK:", book.id)
+    print("CHAPTER:", chapter.id)
+    print("STRIPE SESSION:", session.id)
+    print("AMOUNT:", amount_paid)
+    print("PURCHASE CREATED:", created)
+    print("==========================================")
+
+
+    # ==========================================
+    # Success Page
     # ==========================================
 
     return render(
