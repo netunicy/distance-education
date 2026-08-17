@@ -45,6 +45,10 @@ def chapter_stripe_payment(request, book_id, chapter_id):
                 "enabled": False,
             },
 
+            adaptive_pricing={
+                "enabled": False,
+            },
+
             line_items=[
                 {
                     "price_data": {
