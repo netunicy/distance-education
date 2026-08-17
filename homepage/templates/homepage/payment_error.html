@@ -4,9 +4,9 @@
 
 <style>
 
-    /* ==========================================
-       PAYMENT ERROR
-    ========================================== */
+    /* ===================================================
+       PAYMENT ERROR WRAPPER
+    =================================================== */
 
     .payment-error-wrapper {
         min-height: 70vh;
@@ -17,21 +17,38 @@
         box-sizing: border-box;
     }
 
+
+    /* ===================================================
+       PAYMENT ERROR CARD
+    =================================================== */
+
     .payment-error-card {
         width: 100%;
         max-width: 520px;
+
         background: #ffffff;
+
         border: 1px solid #e8e8e8;
         border-radius: 18px;
+
         padding: 2.5rem;
+
         text-align: center;
+
         box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08);
+
         box-sizing: border-box;
     }
+
+
+    /* ===================================================
+       ERROR ICON
+    =================================================== */
 
     .payment-error-icon {
         width: 70px;
         height: 70px;
+
         margin: 0 auto 1.5rem;
 
         display: flex;
@@ -39,6 +56,7 @@
         justify-content: center;
 
         border-radius: 50%;
+
         background: #fff2f2;
         color: #c62828;
 
@@ -46,38 +64,79 @@
         font-weight: 700;
     }
 
+
+    /* ===================================================
+       TITLE
+    =================================================== */
+
     .payment-error-card h1 {
         margin: 0 0 1rem;
+
         font-size: 1.8rem;
         color: #222222;
     }
 
-    .payment-error-card p {
+
+    /* ===================================================
+       TEXT
+    =================================================== */
+
+    .payment-error-card > p {
         margin: 0;
+
         font-size: 1rem;
         line-height: 1.7;
+
         color: #666666;
     }
 
+
+    /* ===================================================
+       ERROR MESSAGE
+    =================================================== */
+
     .payment-error-message {
         margin-top: 1.5rem;
+
         padding: 1rem 1.2rem;
 
         background: #fff7f7;
+
         border: 1px solid #f1cccc;
         border-radius: 10px;
 
         color: #a52828;
-        font-size: 0.95rem;
+
+        font-size: .95rem;
+        line-height: 1.7;
     }
+
+
+    /* ===================================================
+       REDIRECT MESSAGE
+    =================================================== */
+
+    .redirect-message {
+        margin-top: 1rem;
+
+        font-size: .85rem;
+        color: #888888;
+    }
+
+
+    /* ===================================================
+       BUTTON
+    =================================================== */
 
     .payment-error-actions {
         margin-top: 2rem;
+
         display: flex;
         justify-content: center;
     }
 
-    .payment-back-btn {
+
+    .payment-error-btn {
         display: inline-block;
 
         padding: 14px 24px;
@@ -93,21 +152,25 @@
         font-weight: 600;
 
         text-decoration: none;
+
         cursor: pointer;
 
         transition: .25s;
     }
 
-    .payment-back-btn:hover {
+
+    .payment-error-btn:hover {
         background: #1f63d1;
+
         color: #ffffff;
+
         text-decoration: none;
     }
 
 
-    /* ==========================================
+    /* ===================================================
        MOBILE
-    ========================================== */
+    =================================================== */
 
     @media only screen and (max-width: 600px) {
 
@@ -126,10 +189,11 @@
         .payment-error-icon {
             width: 60px;
             height: 60px;
+
             font-size: 1.7rem;
         }
 
-        .payment-back-btn {
+        .payment-error-btn {
             width: 100%;
             box-sizing: border-box;
         }
@@ -139,41 +203,86 @@
 </style>
 
 
+<!-- ===================================================
+     PAYMENT ERROR
+=================================================== -->
+
 <div class="payment-error-wrapper">
 
     <div class="payment-error-card">
+
+
+        <!-- ERROR ICON -->
 
         <div class="payment-error-icon">
             ×
         </div>
 
+
+        <!-- TITLE -->
+
         <h1>
             Η πληρωμή δεν ολοκληρώθηκε
         </h1>
+
 
         <p>
             Παρουσιάστηκε πρόβλημα κατά την επεξεργασία
             ή την επιβεβαίωση της πληρωμής σας.
         </p>
 
+
+        <!-- ERROR MESSAGE -->
+
         {% if error_message %}
 
             <div class="payment-error-message">
+
                 {{ error_message }}
+
             </div>
 
         {% endif %}
 
+
+        <!-- REDIRECT MESSAGE -->
+
+        <div class="redirect-message">
+
+            Θα μεταφερθείτε αυτόματα στην αρχική σελίδα
+            σε λίγα δευτερόλεπτα.
+
+        </div>
+
+
+        <!-- BUTTON -->
+
         <div class="payment-error-actions">
 
-            <a href="/" class="payment-back-btn">
+            <a href="/" class="payment-error-btn">
                 Επιστροφή στην αρχική
             </a>
 
         </div>
 
+
     </div>
 
 </div>
+
+
+<!-- ===================================================
+     AUTO REDIRECT
+=================================================== -->
+
+<script>
+
+    setTimeout(function () {
+
+        window.location.href = "/";
+
+    }, 5000);
+
+</script>
 
 {% endblock %}
