@@ -99,7 +99,11 @@ document.querySelectorAll(".details-btn").forEach(btn => {
                 data.chapters.forEach(chapter => {
 
                     chapterSelect.innerHTML += `
-                        <option value="${chapter.id}">
+                        <option 
+                            value="${chapter.id}"
+                            data-access="${chapter.has_access}"
+                            data-view-url="${chapter.view_url}"
+                        >
                             ${chapter.order}. ${chapter.title}
                         </option>
                     `;
@@ -231,15 +235,34 @@ buyChapterBtn.addEventListener("click", () => {
 
 chapterSelect.addEventListener("change", () => {
 
-    const chapterId = chapterSelect.value;
+    const selectedOption =
+        chapterSelect.options[chapterSelect.selectedIndex];
 
-    if (chapterId) {
+    const chapterId = selectedOption.value;
 
-        // Κρύβουμε τη λίστα
-        chapterSelect.style.display = "none";
+    if (!chapterId) {
+        chapterPaymentBtn.style.display = "none";
+        return;
+    }
 
-        // Εμφανίζουμε το κουμπί πληρωμής
-        chapterPaymentBtn.style.display = "block";
+    const hasAccess =
+        selectedOption.dataset.access === "true";
+
+    // Κρύβουμε τη λίστα μόλις επιλεγεί κεφάλαιο
+    chapterSelect.style.display = "none";
+
+    // Εμφανίζουμε το κουμπί
+    chapterPaymentBtn.style.display = "block";
+
+    if (hasAccess) {
+
+        chapterPaymentBtn.textContent = "Προβολή";
+        chapterPaymentBtn.dataset.action = "view";
+
+    } else {
+
+        chapterPaymentBtn.textContent = "Συνέχεια στην πληρωμή";
+        chapterPaymentBtn.dataset.action = "payment";
 
     }
 
@@ -257,8 +280,38 @@ chapterPaymentBtn.addEventListener("click", () => {
         return;
     }
 
-    window.location.href =
-        `/chapter-payment/${currentBookId}/${chapterId}/`;
+    const action = chapterPaymentBtn.dataset.action;
+
+    // ==========================================
+    // ΠΡΟΒΟΛΗ ΑΓΟΡΑΣΜΕΝΟΥ ΚΕΦΑΛΑΙΟΥ
+    // ==========================================
+
+    if (action === "view") {
+
+        const selectedOption =
+            chapterSelect.options[chapterSelect.selectedIndex];
+
+        const viewUrl =
+            selectedOption.dataset.viewUrl;
+
+        if (viewUrl) {
+            window.location.href = viewUrl;
+        }
+
+        return;
+    }
+
+
+    // ==========================================
+    // ΠΛΗΡΩΜΗ
+    // ==========================================
+
+    if (action === "payment") {
+
+        window.location.href =
+            `/chapter-payment/${currentBookId}/${chapterId}/`;
+
+    }
 
 });
 

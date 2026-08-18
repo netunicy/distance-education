@@ -116,6 +116,21 @@ def book_contents(request, book_id):
 
     book = get_object_or_404(Schoolcontexts, id=book_id)
 
+    if request.user.is_authenticated:
+
+        purchased_chapter_ids = UserPurchase.objects.filter(
+            user=request.user,
+            book=book,
+            chapter__isnull=False,
+        ).values_list(
+            "chapter_id",
+            flat=True,
+        )
+
+    else:
+
+        purchased_chapter_ids = []
+
     includes = []
 
     for line in book.includes.splitlines():
@@ -143,12 +158,22 @@ def book_contents(request, book_id):
         "chapters": [
 
         {
-
             "id": chapter.id,
 
             "order": chapter.order,
 
             "title": chapter.title,
+
+            "has_access": chapter.id in purchased_chapter_ids,
+
+            "view_url": (
+                reverse(
+                    "homepage:show_video",
+                    args=[chapter.videos.first().id],
+                )
+                if chapter.videos.exists()
+                else ""
+            ),
 
             "videos": [
 
@@ -480,7 +505,7 @@ def pay_success(request):
 
         return render(
             request,
-            "payment_error.html",
+            "homepage/payment_error.html",
             {
                 "error_message": "Δεν βρέθηκε η συναλλαγή."
             },
@@ -507,11 +532,9 @@ def pay_success(request):
 
     except stripe.error.StripeError as e:
 
-        print("STRIPE ERROR:", e)
-
         return render(
             request,
-            "payment_error.html",
+            "homepage/payment_error.html",
             {
                 "error_message":
                     "Δεν ήταν δυνατή η επιβεβαίωση της πληρωμής."
@@ -527,7 +550,7 @@ def pay_success(request):
 
         return render(
             request,
-            "payment_error.html",
+            "homepage/payment_error.html",
             {
                 "error_message":
                     "Η πληρωμή δεν έχει ολοκληρωθεί."
@@ -540,10 +563,9 @@ def pay_success(request):
     # ==========================================
 
     metadata = session.metadata
-
-    user_id = metadata.get("user_id")
-    book_id = metadata.get("book_id")
-    chapter_id = metadata.get("chapter_id")
+    user_id = metadata["user_id"]
+    book_id = metadata["book_id"]
+    chapter_id = metadata["chapter_id"]
 
 
     # ==========================================
@@ -554,7 +576,7 @@ def pay_success(request):
 
         return render(
             request,
-            "payment_error.html",
+            "homepage/payment_error.html",
             {
                 "error_message":
                     "Δεν βρέθηκαν τα στοιχεία της αγοράς."
@@ -570,7 +592,7 @@ def pay_success(request):
 
         return render(
             request,
-            "payment_error.html",
+            "homepage/payment_error.html",
             {
                 "error_message":
                     "Η συναλλαγή δεν ανήκει στον συγκεκριμένο χρήστη."
@@ -609,7 +631,7 @@ def pay_success(request):
 
         return render(
             request,
-            "payment_error.html",
+            "homepage/payment_error.html",
             {
                 "error_message":
                     "Δεν ήταν δυνατή η επιβεβαίωση του ποσού."
@@ -637,11 +659,9 @@ def pay_success(request):
 
     except Exception as e:
 
-        print("DATABASE PURCHASE ERROR:", e)
-
         return render(
             request,
-            "payment_error.html",
+            "homepage/payment_error.html",
             {
                 "error_message":
                     "Η πληρωμή ολοκληρώθηκε, αλλά παρουσιάστηκε "
@@ -658,7 +678,7 @@ def pay_success(request):
 
         return render(
             request,
-            "payment_error.html",
+            "homepage/payment_error.html",
             {
                 "error_message":
                     "Παρουσιάστηκε πρόβλημα κατά την "
@@ -666,29 +686,13 @@ def pay_success(request):
             },
         )
 
-
-    # ==========================================
-    # Debug
-    # ==========================================
-
-    print("==========================================")
-    print("PAYMENT SUCCESS")
-    print("USER:", request.user.id)
-    print("BOOK:", book.id)
-    print("CHAPTER:", chapter.id)
-    print("STRIPE SESSION:", session.id)
-    print("AMOUNT:", amount_paid)
-    print("PURCHASE CREATED:", created)
-    print("==========================================")
-
-
     # ==========================================
     # Success Page
     # ==========================================
 
     return render(
         request,
-        "pay_success.html",
+        "homepage/pay_success.html",
         {
             "purchase": purchase,
             "created": created,

@@ -2,28 +2,6 @@
 
 <section class="purchases-section">
 
-    <!-- ==========================================
-         TITLE
-    ========================================== -->
-
-    <div class="purchases-title-wrap">
-
-        <h2 class="purchases-title">
-            Οι Αγορές μου
-        </h2>
-
-        <p class="purchases-subtitle">
-            Δείτε τα βιβλία και τα κεφάλαια που έχετε αγοράσει
-            και αποκτήστε πρόσβαση στο εκπαιδευτικό σας υλικό.
-        </p>
-
-    </div>
-
-
-    <!-- ==========================================
-         PURCHASE CARDS
-    ========================================== -->
-
     {% if user_purchases %}
 
         <div class="purchases-grid">
@@ -85,15 +63,13 @@
                         {% if purchase.book.edition %}
 
                             <div class="purchase-edition">
-
                                 {{ purchase.book.edition }}
-
                             </div>
 
                         {% endif %}
 
 
-                        <!-- PURCHASE TYPE -->
+                        <!-- PURCHASE ACCESS -->
 
                         <div class="purchase-access">
 
@@ -138,12 +114,26 @@
 
                             {% if purchase.chapter %}
 
-                                <a
-                                    href="#"
-                                    class="purchase-open-btn"
-                                >
-                                    Προβολή Κεφαλαίου
-                                </a>
+                                {% with first_video=purchase.chapter.videos.first %}
+
+                                    {% if first_video %}
+
+                                        <a
+                                            href="{% url 'homepage:show_video' first_video.id %}"
+                                            class="purchase-open-btn"
+                                        >
+                                            Προβολή Κεφαλαίου
+                                        </a>
+
+                                    {% else %}
+
+                                        <span class="purchase-open-btn">
+                                            Δεν υπάρχει διαθέσιμο υλικό
+                                        </span>
+
+                                    {% endif %}
+
+                                {% endwith %}
 
                             {% else %}
 
@@ -169,10 +159,6 @@
 
 
     {% else %}
-
-        <!-- ==========================================
-             NO PURCHASES
-        ========================================== -->
 
         <div class="purchases-empty">
 
