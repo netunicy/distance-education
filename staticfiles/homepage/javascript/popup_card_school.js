@@ -1,11 +1,13 @@
 const modal = document.getElementById("packageModal");
 const closeBtn = document.querySelector(".close-modal");
 const buyChapterBtn = document.getElementById("buy-chapter-btn");
+const buyBookBtn = document.getElementById("buy-book-btn");
 const chapterBuySelection = document.getElementById("chapter-buy-selection");
 const chapterSelect = document.getElementById("chapter-select");
 const chapterPaymentBtn = document.getElementById("chapter-payment-btn");
 
 let currentBookId = null;
+let currentBookViewUrl = "";
 document.querySelectorAll(".details-btn").forEach(btn => {
 
     btn.addEventListener("click", () => {
@@ -27,15 +29,26 @@ document.querySelectorAll(".details-btn").forEach(btn => {
 
             .then(data => {
 
+                currentBookViewUrl = data.book_view_url || "";
                 chapterBuySelection.style.display = "none";
-
                 chapterSelect.value = "";
                 chapterSelect.style.display = "block";
-
                 chapterPaymentBtn.style.display = "none";
+                // ==========================
+                // BOOK ACCESS
+                // ==========================
 
-                // Ο υπόλοιπος κώδικάς σου...
+                if (data.has_book_access) {
 
+                    buyBookBtn.textContent = "Προβολή Βιβλίου";
+                    buyBookBtn.dataset.action = "view";
+
+                } else {
+
+                    buyBookBtn.textContent = "Αγορά Βιβλίου";
+                    buyBookBtn.dataset.action = "payment";
+
+                }
 
                 // ==========================
                 // HEADER
@@ -315,6 +328,45 @@ chapterPaymentBtn.addEventListener("click", () => {
 
 });
 
+// ==========================================
+// ΑΓΟΡΑ / ΠΡΟΒΟΛΗ ΟΛΟΚΛΗΡΟΥ ΒΙΒΛΙΟΥ
+// ==========================================
+
+buyBookBtn.addEventListener("click", () => {
+
+    if (!currentBookId) {
+        return;
+    }
+
+    const action = buyBookBtn.dataset.action;
+
+
+    // ==========================================
+    // ΠΡΟΒΟΛΗ ΑΓΟΡΑΣΜΕΝΟΥ ΒΙΒΛΙΟΥ
+    // ==========================================
+
+    if (action === "view") {
+
+        if (currentBookViewUrl) {
+            window.location.href = currentBookViewUrl;
+        }
+
+        return;
+    }
+
+
+    // ==========================================
+    // ΑΓΟΡΑ ΒΙΒΛΙΟΥ
+    // ==========================================
+
+    if (action === "payment") {
+
+        window.location.href =
+            `/book-payment/${currentBookId}/`;
+
+    }
+
+});
 
 // ==========================================
 // ΚΛΕΙΣΙΜΟ POPUP

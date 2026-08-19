@@ -1,7 +1,5 @@
 import logging
-
 import stripe
-
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import (
@@ -9,7 +7,7 @@ from django.shortcuts import (
     redirect,
     render,
 )
-
+from homepage.models.user_purchases import UserPurchase
 from homepage.models.school import Schoolcontexts
 from homepage.models.school_chapter import Chapter
 
@@ -35,7 +33,6 @@ stripe.api_version = "2025-03-31.basil"
 
 @login_required
 def chapter_stripe_payment(request, book_id, chapter_id):
-
     # ==========================================
     # Βιβλίο
     # ==========================================
@@ -44,6 +41,19 @@ def chapter_stripe_payment(request, book_id, chapter_id):
         Schoolcontexts,
         id=book_id,
     )
+
+    # ==========================================
+    # ΕΛΕΓΧΟΣ ΑΝ ΕΧΕΙ ΗΔΗ ΑΓΟΡΑΣΕΙ ΤΟ ΒΙΒΛΙΟ
+    # ==========================================
+
+    already_purchased = UserPurchase.objects.filter(
+        user=request.user,
+        book=book,
+        chapter__isnull=True,
+    ).exists()
+
+    if already_purchased:
+        return redirect("homepage:homepage")
 
 
     # ==========================================
@@ -56,7 +66,24 @@ def chapter_stripe_payment(request, book_id, chapter_id):
         context=book,
     )
 
+    # ==========================================
+    # ΕΛΕΓΧΟΣ ΑΝ ΥΠΑΡΧΕΙ ΗΔΗ ΠΡΟΣΒΑΣΗ
+    # ==========================================
 
+    already_purchased = UserPurchase.objects.filter(
+        user=request.user,
+        book=book,
+        chapter=chapter,
+    ).exists()
+
+    has_full_book = UserPurchase.objects.filter(
+        user=request.user,
+        book=book,
+        chapter__isnull=True,
+    ).exists()
+
+    if already_purchased or has_full_book:
+        return redirect("homepage:homepage")
     # ==========================================
     # Τιμή
     #
@@ -232,7 +259,180 @@ def chapter_stripe_payment(request, book_id, chapter_id):
 
         return render(
             request,
-            "payment_error.html",
+            "homepage/payment_error.html",
+            {
+                "error_message": error_message,
+            },
+        )
+
+# ==========================================
+# BOOK STRIPE PAYMENT
+# ==========================================
+
+@login_required
+def book_stripe_payment(request, book_id):
+
+    # ==========================================
+    # Βιβλίο
+    # ==========================================
+
+    book = get_object_or_404(
+        Schoolcontexts,
+        id=book_id,
+    )
+
+
+    # ==========================================
+    # Τιμή ολόκληρου βιβλίου
+    # ==========================================
+
+    amount = int(book.price_all * 100)
+
+
+    # ==========================================
+    # Εικόνα βιβλίου
+    # ==========================================
+
+    images = []
+
+    if book.image:
+        images = [book.image.url]
+
+
+    # ==========================================
+    # SUCCESS URL
+    # ==========================================
+
+    success_url = (
+        request.build_absolute_uri("/pay_success/")
+        + "?session_id={CHECKOUT_SESSION_ID}"
+    )
+
+
+    # ==========================================
+    # CANCEL URL
+    # ==========================================
+
+    cancel_url = request.build_absolute_uri(
+        "/pay_cancel/"
+    )
+
+
+    # ==========================================
+    # DEBUG
+    # ==========================================
+
+    logger.info(
+        "Stripe BOOK checkout URLs - success=%s cancel=%s",
+        success_url,
+        cancel_url,
+    )
+
+
+    # ==========================================
+    # CREATE STRIPE CHECKOUT SESSION
+    # ==========================================
+
+    try:
+
+        session = stripe.checkout.Session.create(
+
+            managed_payments={
+                "enabled": False,
+            },
+
+            adaptive_pricing={
+                "enabled": False,
+            },
+
+            # ==================================
+            # Προϊόν
+            # ==================================
+
+            line_items=[
+                {
+                    "price_data": {
+
+                        "currency": "gbp",
+
+                        "unit_amount": amount,
+
+                        "product_data": {
+
+                            "name": book.title,
+
+                            "images": images,
+
+                            "tax_code": "txcd_20060158",
+                        },
+                    },
+
+                    "quantity": 1,
+                }
+            ],
+
+
+            # ==================================
+            # One-off payment
+            # ==================================
+
+            mode="payment",
+
+
+            # ==================================
+            # Metadata
+            # ==================================
+
+            metadata={
+
+                "user_id": str(request.user.id),
+
+                "purchase_type": "book",
+
+                "book_id": str(book.id),
+            },
+
+
+            # ==================================
+            # Redirect URLs
+            # ==================================
+
+            success_url=success_url,
+
+            cancel_url=cancel_url,
+        )
+
+
+        # ==========================================
+        # Redirect στο Stripe
+        # ==========================================
+
+        return redirect(
+            session.url
+        )
+
+
+    # ==========================================
+    # STRIPE ERROR
+    # ==========================================
+
+    except stripe.error.StripeError as e:
+
+        logger.exception(
+            "Stripe BOOK checkout error for user=%s book=%s",
+            request.user.id,
+            book.id,
+        )
+
+        error_message = getattr(
+            e,
+            "user_message",
+            str(e),
+        )
+
+        return render(
+            request,
+            "homepage/payment_error.html",
             {
                 "error_message": error_message,
             },

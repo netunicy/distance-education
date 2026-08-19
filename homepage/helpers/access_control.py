@@ -1,3 +1,4 @@
+from homepage.models.user_purchases import UserPurchase
 #Ελέγχει αν ο χρήστης είναι διαχειριστής.
 def is_admin(user):
     # Επιστρέφει αν ο χρήστης είναι Superuser
@@ -12,26 +13,34 @@ def is_free_video(video):
 # Έλεγχος Αγοράς Βιβλίου
 # ==========================================
 
+# ==========================================
+# Έλεγχος Αγοράς Βιβλίου
+# ==========================================
+
 def has_purchased_book(user, book):
-    """
-    Ελέγχει αν ο χρήστης έχει αγοράσει το βιβλίο.
 
-    Args:
-        user:
-            Ο συνδεδεμένος χρήστης.
+    if not user.is_authenticated:
+        return False
 
-        book:
-            Το βιβλίο.
+    return UserPurchase.objects.filter(
+        user=user,
+        book=book,
+        chapter__isnull=True,
+    ).exists()
 
-    Returns:
-        True αν έχει αγοράσει το βιβλίο.
-        False διαφορετικά.
-    """
+# ==========================================
+# Έλεγχος Αγοράς Κεφαλαίου
+# ==========================================
 
-    # Θα υλοποιηθεί όταν δημιουργηθεί
-    # το σύστημα αγορών.
-    return False
+def has_purchased_chapter(user, chapter):
 
+    if not user.is_authenticated:
+        return False
+
+    return UserPurchase.objects.filter(
+        user=user,
+        chapter=chapter,
+    ).exists()
 # ==========================================
 # Έλεγχος Συνδρομής
 # ==========================================
@@ -108,6 +117,10 @@ def can_view_video(user, video, book):
 
     # Αγορά Βιβλίου
     if has_purchased_book(user, book):
+        return True
+
+    # Αγορά Κεφαλαίου
+    if has_purchased_chapter(user, video.chapter):
         return True
 
     # Ενεργή Συνδρομή

@@ -116,6 +116,49 @@ def book_contents(request, book_id):
 
     book = get_object_or_404(Schoolcontexts, id=book_id)
 
+    # ==========================================
+    # ΕΛΕΓΧΟΣ ΑΓΟΡΑΣ ΟΛΟΚΛΗΡΟΥ ΒΙΒΛΙΟΥ
+    # ==========================================
+
+    has_book_access = False
+
+    if request.user.is_authenticated:
+
+        has_book_access = UserPurchase.objects.filter(
+            user=request.user,
+            book=book,
+            chapter__isnull=True,
+        ).exists()
+
+    # ==========================================
+    # URL ΠΡΟΒΟΛΗΣ ΟΛΟΚΛΗΡΟΥ ΒΙΒΛΙΟΥ
+    # ==========================================
+
+    book_view_url = ""
+
+    if has_book_access:
+
+        first_chapter = (
+            book.chapters
+            .order_by("order")
+            .first()
+        )
+
+        if first_chapter:
+
+            first_video = (
+                first_chapter.videos
+                .order_by("page", "id")
+                .first()
+            )
+
+            if first_video:
+
+                book_view_url = reverse(
+                    "homepage:show_video",
+                    args=[first_video.id],
+                )
+
     if request.user.is_authenticated:
 
         purchased_chapter_ids = UserPurchase.objects.filter(
@@ -153,6 +196,10 @@ def book_contents(request, book_id):
         "price_chapter": book.price_chapter,
         "price_all": book.price_all,
 
+        "has_book_access": has_book_access,
+
+        "book_view_url": book_view_url,
+
         "includes": includes,
 
         "chapters": [
@@ -164,7 +211,10 @@ def book_contents(request, book_id):
 
             "title": chapter.title,
 
-            "has_access": chapter.id in purchased_chapter_ids,
+            "has_access": (
+                has_book_access
+                or chapter.id in purchased_chapter_ids
+            ),
 
             "view_url": (
                 reverse(
@@ -530,7 +580,7 @@ def pay_success(request):
             session_id
         )
 
-    except stripe.error.StripeError as e:
+    except stripe.error.StripeError:
 
         return render(
             request,
@@ -563,16 +613,18 @@ def pay_success(request):
     # ==========================================
 
     metadata = session.metadata
-    user_id = metadata["user_id"]
-    book_id = metadata["book_id"]
-    chapter_id = metadata["chapter_id"]
+
+    user_id = metadata.get("user_id")
+    book_id = metadata.get("book_id")
+    purchase_type = metadata.get("purchase_type")
+    chapter_id = metadata.get("chapter_id")
 
 
     # ==========================================
-    # Έλεγχος Metadata
+    # Βασικός έλεγχος Metadata
     # ==========================================
 
-    if not user_id or not book_id or not chapter_id:
+    if not user_id or not book_id or not purchase_type:
 
         return render(
             request,
@@ -611,14 +663,59 @@ def pay_success(request):
 
 
     # ==========================================
-    # Κεφάλαιο
+    # Τύπος αγοράς
     # ==========================================
 
-    chapter = get_object_or_404(
-        Chapter,
-        id=chapter_id,
-        context=book,
-    )
+    chapter = None
+
+
+    # ==========================================
+    # Αγορά Κεφαλαίου
+    # ==========================================
+
+    if purchase_type == "chapter":
+
+        if not chapter_id:
+
+            return render(
+                request,
+                "homepage/payment_error.html",
+                {
+                    "error_message":
+                        "Δεν βρέθηκε το κεφάλαιο της αγοράς."
+                },
+            )
+
+        chapter = get_object_or_404(
+            Chapter,
+            id=chapter_id,
+            context=book,
+        )
+
+
+    # ==========================================
+    # Αγορά Ολόκληρου Βιβλίου
+    # ==========================================
+
+    elif purchase_type == "book":
+
+        chapter = None
+
+
+    # ==========================================
+    # Άγνωστος τύπος αγοράς
+    # ==========================================
+
+    else:
+
+        return render(
+            request,
+            "homepage/payment_error.html",
+            {
+                "error_message":
+                    "Μη έγκυρος τύπος αγοράς."
+            },
+        )
 
 
     # ==========================================
@@ -657,7 +754,7 @@ def pay_success(request):
             },
         )
 
-    except Exception as e:
+    except Exception:
 
         return render(
             request,
@@ -686,6 +783,7 @@ def pay_success(request):
             },
         )
 
+
     # ==========================================
     # Success Page
     # ==========================================
@@ -697,4 +795,31 @@ def pay_success(request):
             "purchase": purchase,
             "created": created,
         },
+    )
+
+@login_required
+def book_payment(request, book_id):
+
+    # ==========================================
+    # Βιβλίο
+    # ==========================================
+
+    book = get_object_or_404(
+        Schoolcontexts,
+        id=book_id,
+    )
+
+    # ==========================================
+    # Πληροφορίες αγοράς βιβλίου
+    # ==========================================
+
+    return HttpResponse(
+        f"""
+        Βιβλίο: {book}<br>
+        Book ID: {book.id}<br><br>
+
+        Αγορά: Ολόκληρο το βιβλίο<br><br>
+
+        Τιμή βιβλίου: £{book.price_all}
+        """
     )
