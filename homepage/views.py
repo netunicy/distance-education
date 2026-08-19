@@ -607,17 +607,21 @@ def pay_success(request):
             },
         )
 
-
     # ==========================================
     # Metadata
     # ==========================================
 
     metadata = session.metadata
 
-    user_id = metadata.get("user_id")
-    book_id = metadata.get("book_id")
-    purchase_type = metadata.get("purchase_type")
-    chapter_id = metadata.get("chapter_id")
+    user_id = metadata["user_id"]
+    book_id = metadata["book_id"]
+    purchase_type = metadata["purchase_type"]
+
+    chapter_id = (
+        metadata["chapter_id"]
+        if "chapter_id" in metadata
+        else None
+    )
 
 
     # ==========================================

@@ -137,12 +137,40 @@
 
                             {% else %}
 
-                                <a
-                                    href="#"
-                                    class="purchase-open-btn"
-                                >
-                                    Προβολή Βιβλίου
-                                </a>
+                                {% with first_chapter=purchase.book.chapters.first %}
+
+                                    {% if first_chapter %}
+
+                                        {% with first_video=first_chapter.videos.first %}
+
+                                            {% if first_video %}
+
+                                                <a
+                                                    href="{% url 'homepage:show_video' first_video.id %}"
+                                                    class="purchase-open-btn"
+                                                >
+                                                    Προβολή Βιβλίου
+                                                </a>
+
+                                            {% else %}
+
+                                                <span class="purchase-open-btn">
+                                                    Δεν υπάρχει διαθέσιμο υλικό
+                                                </span>
+
+                                            {% endif %}
+
+                                        {% endwith %}
+
+                                    {% else %}
+
+                                        <span class="purchase-open-btn">
+                                            Δεν υπάρχει διαθέσιμο υλικό
+                                        </span>
+
+                                    {% endif %}
+
+                                {% endwith %}
 
                             {% endif %}
 
