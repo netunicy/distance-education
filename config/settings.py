@@ -307,3 +307,6 @@ STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY") or read_secret("stripe_k
 STRIPE_PUBLISHABLE_KEY = os.environ.get("STRIPE_PUBLISHABLE_KEY") or read_secret("stripe_publishable.txt")
 
 stripe.api_key = STRIPE_SECRET_KEY
+
+RECAPTCHA_PUBLIC_KEY = os.environ.get("RECAPTCHA_PUBLIC_KEY") or read_secret ("recaptcha_public.txt") 
+RECAPTCHA_PRIVATE_KEY = os.environ.get("RECAPTCHA_PRIVATE_KEY") or read_secret ("recaptcha_key.txt")
