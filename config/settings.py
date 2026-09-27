@@ -84,22 +84,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
+DATABASE_URL = os.environ.get('DATABASE_URL') or read_secret("d_b_url_neon.txt")
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
-
-# Αν τρέχει στο Render (Production), συνδέσου στο Neon Postgres
-DATABASE_URL = os.environ.get('DATABASE_URL') or read_secret ("d_b_url_neon.txt")
-
-if DATABASE_URL:
-    DATABASES['default'] = dj_database_url.config(
+    'default': dj_database_url.config(
         default=DATABASE_URL,
         conn_max_age=600,
-        ssl_require=True  # Το Neon ΑΠΑΙΤΕΙ SSL ακόμα και από localhost
+        ssl_require=True
     )
+}
 
 
 # Password validation
