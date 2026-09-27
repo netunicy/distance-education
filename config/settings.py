@@ -50,6 +50,8 @@ INSTALLED_APPS = [
 
     'homepage.apps.HomepageConfig',
     'accounts.apps.AccountsConfig',
+
+    "django_recaptcha",
 ]
 SITE_ID = 1
 MIDDLEWARE = [

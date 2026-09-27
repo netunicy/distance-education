@@ -4,21 +4,33 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate
 from django_recaptcha.fields import ReCaptchaField
 from django_recaptcha.widgets import ReCaptchaV2Checkbox
+
+
 class RegisterForm(UserCreationForm):
-    email = forms.EmailField(required=True, help_text="Απαιτείται έγκυρη διεύθυνση email.")
-    captcha = ReCaptchaField(widget=ReCaptchaV2Checkbox())
+    email = forms.EmailField(
+        required=True,
+        help_text="Απαιτείται έγκυρη διεύθυνση email."
+    )
+
+    captcha = ReCaptchaField(
+        widget=ReCaptchaV2Checkbox()
+    )
+
     class Meta:
         model = User
         fields = ["username", "email"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Προσθήκη CSS κλάσεων και placeholders για όλα τα πεδία
+
+        # CSS μόνο στα κανονικά πεδία — ΟΧΙ στο captcha
         for field_name, field in self.fields.items():
-            field.widget.attrs.update({
-                'class': 'form-control',
-                'placeholder': ' '  # Χρειάζεται για το floating label εφέ στο CSS
-            })
+            if field_name != "captcha":
+                field.widget.attrs.update({
+                    "class": "form-control",
+                    "placeholder": " "
+                })
+
 
 # accounts/forms.py
 class EmailOrUsernameLoginForm(forms.Form):
