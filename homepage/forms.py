@@ -1,144 +1,28 @@
-from pathlib import Path
-import tempfile
-import uuid
 
 from django import forms
 
 from .models import TopicsVideo, SchoolVideo
 
-from homepage.helpers.media.processor import VideoProcessor
-
 
 class TopicsVideoAdminForm(forms.ModelForm):
+
+    cloudflare_upload_uid = forms.CharField(
+        required=False,
+        widget=forms.HiddenInput,
+    )
 
     class Meta:
         model = TopicsVideo
         fields = "__all__"
 
-    def save(self, commit=True):
 
-        obj = super().save(commit=False)
-
-        if obj.pk is None:
-            obj.save()
-
-        if obj.video_file:
-
-            processor = VideoProcessor()
-
-            # Κρατάμε το παλιό UID
-            old_uid = obj.cloudflare_uid
-
-            with tempfile.TemporaryDirectory() as temp_dir:
-
-                extension = Path(obj.video_file.name).suffix
-
-                temp_input = (
-                    Path(temp_dir) /
-                    f"{uuid.uuid4()}{extension}"
-                )
-
-                with open(temp_input, "wb") as destination:
-
-                    for chunk in obj.video_file.chunks():
-                        destination.write(chunk)
-
-                response = processor.process(
-                    input_file=temp_input,
-                    meta={
-                        "section": "Topics",
-                        "category": obj.topics_content.topics.category,
-                        "level": obj.topics_content.topics.level,
-                        "topics": obj.topics_content.topics.slug,
-                        "content": obj.topics_content.slug,
-                        "material": obj.slug,
-                    }
-                )
-
-            # Αν το upload πέτυχε και υπήρχε παλιό video,
-            # το διαγράφουμε από το Cloudflare.
-            if old_uid:
-                try:
-                    processor.uploader.delete_video(old_uid)
-                except Exception:
-                    pass
-
-            obj.cloudflare_uid = response["uid"]
-            obj.cloudflare_status = response["status"]
-
-            obj.video_file.delete(save=False)
-            obj.video_file = None
-
-            obj.save(
-                update_fields=[
-                    "cloudflare_uid",
-                    "cloudflare_status",
-                    "video_file",
-                ]
-            )
-
-        return obj
 class VideoAdminForm(forms.ModelForm):
+
+    cloudflare_upload_uid = forms.CharField(
+        required=False,
+        widget=forms.HiddenInput,
+    )
 
     class Meta:
         model = SchoolVideo
         fields = "__all__"
-
-    def save(self, commit=True):
-
-        obj = super().save(commit=False)
-
-        if obj.pk is None:
-            obj.save()
-
-        if obj.video_file:
-
-            processor = VideoProcessor()
-
-            # Κρατάμε το παλιό UID
-            old_uid = obj.cloudflare_uid
-
-            with tempfile.TemporaryDirectory() as temp_dir:
-
-                extension = Path(obj.video_file.name).suffix
-
-                temp_input = (
-                    Path(temp_dir) /
-                    f"{uuid.uuid4()}{extension}"
-                )
-
-                with open(temp_input, "wb") as destination:
-
-                    for chunk in obj.video_file.chunks():
-                        destination.write(chunk)
-
-                response = processor.process(
-                    input_file=temp_input,
-                    meta={
-                        "section": "Schools",
-                        "subject": obj.chapter.context.subject_lesson,
-                        "class": obj.chapter.context.class_is,
-                        "book": obj.chapter.context.slug,
-                        "chapter": obj.chapter.slug,
-                        "video": obj.slug,
-                    }
-                )
-
-            if old_uid:
-                processor.uploader.delete_video(old_uid)
-
-            obj.cloudflare_uid = response["uid"]
-            obj.cloudflare_status = response["status"]
-
-            obj.video_file.delete(save=False)
-            obj.video_file = None
-
-            obj.save(
-                update_fields=[
-                    "cloudflare_uid",
-                    "cloudflare_status",
-                    "video_file",
-                ]
-            )
-
-        return obj
