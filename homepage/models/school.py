@@ -1,7 +1,7 @@
 from django.db import models
 
 from homepage.helpers.slug import generate_unique_slug
-from cloudinary.models import CloudinaryField
+from homepage.storage import get_r2_storage
 
 class Schoolcontexts(models.Model):
 
@@ -70,8 +70,9 @@ class Schoolcontexts(models.Model):
         null=True,
     )
 
-    image = CloudinaryField(
-        "image",
+    image = models.ImageField(
+        upload_to="schools/",
+        storage=get_r2_storage,
         blank=True,
         null=True,
     )
@@ -113,46 +114,7 @@ class Schoolcontexts(models.Model):
                 name="unique_context_per_class_level_edition",
             ),
         ]
-    def get_cloudinary_folder(self):
 
-        subject_paths = {
-            self.SubjectLesson.GREEK: "ellinika",
-            self.SubjectLesson.MATHS: "mathimatika",
-            self.SubjectLesson.HISTORY: "istoria",
-            self.SubjectLesson.PHYSICS: "fysiki",
-        }
-
-        class_paths = {
-            self.ClassLevel.A: "a",
-            self.ClassLevel.B: "b",
-            self.ClassLevel.G: "g",
-            self.ClassLevel.D: "d",
-            self.ClassLevel.E: "e",
-            self.ClassLevel.ST: "st",
-        }
-
-        level_paths = {
-            self.LevelType.ΔΗΜΟΤΙΚΟ: "dimotikou",
-            self.LevelType.ΓΥΜΝΑΣΙΟ: "gymnasiou",
-            self.LevelType.ΛΥΚΕΙΟ: "lykeiou",
-        }
-
-        subject = subject_paths.get(
-            self.subject_lesson,
-            "other"
-        )
-
-        school_class = class_paths.get(
-            self.class_is,
-            "other"
-        )
-
-        level = level_paths.get(
-            self.stage,
-            "other"
-        )
-
-        return f"{subject}/{school_class}-{level}/book-images"
     def save(self, *args, **kwargs):
         # 1. Παραγωγή/έλεγχος του slug
         if not self.slug:

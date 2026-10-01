@@ -19,7 +19,6 @@ from homepage.helpers.video_service import increment_video_views
 from homepage.helpers.navigation import get_previous_video
 from homepage.helpers.navigation import get_next_video
 from homepage.helpers.navigation import get_videos_by_chapter
-from homepage.helpers.video_security import create_secure_url
 from homepage.helpers.access_control import can_view_video
 
 import stripe

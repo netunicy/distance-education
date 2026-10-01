@@ -1,6 +1,6 @@
 from django.db import models
 from homepage.helpers.slug import generate_unique_slug
-from cloudinary.models import CloudinaryField
+from homepage.storage import get_r2_storage
 class Topics(models.Model):
 
     class Category(models.TextChoices):
@@ -23,7 +23,7 @@ class Topics(models.Model):
     category = models.CharField(max_length=50,choices=Category.choices,default=Category.OTHER)
     level = models.CharField(max_length=30,choices=Level.choices,default=Level.BEGINNER)
     description = models.TextField(blank=True)
-    image = CloudinaryField("image",blank=True,null=True)
+    image = models.ImageField(upload_to="topics/",storage=get_r2_storage,blank=True,null=True,)
     alt = models.CharField(max_length=1000,blank=True,null=True)
     includes = models.TextField(blank=True,help_text="Τι περιλαμβάνει. Ένα στοιχείο ανά γραμμή.")
     price = models.DecimalField(max_digits=8,decimal_places=2,default=0)

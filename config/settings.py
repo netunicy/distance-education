@@ -1,6 +1,5 @@
 import os
 from pathlib import Path
-import cloudinary
 import os
 import dj_database_url
 import stripe
@@ -39,8 +38,6 @@ INSTALLED_APPS = [
 
     'django.contrib.sites',
 
-    'cloudinary',
-
     'tinymce',
 
     'allauth',
@@ -52,6 +49,8 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
 
     "django_recaptcha",
+
+    "storages",
 ]
 SITE_ID = 1
 MIDDLEWARE = [
@@ -135,34 +134,43 @@ STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static",]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-CLOUDINARY_CLOUD_NAME = (
-    os.environ.get("CLOUDINARY_CLOUD_NAME")
-    or read_secret("cloudinary_cloud_name.txt")
-)
-
-CLOUDINARY_API_KEY = (
-    os.environ.get("CLOUDINARY_API_KEY")
-    or read_secret("cloudinary_api_key.txt")
-)
-
-CLOUDINARY_API_SECRET = (
-    os.environ.get("CLOUDINARY_API_SECRET")
-    or read_secret("cloudinary_api_secret.txt")
-)
-
-
-cloudinary.config(
-    cloud_name=CLOUDINARY_CLOUD_NAME,
-    api_key=CLOUDINARY_API_KEY,
-    api_secret=CLOUDINARY_API_SECRET,
-    secure=True,
-)
-
 CLOUDFLARE_ACCOUNT_ID = os.environ.get("CLOUDFLARE_ACCOUNT_ID") or read_secret ("cloudflare_account_id.txt")
 CLOUDFLARE_API_TOKEN = os.environ.get("CLOUDFLARE_API_TOKEN") or read_secret ("cloudflare_api_token.txt")
 CLOUDFLARE_STREAM_KEY_ID = (os.environ.get("CLOUDFLARE_STREAM_KEY_ID") or read_secret("cloudflare_stream_key_id.txt"))
 CLOUDFLARE_STREAM_PRIVATE_KEY = (os.environ.get("CLOUDFLARE_STREAM_PRIVATE_KEY") or read_secret("cloudflare_stream_private_key.pem"))
 CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN = (os.environ.get("CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN") or read_secret("cloudflare_stream_customer_subdomain.txt"))
+
+CLOUDFLARE_R2_ACCESS_KEY_ID = (os.environ.get("CLOUDFLARE_R2_ACCESS_KEY_ID") or read_secret("cloudfare_Access_Key_ID.txt"))
+CLOUDFLARE_R2_SECRET_ACCESS_KEY = (os.environ.get("CLOUDFLARE_R2_SECRET_ACCESS_KEY") or read_secret("cloudfare_Secret_Access_Key.txt"))
+CLOUDFLARE_R2_BUCKET_NAME = "the-turnonlearning-images"
+CLOUDFLARE_R2_ENDPOINT_URL = (f"https://{CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com")
+CLOUDFLARE_R2_CUSTOM_DOMAIN = "images.turnonlearning.com"
+
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+
+    "r2": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+        "OPTIONS": {
+            "access_key": CLOUDFLARE_R2_ACCESS_KEY_ID,
+            "secret_key": CLOUDFLARE_R2_SECRET_ACCESS_KEY,
+            "bucket_name": CLOUDFLARE_R2_BUCKET_NAME,
+            "endpoint_url": CLOUDFLARE_R2_ENDPOINT_URL,
+            "region_name": "auto",
+            "default_acl": None,
+            "querystring_auth": False,
+            "custom_domain": CLOUDFLARE_R2_CUSTOM_DOMAIN,
+        },
+    },
+
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}
+
+MEDIA_URL = "/media/"
 
 
 # Προαιρετικές ρυθμίσεις για το allauth (αν χρησιμοποιείς το email για login)
