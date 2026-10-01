@@ -2,12 +2,12 @@ from django.db import models
 from tinymce.models import HTMLField
 
 from homepage.models.image_cards import InformationPage
-
+from homepage.storage import get_r2_storage
 # models/informations.py
 class Informations(models.Model):
     page = models.OneToOneField(InformationPage, on_delete=models.CASCADE, related_name='modal_info', null=True, blank=True)
     title = models.CharField(max_length=200)
-    image = models.CharField(max_length=1000, null=True, blank=True)
+    image = models.ImageField(upload_to="informations/",storage=get_r2_storage,blank=True,null=True,)
     description = HTMLField(null=True, blank=True)
 
     class Meta:
