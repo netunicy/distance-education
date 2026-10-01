@@ -17,7 +17,7 @@ def read_secret(file_name, default=None):
 
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY") or read_secret("secret_key.txt")
 
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [
     'distance-education.onrender.com',

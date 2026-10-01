@@ -82,3 +82,40 @@ class CloudflareStreamClient:
         response.raise_for_status()
 
         return response.json()
+
+    
+    def create_tus_upload(self, file_size):
+
+        if not isinstance(file_size, int) or file_size <= 0:
+            raise ValueError("Invalid video file size.")
+
+        headers = {
+            **self.headers,
+            "Tus-Resumable": "1.0.0",
+            "Upload-Length": str(file_size),
+            "Upload-Metadata": (
+            "maxDurationSeconds NjAw,requiresignedurls dHJ1ZQ=="
+            ),
+        }
+
+        response = requests.post(
+            self.base_url + "/stream",
+            params={"direct_user": "true"},
+            headers=headers,
+            timeout=30,
+        )
+
+        response.raise_for_status()
+
+        upload_url = response.headers.get("Location")
+        uid = response.headers.get("stream-media-id")
+
+        if not upload_url or not uid:
+            raise RuntimeError(
+                "Cloudflare did not return the upload URL or UID."
+            )
+
+        return {
+            "upload_url": upload_url,
+            "uid": uid,
+        }
