@@ -33,6 +33,11 @@ class TopicsVideo(models.Model):
     order = models.PositiveIntegerField(default=1)
     is_free = models.BooleanField(default=False)
 
+    views = models.PositiveIntegerField(
+            default=0,
+            editable=False,
+        )
+
     class Meta:
 
         ordering = ["order"]
