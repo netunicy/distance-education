@@ -171,7 +171,7 @@ STORAGES = {
 }
 
 MEDIA_URL = "/media/"
-
+MEDIA_ROOT = BASE_DIR / "media"
 
 # Προαιρετικές ρυθμίσεις για το allauth (αν χρησιμοποιείς το email για login)
 ACCOUNT_LOGIN_METHODS = {"email"}

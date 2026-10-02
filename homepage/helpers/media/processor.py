@@ -1,14 +1,9 @@
-from pathlib import Path
-import tempfile
-
-from .compressor import compress_video
 from homepage.cloudflare.upload import CloudflareUploader
 
 
 class VideoProcessor:
 
     def __init__(self):
-
         self.uploader = CloudflareUploader()
 
     def process(self, input_file, meta=None):
@@ -16,37 +11,20 @@ class VideoProcessor:
         if meta is None:
             meta = {}
 
-        with tempfile.TemporaryDirectory() as temp_dir:
+        # ==========================================
+        # Upload στο Cloudflare Stream
+        # Χωρίς συμπίεση στο Render
+        # ==========================================
 
-            temp_dir = Path(temp_dir)
+        response = self.uploader.upload_video(
+            file_path=str(input_file),
+            meta=meta,
+        )
 
-            compressed_file = (
-                temp_dir /
-                f"{Path(input_file).stem}_compressed.mp4"
-            )
+        result = response["result"]
 
-            # ==========================
-            # Συμπίεση
-            # ==========================
-
-            compress_video(
-                input_file=input_file,
-                output_file=compressed_file,
-            )
-
-            # ==========================
-            # Upload στο Cloudflare Stream
-            # ==========================
-
-            response = self.uploader.upload_video(
-                file_path=str(compressed_file),
-                meta=meta,
-            )
-
-            result = response["result"]
-
-            return {
-                "uid": result["uid"],
-                "status": result["status"]["state"],
-                "ready": result["readyToStream"],
-            }
+        return {
+            "uid": result["uid"],
+            "status": result["status"]["state"],
+            "ready": result["readyToStream"],
+        }

@@ -1,6 +1,7 @@
 
 import json
-
+from django.contrib import messages
+from homepage.helpers.media.processor import VideoProcessor
 from django.contrib import admin
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.http import JsonResponse
@@ -246,7 +247,60 @@ class SchoolVideoAdmin(admin.ModelAdmin):
     def book(self, obj):
         return obj.chapter.context
 
+    def save_model(self, request, obj, form, change):
 
+        new_video = (
+            "video_file" in form.changed_data
+            and bool(obj.video_file)
+        )
+
+        # Αποθήκευση στο Django
+        super().save_model(request, obj, form, change)
+
+        if not new_video:
+            return
+
+        try:
+            # Μεταφόρτωση χωρίς τοπική συμπίεση
+            processor = VideoProcessor()
+
+            result = processor.process(
+                input_file=obj.video_file.path,
+                meta={
+                    "name": obj.activity_title or str(obj),
+                },
+            )
+
+        except Exception:
+            messages.error(
+                request,
+                "Η μεταφόρτωση στο Cloudflare απέτυχε. "
+                "Το αρχικό αρχείο διατηρήθηκε για "
+                "να μπορέσετε να δοκιμάσετε ξανά."
+            )
+            return
+
+        # Αποθήκευση των στοιχείων Cloudflare
+        obj.cloudflare_uid = result["uid"]
+        obj.cloudflare_status = result["status"]
+        obj.cloudflare_ready = result["ready"]
+
+        # Αποθήκευση πριν από τη διαγραφή
+        obj.save(
+            update_fields=[
+                "cloudflare_uid",
+                "cloudflare_status",
+                "cloudflare_ready",
+            ]
+        )
+
+        # Αφαίρεση προσωρινού αρχείου
+        obj.video_file.delete(save=True)
+
+        messages.success(
+            request,
+            "Το βίντεο μεταφορτώθηκε στο Cloudflare."
+        )
 # =========================================================
 # Topics
 # =========================================================
