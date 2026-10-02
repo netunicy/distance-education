@@ -19,8 +19,13 @@ from homepage.helpers.video_service import increment_video_views
 from homepage.helpers.navigation import get_previous_video
 from homepage.helpers.navigation import get_next_video
 from homepage.helpers.navigation import get_videos_by_chapter
-from homepage.helpers.access_control import can_view_video
-
+from homepage.helpers.access_control import (
+    can_view_video,
+    can_view_topics_video,
+)
+from homepage.models.topic_purchases import TopicPurchase
+import logging
+logger = logging.getLogger(__name__)
 import stripe
 
 from django.conf import settings
@@ -30,6 +35,7 @@ from django.shortcuts import get_object_or_404, render
 from homepage.models.school import Schoolcontexts
 from homepage.models.school_chapter import Chapter
 from homepage.models.user_purchases import UserPurchase
+
 
 
 def homepage(request):
@@ -412,19 +418,48 @@ def topics_contents(request, topics_id):
 @login_required
 def show_topics_video(request, material_id):
 
+    # Αναζητά το video
     material = get_object_or_404(
         TopicsVideo,
         id=material_id,
     )
 
+    # Παίρνει το περιεχόμενο
+    topics_content = material.topics_content
+
+    # Παίρνει το Topic
+    topic = topics_content.topics
+
+    # Ελέγχει αν ο χρήστης μπορεί να δει το video
+    if not can_view_topics_video(
+        request.user,
+        material,
+        topic,
+    ):
+        return redirect("homepage:homepage")
+
+    # Αυξάνει τις προβολές του video
+    increment_video_views(material)
+
+    # Δημιουργεί το προστατευμένο Cloudflare Signed Playback URL
     secure_video_url = create_signed_playback_url(
         material.cloudflare_uid,
     )
 
-    context = {
+    # Δημιουργία Context
+    context = build_base_context()
+
+    context.update({
+
         "material": material,
+
+        "topics_content": topics_content,
+
+        "topic": topic,
+
         "secure_video_url": secure_video_url,
-    }
+
+    })
 
     return render(
         request,
@@ -508,40 +543,6 @@ def show_video(request, video_id):
     )
 
 @login_required
-def chapter_payment(request, book_id, chapter_id):
-
-    # ==========================================
-    # Βιβλίο
-    # ==========================================
-
-    book = get_object_or_404(
-        Schoolcontexts,
-        id=book_id,
-    )
-
-    # ==========================================
-    # Κεφάλαιο
-    # ==========================================
-
-    chapter = get_object_or_404(
-        Chapter,
-        id=chapter_id,
-        context=book,
-    )
-
-    return HttpResponse(
-        f"""
-        Βιβλίο: {book}<br>
-        Book ID: {book.id}<br><br>
-
-        Κεφάλαιο: {chapter.title}<br>
-        Chapter ID: {chapter.id}<br><br>
-
-        Τιμή κεφαλαίου: £{book.price_chapter}
-        """
-    )
-
-@login_required
 def pay_success(request):
 
     # ==========================================
@@ -551,15 +552,11 @@ def pay_success(request):
     session_id = request.GET.get("session_id")
 
     if not session_id:
-
         return render(
             request,
             "homepage/payment_error.html",
-            {
-                "error_message": "Δεν βρέθηκε η συναλλαγή."
-            },
+            {"error_message": "Δεν βρέθηκε η συναλλαγή."},
         )
-
 
     # ==========================================
     # Stripe Settings
@@ -568,19 +565,16 @@ def pay_success(request):
     stripe.api_key = settings.STRIPE_SECRET_KEY
     stripe.api_version = "2025-03-31.basil"
 
-
     # ==========================================
     # Ανάκτηση Stripe Session
     # ==========================================
 
     try:
-
         session = stripe.checkout.Session.retrieve(
             session_id
         )
 
     except stripe.error.StripeError:
-
         return render(
             request,
             "homepage/payment_error.html",
@@ -590,13 +584,11 @@ def pay_success(request):
             },
         )
 
-
     # ==========================================
-    # Έλεγχος πληρωμής
+    # Έλεγχος Πληρωμής
     # ==========================================
 
     if session.payment_status != "paid":
-
         return render(
             request,
             "homepage/payment_error.html",
@@ -610,41 +602,34 @@ def pay_success(request):
     # Metadata
     # ==========================================
 
-    metadata = session.metadata
+    metadata = session.metadata or {}
 
-    user_id = metadata["user_id"]
-    book_id = metadata["book_id"]
-    purchase_type = metadata["purchase_type"]
-
-    chapter_id = (
-        metadata["chapter_id"]
-        if "chapter_id" in metadata
-        else None
-    )
-
+    user_id = metadata.get("user_id")
+    purchase_type = metadata.get("purchase_type")
 
     # ==========================================
-    # Βασικός έλεγχος Metadata
+    # Έλεγχος Metadata
     # ==========================================
 
-    if not user_id or not book_id or not purchase_type:
-
+    if not user_id or purchase_type not in (
+        "book",
+        "chapter",
+        "topic",
+    ):
         return render(
             request,
             "homepage/payment_error.html",
             {
                 "error_message":
-                    "Δεν βρέθηκαν τα στοιχεία της αγοράς."
+                    "Δεν βρέθηκαν έγκυρα στοιχεία αγοράς."
             },
         )
-
 
     # ==========================================
     # Έλεγχος Χρήστη
     # ==========================================
 
     if str(request.user.id) != str(user_id):
-
         return render(
             request,
             "homepage/payment_error.html",
@@ -654,81 +639,13 @@ def pay_success(request):
             },
         )
 
-
     # ==========================================
-    # Βιβλίο
-    # ==========================================
-
-    book = get_object_or_404(
-        Schoolcontexts,
-        id=book_id,
-    )
-
-
-    # ==========================================
-    # Τύπος αγοράς
-    # ==========================================
-
-    chapter = None
-
-
-    # ==========================================
-    # Αγορά Κεφαλαίου
-    # ==========================================
-
-    if purchase_type == "chapter":
-
-        if not chapter_id:
-
-            return render(
-                request,
-                "homepage/payment_error.html",
-                {
-                    "error_message":
-                        "Δεν βρέθηκε το κεφάλαιο της αγοράς."
-                },
-            )
-
-        chapter = get_object_or_404(
-            Chapter,
-            id=chapter_id,
-            context=book,
-        )
-
-
-    # ==========================================
-    # Αγορά Ολόκληρου Βιβλίου
-    # ==========================================
-
-    elif purchase_type == "book":
-
-        chapter = None
-
-
-    # ==========================================
-    # Άγνωστος τύπος αγοράς
-    # ==========================================
-
-    else:
-
-        return render(
-            request,
-            "homepage/payment_error.html",
-            {
-                "error_message":
-                    "Μη έγκυρος τύπος αγοράς."
-            },
-        )
-
-
-    # ==========================================
-    # Ποσό πληρωμής
+    # Έλεγχος Ποσού
     # ==========================================
 
     amount_paid = session.amount_total
 
     if amount_paid is None:
-
         return render(
             request,
             "homepage/payment_error.html",
@@ -738,44 +655,162 @@ def pay_success(request):
             },
         )
 
-
     # ==========================================
-    # Καταχώριση Αγοράς
+    # Αγορά Topic
     # ==========================================
 
-    try:
+    if purchase_type == "topic":
 
-        purchase, created = UserPurchase.objects.get_or_create(
+        topic_id = metadata.get("topic_id")
 
-            stripe_session_id=session.id,
+        if not topic_id:
+            return render(
+                request,
+                "homepage/payment_error.html",
+                {
+                    "error_message":
+                        "Δεν βρέθηκε το Topic της αγοράς."
+                },
+            )
 
-            defaults={
-                "user": request.user,
-                "book": book,
-                "chapter": chapter,
-                "amount_paid": amount_paid,
-            },
+        topic = get_object_or_404(
+            Topics,
+            id=topic_id,
         )
 
-    except Exception:
+        try:
 
-        return render(
-            request,
-            "homepage/payment_error.html",
-            {
-                "error_message":
-                    "Η πληρωμή ολοκληρώθηκε, αλλά παρουσιάστηκε "
-                    "πρόβλημα κατά την καταχώριση της αγοράς."
-            },
-        )
+            # Έλεγχος προηγούμενης αγοράς
+            existing_purchase = TopicPurchase.objects.filter(
+                user=request.user,
+                topic=topic,
+            ).first()
 
+            if existing_purchase:
+
+                # Επαλήθευση της ίδιας συναλλαγής
+                if existing_purchase.stripe_session_id != session.id:
+                    logger.warning(
+                        "Additional paid Topic session: user=%s topic=%s session=%s",
+                        request.user.id,
+                        topic.id,
+                        session.id,
+                    )
+
+                purchase = existing_purchase
+                created = False
+
+            else:
+
+                purchase, created = TopicPurchase.objects.get_or_create(
+                    stripe_session_id=session.id,
+                    defaults={
+                        "user": request.user,
+                        "topic": topic,
+                        "amount_paid": amount_paid,
+                    },
+                )
+
+        except Exception:
+
+            logger.exception(
+                "Topic purchase registration failed: session=%s",
+                session.id,
+            )
+
+            return render(
+                request,
+                "homepage/payment_error.html",
+                {
+                    "error_message":
+                        "Η πληρωμή ολοκληρώθηκε, αλλά παρουσιάστηκε "
+                        "πρόβλημα κατά την καταχώριση της αγοράς."
+                },
+            )
 
     # ==========================================
-    # Έλεγχος υπάρχουσας αγοράς
+    # Αγορά Βιβλίου ή Κεφαλαίου
+    # ==========================================
+
+    else:
+
+        book_id = metadata.get("book_id")
+        chapter_id = metadata.get("chapter_id")
+
+        if not book_id:
+            return render(
+                request,
+                "homepage/payment_error.html",
+                {
+                    "error_message":
+                        "Δεν βρέθηκε το βιβλίο της αγοράς."
+                },
+            )
+
+        book = get_object_or_404(
+            Schoolcontexts,
+            id=book_id,
+        )
+
+        chapter = None
+
+        # Αγορά κεφαλαίου
+        if purchase_type == "chapter":
+
+            if not chapter_id:
+                return render(
+                    request,
+                    "homepage/payment_error.html",
+                    {
+                        "error_message":
+                            "Δεν βρέθηκε το κεφάλαιο της αγοράς."
+                    },
+                )
+
+            chapter = get_object_or_404(
+                Chapter,
+                id=chapter_id,
+                context=book,
+            )
+
+        # ==========================================
+        # Καταχώριση Αγοράς
+        # ==========================================
+
+        try:
+
+            purchase, created = UserPurchase.objects.get_or_create(
+                stripe_session_id=session.id,
+                defaults={
+                    "user": request.user,
+                    "book": book,
+                    "chapter": chapter,
+                    "amount_paid": amount_paid,
+                },
+            )
+
+        except Exception:
+
+            logger.exception(
+                "Book purchase registration failed: session=%s",
+                session.id,
+            )
+
+            return render(
+                request,
+                "homepage/payment_error.html",
+                {
+                    "error_message":
+                        "Η πληρωμή ολοκληρώθηκε, αλλά παρουσιάστηκε "
+                        "πρόβλημα κατά την καταχώριση της αγοράς."
+                },
+            )
+
+    # ==========================================
+    # Τελικός Έλεγχος Αγοράς
     # ==========================================
 
     if purchase.user_id != request.user.id:
-
         return render(
             request,
             "homepage/payment_error.html",
@@ -785,7 +820,6 @@ def pay_success(request):
                     "επιβεβαίωση της αγοράς."
             },
         )
-
 
     # ==========================================
     # Success Page
@@ -824,5 +858,39 @@ def book_payment(request, book_id):
         Αγορά: Ολόκληρο το βιβλίο<br><br>
 
         Τιμή βιβλίου: £{book.price_all}
+        """
+    )
+
+@login_required
+def chapter_payment(request, book_id, chapter_id):
+
+    # ==========================================
+    # Βιβλίο
+    # ==========================================
+
+    book = get_object_or_404(
+        Schoolcontexts,
+        id=book_id,
+    )
+
+    # ==========================================
+    # Κεφάλαιο
+    # ==========================================
+
+    chapter = get_object_or_404(
+        Chapter,
+        id=chapter_id,
+        context=book,
+    )
+
+    return HttpResponse(
+        f"""
+        Βιβλίο: {book}<br>
+        Book ID: {book.id}<br><br>
+
+        Κεφάλαιο: {chapter.title}<br>
+        Chapter ID: {chapter.id}<br><br>
+
+        Τιμή κεφαλαίου: £{book.price_chapter}
         """
     )

@@ -8,3 +8,4 @@ from .topics_video import TopicsVideo
 from .image_cards import InformationPage
 from .informations import Informations
 from .user_purchases import UserPurchase
+from .topic_purchases import TopicPurchase

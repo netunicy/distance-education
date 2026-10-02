@@ -283,46 +283,80 @@
              PURCHASE INFORMATION
         ========================================== -->
 
+        <!-- ==========================================
+            PURCHASE INFORMATION
+        ========================================== -->
+
         <div class="purchase-info">
 
+            <!-- ======================================
+                TOPIC PURCHASE
+            ======================================= -->
 
-            <!-- BOOK -->
-
-            <div class="purchase-info-row">
-
-                <strong>Βιβλίο:</strong>
-
-                {{ purchase.book.title }}
-
-            </div>
-
-
-            <!-- CHAPTER -->
-
-            {% if purchase.chapter %}
+            {% if purchase.topic %}
 
                 <div class="purchase-info-row">
 
-                    <strong>Κεφάλαιο:</strong>
+                    <strong>Topic:</strong>
 
-                    {{ purchase.chapter.title }}
+                    {{ purchase.topic.title }}
 
                 </div>
-
-            {% else %}
 
                 <div class="purchase-info-row">
 
                     <strong>Αγορά:</strong>
 
-                    Ολόκληρο βιβλίο
+                    Ολόκληρο Topic
 
                 </div>
+
+            <!-- ======================================
+                BOOK PURCHASE
+            ======================================= -->
+
+            {% else %}
+
+                <div class="purchase-info-row">
+
+                    <strong>Βιβλίο:</strong>
+
+                    {{ purchase.book.title }}
+
+                </div>
+
+                <!-- CHAPTER -->
+
+                {% if purchase.chapter %}
+
+                    <div class="purchase-info-row">
+
+                        <strong>Κεφάλαιο:</strong>
+
+                        {{ purchase.chapter.title }}
+
+                    </div>
+
+                <!-- FULL BOOK -->
+
+                {% else %}
+
+                    <div class="purchase-info-row">
+
+                        <strong>Αγορά:</strong>
+
+                        Ολόκληρο βιβλίο
+
+                    </div>
+
+                {% endif %}
 
             {% endif %}
 
 
-            <!-- DATE -->
+            <!-- ======================================
+                PURCHASE DATE
+            ======================================= -->
 
             <div class="purchase-info-row">
 
@@ -331,7 +365,6 @@
                 {{ purchase.purchased_at|date:"d/m/Y H:i" }}
 
             </div>
-
 
         </div>
 

@@ -1,4 +1,5 @@
 from homepage.models.user_purchases import UserPurchase
+from homepage.models.topic_purchases import TopicPurchase
 #Ελέγχει αν ο χρήστης είναι διαχειριστής.
 def is_admin(user):
     # Επιστρέφει αν ο χρήστης είναι Superuser
@@ -88,6 +89,7 @@ def has_active_promocode(user):
 # ==========================================
 
 def can_view_video(user, video, book):
+    
     """
     Ελέγχει αν ο χρήστης
     μπορεί να δει το video.
@@ -121,6 +123,50 @@ def can_view_video(user, video, book):
 
     # Αγορά Κεφαλαίου
     if has_purchased_chapter(user, video.chapter):
+        return True
+
+    # Ενεργή Συνδρομή
+    if has_active_subscription(user):
+        return True
+
+    # Ενεργό Promo Code
+    if has_active_promocode(user):
+        return True
+
+    # Δεν επιτρέπεται η πρόσβαση
+    return False
+
+# ==========================================
+# Έλεγχος Αγοράς Topic
+# ==========================================
+
+def has_purchased_topic(user, topic):
+
+    if not user.is_authenticated:
+        return False
+
+    return TopicPurchase.objects.filter(
+        user=user,
+        topic=topic,
+    ).exists()
+
+
+# ==========================================
+# Έλεγχος Πρόσβασης Topics Video
+# ==========================================
+
+def can_view_topics_video(user, material, topic):
+
+    # Administrator
+    if is_admin(user):
+        return True
+
+    # Δωρεάν Video
+    if is_free_video(material):
+        return True
+
+    # Αγορά Topic
+    if has_purchased_topic(user, topic):
         return True
 
     # Ενεργή Συνδρομή

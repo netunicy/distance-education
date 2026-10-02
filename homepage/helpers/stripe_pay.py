@@ -11,6 +11,8 @@ from homepage.models.user_purchases import UserPurchase
 from homepage.models.school import Schoolcontexts
 from homepage.models.school_chapter import Chapter
 
+from homepage.models.topics import Topics
+from homepage.models.topic_purchases import TopicPurchase
 
 # ==========================================
 # LOGGER
@@ -422,6 +424,105 @@ def book_stripe_payment(request, book_id):
             "Stripe BOOK checkout error for user=%s book=%s",
             request.user.id,
             book.id,
+        )
+
+        error_message = getattr(
+            e,
+            "user_message",
+            str(e),
+        )
+
+        return render(
+            request,
+            "homepage/payment_error.html",
+            {
+                "error_message": error_message,
+            },
+        )
+
+# ==========================================
+# TOPIC STRIPE PAYMENT
+# ==========================================
+
+@login_required
+def topic_stripe_payment(request, topic_id):
+
+    # Αναζητά το Topic
+    topic = get_object_or_404(
+        Topics,
+        id=topic_id,
+    )
+
+    # Ελέγχει αν ο χρήστης έχει ήδη αγοράσει το Topic
+    already_purchased = TopicPurchase.objects.filter(
+        user=request.user,
+        topic=topic,
+    ).exists()
+
+    if already_purchased:
+        return redirect("homepage:homepage")
+
+    # Τιμή σε pence
+    amount = int(topic.price * 100)
+
+    # Success URL
+    success_url = (
+        request.build_absolute_uri("/pay_success/")
+        + "?session_id={CHECKOUT_SESSION_ID}"
+    )
+
+    # Cancel URL
+    cancel_url = request.build_absolute_uri(
+        "/pay_cancel/"
+    )
+
+    try:
+
+        # Δημιουργεί το Stripe Checkout Session
+        session = stripe.checkout.Session.create(
+
+            managed_payments={
+                "enabled": False,
+            },
+
+            adaptive_pricing={
+                "enabled": False,
+            },
+
+            line_items=[
+                {
+                    "price_data": {
+                        "currency": "gbp",
+                        "unit_amount": amount,
+                        "product_data": {
+                            "name": topic.title,
+                            "tax_code": "txcd_20060158",
+                        },
+                    },
+                    "quantity": 1,
+                }
+            ],
+
+            mode="payment",
+
+            metadata={
+                "user_id": str(request.user.id),
+                "purchase_type": "topic",
+                "topic_id": str(topic.id),
+            },
+
+            success_url=success_url,
+            cancel_url=cancel_url,
+        )
+
+        return redirect(session.url)
+
+    except stripe.error.StripeError as e:
+
+        logger.exception(
+            "Stripe TOPIC checkout error for user=%s topic=%s",
+            request.user.id,
+            topic.id,
         )
 
         error_message = getattr(

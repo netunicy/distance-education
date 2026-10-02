@@ -1,10 +1,11 @@
 
 from django.urls import path
-
+from homepage.helpers.stripe_webhook import stripe_webhook
 from homepage import views
 from homepage.helpers.stripe_pay import (
     chapter_stripe_payment,
     book_stripe_payment,
+    topic_stripe_payment,
 )
 
 
@@ -66,4 +67,9 @@ urlpatterns = [
         views.pay_success,
         name="pay_success",
     ),
+
+    path("topic/payment/<int:topic_id>/",topic_stripe_payment,name="topic_stripe_payment",),
+    
+    # STRIPE WEBHOOK
+    path("stripe/webhook/",stripe_webhook,name="stripe_webhook",),
 ]
