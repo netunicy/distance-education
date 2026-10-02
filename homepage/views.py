@@ -602,7 +602,7 @@ def pay_success(request):
     # Metadata
     # ==========================================
 
-    metadata = dict(session.metadata) if session.metadata else {}
+    metadata = session.metadata.to_dict() if session.metadata else {}
 
     user_id = metadata.get("user_id")
     purchase_type = metadata.get("purchase_type")
