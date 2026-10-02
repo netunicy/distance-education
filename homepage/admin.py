@@ -1,14 +1,15 @@
 
 import json
-from django.contrib import messages
-from homepage.helpers.media.processor import VideoProcessor
-from django.contrib import admin
+import logging
+
+from django.contrib import admin, messages
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.http import JsonResponse
 from django.urls import path
 from django.views.decorators.http import require_POST
 
 from homepage.cloudflare.client import CloudflareStreamClient
+from homepage.helpers.media.processor import VideoProcessor
 
 from .models import (
     Logo,
@@ -26,6 +27,9 @@ from .forms import (
     TopicsVideoAdminForm,
     VideoAdminForm,
 )
+
+
+logger = logging.getLogger(__name__)
 
 
 # =========================================================
@@ -64,6 +68,7 @@ class TopicsVideoAdmin(admin.ModelAdmin):
     # -----------------------------------------------------
 
     def get_urls(self):
+
         custom_urls = [
             path(
                 "create-upload/",
@@ -127,6 +132,10 @@ class TopicsVideoAdmin(admin.ModelAdmin):
             )
 
         except Exception:
+            logger.exception(
+                "TopicsVideo Cloudflare upload creation failed"
+            )
+
             return JsonResponse(
                 {"error": "Cloudflare upload creation failed"},
                 status=502,
@@ -247,6 +256,10 @@ class SchoolVideoAdmin(admin.ModelAdmin):
     def book(self, obj):
         return obj.chapter.context
 
+    # -----------------------------------------------------
+    # Save and upload to Cloudflare
+    # -----------------------------------------------------
+
     def save_model(self, request, obj, form, change):
 
         new_video = (
@@ -254,14 +267,43 @@ class SchoolVideoAdmin(admin.ModelAdmin):
             and bool(obj.video_file)
         )
 
-        # Αποθήκευση στο Django
-        super().save_model(request, obj, form, change)
+        logger.info(
+            "SchoolVideo save started: id=%s, new_video=%s",
+            obj.pk,
+            new_video,
+        )
+
+        # Αποθήκευση της εγγραφής στο Django.
+        try:
+            super().save_model(
+                request,
+                obj,
+                form,
+                change,
+            )
+
+        except Exception:
+            logger.exception(
+                "SchoolVideo database save failed"
+            )
+            raise
 
         if not new_video:
+            logger.info(
+                "SchoolVideo saved without a new video upload."
+            )
             return
 
+        # -------------------------------------------------
+        # Upload without local compression
+        # -------------------------------------------------
+
         try:
-            # Μεταφόρτωση χωρίς τοπική συμπίεση
+            logger.info(
+                "Starting Cloudflare upload for SchoolVideo %s",
+                obj.pk,
+            )
+
             processor = VideoProcessor()
 
             result = processor.process(
@@ -271,36 +313,96 @@ class SchoolVideoAdmin(admin.ModelAdmin):
                 },
             )
 
+            if not result.get("uid"):
+                raise RuntimeError(
+                    "Cloudflare did not return a video UID."
+                )
+
+            logger.info(
+                "Cloudflare upload completed: video_id=%s, uid=%s",
+                obj.pk,
+                result["uid"],
+            )
+
         except Exception:
+            logger.exception(
+                "Cloudflare SchoolVideo upload failed: video_id=%s",
+                obj.pk,
+            )
+
             messages.error(
                 request,
                 "Η μεταφόρτωση στο Cloudflare απέτυχε. "
-                "Το αρχικό αρχείο διατηρήθηκε για "
-                "να μπορέσετε να δοκιμάσετε ξανά."
+                "Το αρχικό αρχείο διατηρήθηκε. "
+                "Ελέγξτε τα Render Logs."
             )
             return
 
-        # Αποθήκευση των στοιχείων Cloudflare
-        obj.cloudflare_uid = result["uid"]
-        obj.cloudflare_status = result["status"]
-        obj.cloudflare_ready = result["ready"]
+        # -------------------------------------------------
+        # Save Cloudflare information
+        # -------------------------------------------------
 
-        # Αποθήκευση πριν από τη διαγραφή
-        obj.save(
-            update_fields=[
-                "cloudflare_uid",
-                "cloudflare_status",
-                "cloudflare_ready",
-            ]
-        )
+        try:
+            obj.cloudflare_uid = result["uid"]
+            obj.cloudflare_status = result.get(
+                "status", "pending"
+            )
+            obj.cloudflare_ready = result.get(
+                "ready", False
+            )
 
-        # Αφαίρεση προσωρινού αρχείου
-        obj.video_file.delete(save=True)
+            obj.save(
+                update_fields=[
+                    "cloudflare_uid",
+                    "cloudflare_status",
+                    "cloudflare_ready",
+                ]
+            )
+
+        except Exception:
+            logger.exception(
+                "Failed to save Cloudflare information "
+                "for SchoolVideo %s",
+                obj.pk,
+            )
+
+            messages.error(
+                request,
+                "Το βίντεο μεταφορτώθηκε στο Cloudflare, "
+                "αλλά απέτυχε η αποθήκευση του UID. "
+                "Μην ανεβάσετε ξανά το βίντεο πριν "
+                "ελέγξετε τα Render Logs."
+            )
+            return
+
+        # -------------------------------------------------
+        # Remove temporary file
+        # -------------------------------------------------
+
+        try:
+            obj.video_file.delete(save=True)
+
+        except Exception:
+            logger.exception(
+                "Failed to delete temporary file "
+                "for SchoolVideo %s",
+                obj.pk,
+            )
+
+            messages.warning(
+                request,
+                "Το βίντεο μεταφορτώθηκε επιτυχώς, "
+                "αλλά δεν διαγράφηκε το προσωρινό αρχείο."
+            )
+            return
 
         messages.success(
             request,
-            "Το βίντεο μεταφορτώθηκε στο Cloudflare."
+            "Το βίντεο μεταφορτώθηκε στο Cloudflare Stream. "
+            "Η επεξεργασία του μπορεί να συνεχίζεται."
         )
+
+
 # =========================================================
 # Topics
 # =========================================================
