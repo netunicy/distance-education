@@ -1,6 +1,5 @@
 
 {% extends "homepage/base.html" %}
-{% load static %}
 
 {% block content %}
 
@@ -8,32 +7,30 @@
 
     <section class="topics-content-wrapper">
 
-        <!-- ==========================================
-                        MAIN CONTENT
-        =========================================== -->
+        <!-- MAIN CONTENT -->
 
         <main class="topics-main-content">
 
-            <!-- HEADER -->
+            <!-- VIDEO HEADER -->
 
             <div class="topics-video-header-card">
 
                 <h1 class="topics-book-title">
-                    {{ material.title }}
+                    {{ material.topics_content }}
                 </h1>
 
                 <h2 class="topics-chapter-title">
-                    Υλικό
+                    {{ material.title }}
                 </h2>
 
                 <div class="topics-video-info">
 
                     <span>
-                        Τίτλος: {{ material.title }}
+                        {{ material.title }}
                     </span>
 
                     <span>
-                        Τύπος: {{ material.get_material_type_display }}
+                        {{ material.get_material_type_display }}
                     </span>
 
                     <span>
@@ -44,9 +41,8 @@
 
             </div>
 
-            <!-- ==========================================
-                            VIDEO PLAYER
-            =========================================== -->
+
+            <!-- VIDEO PLAYER -->
 
             <div class="topics-player-wrapper">
 
@@ -61,66 +57,59 @@
 
             </div>
 
-            <!-- ==========================================
-                            NAVIGATION
-            =========================================== -->
 
-            {% if previous_material or next_material %}
+            <!-- NAVIGATION -->
 
-                <div class="topics-navigation-wrapper">
+            <div class="topics-navigation-wrapper">
 
-                    <div class="topics-previous-wrapper">
+                <div class="topics-previous-wrapper">
 
-                        {% if previous_material %}
+                    {% if previous_material %}
 
-                            <a href="#"
-                               class="topics-previous-button">
-                                ◀ Previous
-                            </a>
+                        <a href="{{ previous_material_url }}"
+                           class="topics-previous-button">
+                            ◀ Previous
+                        </a>
 
-                        {% endif %}
-
-                    </div>
-
-                    <div class="topics-next-wrapper">
-
-                        {% if next_material %}
-
-                            <a href="#"
-                               class="topics-next-button">
-                                Next ▶
-                            </a>
-
-                        {% endif %}
-
-                    </div>
+                    {% endif %}
 
                 </div>
 
-            {% endif %}
+                <div class="topics-next-wrapper">
 
-            <!-- ==========================================
-                            FOOTER
-            =========================================== -->
+                    {% if next_material %}
+
+                        <a href="{{ next_material_url }}"
+                           class="topics-next-button">
+                            Next ▶
+                        </a>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <!-- VIDEO FOOTER -->
 
             <div class="topics-video-footer">
 
                 <span>
-                    Σειρά: {{ material.order }}
+                    Προβολές: {{ material.views }}
                 </span>
 
             </div>
 
         </main>
 
-        <!-- ==========================================
-                            PLAYLIST
-        =========================================== -->
+
+        <!-- PLAYLIST -->
 
         <aside class="topics-playlist-wrapper">
 
             <div class="topics-playlist-title">
-                Videos Topics
+                Videos Κεφαλαίου
             </div>
 
             <ul class="topics-playlist">
@@ -129,9 +118,14 @@
 
                     <li>
 
-                        <div class="topics-playlist-item">
+                        <a href="{{ item.video_url }}"
+                           class="topics-playlist-item">
 
                             <div class="topics-playlist-thumbnail">
+
+                                <img
+                                    src="https://videodelivery.net/{{ item.cloudflare_uid }}/thumbnails/thumbnail.jpg"
+                                    alt="{{ item.title }}">
 
                                 <div class="topics-playlist-play">
                                     ▶
@@ -151,7 +145,7 @@
 
                             </div>
 
-                        </div>
+                        </a>
 
                     </li>
 
@@ -172,9 +166,7 @@
 </div>
 
 
-<!-- ==========================================
-                SHAKA PLAYER
-=========================================== -->
+<!-- SHAKA PLAYER -->
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.15.12/shaka-player.compiled.js"></script>
 
