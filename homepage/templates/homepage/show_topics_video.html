@@ -3,257 +3,257 @@
 
 {% block content %}
 
-<div class="topics-video-page">
+    <div class="topics-video-page">
 
-    <section class="topics-content-wrapper">
+        <section class="topics-content-wrapper">
 
-        <!-- MAIN CONTENT -->
+            <!-- MAIN CONTENT -->
 
-        <main class="topics-main-content">
+            <main class="topics-main-content">
 
-            <!-- VIDEO HEADER -->
+                <!-- VIDEO HEADER -->
 
-            <div class="topics-video-header-card">
+                <div class="topics-video-header-card">
 
-                <h1 class="topics-book-title">
-                    {{ material.topics_content }}
-                </h1>
+                    <h1 class="topics-book-title">
+                        {{ material.topics_content }}
+                    </h1>
 
-                <h2 class="topics-chapter-title">
-                    {{ material.title }}
-                </h2>
-
-                <div class="topics-video-info">
-
-                    <span>
+                    <h2 class="topics-chapter-title">
                         {{ material.title }}
-                    </span>
+                    </h2>
+
+                    <div class="topics-video-info">
+
+                        <span>
+                            {{ material.title }}
+                        </span>
+
+                        <span>
+                            {{ material.get_material_type_display }}
+                        </span>
+
+                        <span>
+                            Δωρεάν: {{ material.is_free }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- VIDEO PLAYER -->
+
+                <div class="topics-player-wrapper">
+
+                    <video
+                        id="video"
+                        controls
+                        controlsList="nodownload"
+                        disablePictureInPicture
+                        disableRemotePlayback
+                        preload="metadata">
+                    </video>
+
+                </div>
+
+
+                <!-- NAVIGATION -->
+
+                <div class="topics-navigation-wrapper">
+
+                    <div class="topics-previous-wrapper">
+
+                        {% if previous_material %}
+
+                            <a href="{{ previous_material_url }}"
+                            class="topics-previous-button">
+                                ◀ Previous
+                            </a>
+
+                        {% endif %}
+
+                    </div>
+
+                    <div class="topics-next-wrapper">
+
+                        {% if next_material %}
+
+                            <a href="{{ next_material_url }}"
+                            class="topics-next-button">
+                                Next ▶
+                            </a>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <!-- VIDEO FOOTER -->
+
+                <div class="topics-video-footer">
 
                     <span>
-                        {{ material.get_material_type_display }}
-                    </span>
-
-                    <span>
-                        Δωρεάν: {{ material.is_free }}
+                        Προβολές: {{ material.views }}
                     </span>
 
                 </div>
 
-            </div>
+            </main>
 
 
-            <!-- VIDEO PLAYER -->
+            <!-- PLAYLIST -->
 
-            <div class="topics-player-wrapper">
+            <aside class="topics-playlist-wrapper">
 
-                <video
-                    id="video"
-                    controls
-                    controlsList="nodownload"
-                    disablePictureInPicture
-                    disableRemotePlayback
-                    preload="metadata">
-                </video>
-
-            </div>
-
-
-            <!-- NAVIGATION -->
-
-            <div class="topics-navigation-wrapper">
-
-                <div class="topics-previous-wrapper">
-
-                    {% if previous_material %}
-
-                        <a href="{{ previous_material_url }}"
-                           class="topics-previous-button">
-                            ◀ Previous
-                        </a>
-
-                    {% endif %}
-
+                <div class="topics-playlist-title">
+                    Videos Κεφαλαίου
                 </div>
 
-                <div class="topics-next-wrapper">
+                <ul class="topics-playlist">
 
-                    {% if next_material %}
+                    {% for item in topic_materials %}
 
-                        <a href="{{ next_material_url }}"
-                           class="topics-next-button">
-                            Next ▶
-                        </a>
+                        <li>
 
-                    {% endif %}
+                            <a href="{{ item.video_url }}"
+                            class="topics-playlist-item">
 
-                </div>
+                                <div class="topics-playlist-thumbnail">
 
-            </div>
+                                    <img
+                                        src="https://videodelivery.net/{{ item.cloudflare_uid }}/thumbnails/thumbnail.jpg"
+                                        alt="{{ item.title }}">
 
+                                    <div class="topics-playlist-play">
+                                        ▶
+                                    </div>
 
-            <!-- VIDEO FOOTER -->
-
-            <div class="topics-video-footer">
-
-                <span>
-                    Προβολές: {{ material.views }}
-                </span>
-
-            </div>
-
-        </main>
-
-
-        <!-- PLAYLIST -->
-
-        <aside class="topics-playlist-wrapper">
-
-            <div class="topics-playlist-title">
-                Videos Κεφαλαίου
-            </div>
-
-            <ul class="topics-playlist">
-
-                {% for item in topic_materials %}
-
-                    <li>
-
-                        <a href="{{ item.video_url }}"
-                           class="topics-playlist-item">
-
-                            <div class="topics-playlist-thumbnail">
-
-                                <img
-                                    src="https://videodelivery.net/{{ item.cloudflare_uid }}/thumbnails/thumbnail.jpg"
-                                    alt="{{ item.title }}">
-
-                                <div class="topics-playlist-play">
-                                    ▶
                                 </div>
 
-                            </div>
+                                <div class="topics-playlist-content">
 
-                            <div class="topics-playlist-content">
+                                    <div class="topics-playlist-video-title">
+                                        {{ item.title }}
+                                    </div>
 
-                                <div class="topics-playlist-video-title">
-                                    {{ item.title }}
+                                    <div class="topics-playlist-video-part">
+                                        {{ item.get_material_type_display }}
+                                    </div>
+
                                 </div>
 
-                                <div class="topics-playlist-video-part">
-                                    {{ item.get_material_type_display }}
-                                </div>
+                            </a>
 
-                            </div>
+                        </li>
 
-                        </a>
+                    {% empty %}
 
-                    </li>
+                        <li class="topics-playlist-empty">
+                            Δεν υπάρχουν videos.
+                        </li>
 
-                {% empty %}
+                    {% endfor %}
 
-                    <li class="topics-playlist-empty">
-                        Δεν υπάρχουν videos.
-                    </li>
+                </ul>
 
-                {% endfor %}
+            </aside>
 
-            </ul>
+        </section>
 
-        </aside>
-
-    </section>
-
-</div>
+    </div>
 
 
-<!-- SHAKA PLAYER -->
+    <!-- SHAKA PLAYER -->
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.15.12/shaka-player.compiled.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.15.12/shaka-player.compiled.js"></script>
 
-<script>
+    <script>
 
-document.addEventListener("DOMContentLoaded", async () => {
+    document.addEventListener("DOMContentLoaded", async () => {
 
-    // Έλεγχος φόρτωσης της βιβλιοθήκης
-    if (typeof shaka === "undefined") {
-
-        console.error(
-            "Shaka Player library failed to load."
-        );
-
-        return;
-    }
-
-    shaka.polyfill.installAll();
-
-    // Έλεγχος υποστήριξης του browser
-    if (!shaka.Player.isBrowserSupported()) {
-
-        console.error(
-            "Ο browser δεν υποστηρίζει τον Shaka Player."
-        );
-
-        return;
-    }
-
-    // Εντοπισμός του video element
-    const video = document.getElementById("video");
-
-    if (!video) {
-
-        console.error(
-            "Video element not found."
-        );
-
-        return;
-    }
-
-    // Δημιουργία του player
-    const player = new shaka.Player(video);
-
-    // Καταγραφή σφαλμάτων
-    player.addEventListener("error", function(event) {
-
-        console.error(
-            "Shaka Player Error:",
-            event.detail
-        );
-
-    });
-
-    // Φόρτωση προστατευμένου βίντεο
-    try {
-
-        const videoUrl = "{{ secure_video_url|escapejs }}";
-
-        if (!videoUrl) {
+        // Έλεγχος φόρτωσης της βιβλιοθήκης
+        if (typeof shaka === "undefined") {
 
             console.error(
-                "Cloudflare Signed URL is missing."
+                "Shaka Player library failed to load."
             );
 
             return;
         }
 
-        await player.load(videoUrl);
+        shaka.polyfill.installAll();
 
-        console.log(
-            "Video loaded successfully."
-        );
+        // Έλεγχος υποστήριξης του browser
+        if (!shaka.Player.isBrowserSupported()) {
 
-    }
+            console.error(
+                "Ο browser δεν υποστηρίζει τον Shaka Player."
+            );
 
-    catch(error) {
+            return;
+        }
 
-        console.error(
-            "Video loading failed:",
-            error
-        );
+        // Εντοπισμός του video element
+        const video = document.getElementById("video");
 
-    }
+        if (!video) {
 
-});
+            console.error(
+                "Video element not found."
+            );
 
-</script>
+            return;
+        }
+
+        // Δημιουργία του player
+        const player = new shaka.Player(video);
+
+        // Καταγραφή σφαλμάτων
+        player.addEventListener("error", function(event) {
+
+            console.error(
+                "Shaka Player Error:",
+                event.detail
+            );
+
+        });
+
+        // Φόρτωση προστατευμένου βίντεο
+        try {
+
+            const videoUrl = "{{ secure_video_url|escapejs }}";
+
+            if (!videoUrl) {
+
+                console.error(
+                    "Cloudflare Signed URL is missing."
+                );
+
+                return;
+            }
+
+            await player.load(videoUrl);
+
+            console.log(
+                "Video loaded successfully."
+            );
+
+        }
+
+        catch(error) {
+
+            console.error(
+                "Video loading failed:",
+                error
+            );
+
+        }
+
+    });
+
+    </script>
 
 {% endblock %}
