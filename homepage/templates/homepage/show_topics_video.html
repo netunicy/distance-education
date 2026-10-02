@@ -1,3 +1,4 @@
+
 {% extends "homepage/base.html" %}
 
 {% block content %}
@@ -37,76 +38,94 @@
     width="900">
 </video>
 
+
+<!-- SHAKA PLAYER -->
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.15.12/shaka-player.compiled.js"></script>
 
 <script>
 
-    document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("DOMContentLoaded", async () => {
 
-        shaka.polyfill.installAll();
+    // Έλεγχος φόρτωσης της βιβλιοθήκης
+    if (typeof shaka === "undefined") {
 
-        if (!shaka.Player.isBrowserSupported()) {
+        console.error(
+            "Shaka Player library failed to load."
+        );
 
-            alert("Ο browser δεν υποστηρίζεται.");
+        return;
+    }
+
+    shaka.polyfill.installAll();
+
+    // Έλεγχος υποστήριξης του browser
+    if (!shaka.Player.isBrowserSupported()) {
+
+        console.error(
+            "Ο browser δεν υποστηρίζει τον Shaka Player."
+        );
+
+        return;
+    }
+
+    // Εντοπισμός του video element
+    const video = document.getElementById("video");
+
+    if (!video) {
+
+        console.error(
+            "Video element not found."
+        );
+
+        return;
+    }
+
+    // Δημιουργία του player
+    const player = new shaka.Player(video);
+
+    // Καταγραφή σφαλμάτων
+    player.addEventListener("error", function(event) {
+
+        console.error(
+            "Shaka Player Error:",
+            event.detail
+        );
+
+    });
+
+    // Φόρτωση προστατευμένου βίντεο
+    try {
+
+        const videoUrl = "{{ secure_video_url|escapejs }}";
+
+        if (!videoUrl) {
+
+            console.error(
+                "Cloudflare Signed URL is missing."
+            );
 
             return;
-
         }
 
-        const video = document.getElementById("video");
+        await player.load(videoUrl);
 
-        const player = new shaka.Player(video);
+        console.log(
+            "Video loaded successfully."
+        );
 
-        player.addEventListener("error", function(event) {
+    }
 
-            console.error("Shaka Error:", event.detail);
+    catch(error) {
 
-        });
+        console.error(
+            "Video loading failed:",
+            error
+        );
 
-        try {
+    }
 
-            await player.load("{{ secure_video_url }}");
-
-            console.log("Video loaded successfully.");
-
-        }
-
-        catch(error) {
-
-            console.error(error);
-
-        }
-
-    });
-
-</script>
-
-<script>
-
-    document.addEventListener("contextmenu", function(event) {
-
-        event.preventDefault();
-
-    });
-
-</script>
-
-<script>
-
-    document.addEventListener("keydown", function(e) {
-
-        if (
-            e.key === "F12" ||
-            (e.ctrlKey && e.shiftKey &&
-                ["I", "J", "C"].includes(e.key.toUpperCase())) ||
-            (e.ctrlKey && e.key.toUpperCase() === "U")
-        ) {
-
-            e.preventDefault();
-
-        }
-
-    });
+});
 
 </script>
 

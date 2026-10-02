@@ -1,3 +1,4 @@
+
 {% extends "homepage/base.html" %}
 
 {% block content %}
@@ -12,46 +13,32 @@
 
         <main class="main-content">
 
-            <!-- ==========================================
-                            HEADER
-            =========================================== -->
+            <!-- HEADER -->
 
             <div class="video-header-card">
 
                 <h1 class="book-title">
-
                     {{ book.title }}
-
                 </h1>
 
                 <h2 class="chapter-title">
-
                     {{ chapter.title }}
-
                 </h2>
 
                 <div class="video-info">
 
                     <span>
                         {{ video.activity_title }}
-
                     </span>
 
                     <span>
-
-                        Σελίδα:
-                        {{ video.page }}
-
+                        Σελίδα: {{ video.page }}
                     </span>
 
                     {% if video.part %}
-
                         <span>
-
                             {{ video.get_part_display }}
-
                         </span>
-
                     {% endif %}
 
                 </div>
@@ -59,7 +46,7 @@
             </div>
 
             <!-- ==========================================
-                            PLAYER
+                            VIDEO PLAYER
             =========================================== -->
 
             <div class="player-wrapper">
@@ -71,13 +58,12 @@
                     disablePictureInPicture
                     disableRemotePlayback
                     preload="metadata">
-
                 </video>
 
             </div>
 
             <!-- ==========================================
-                        NAVIGATION
+                            NAVIGATION
             =========================================== -->
 
             <div class="navigation-wrapper">
@@ -88,9 +74,7 @@
 
                         <a href="#"
                            class="previous-button">
-
                             ◀ Previous
-
                         </a>
 
                     {% endif %}
@@ -103,9 +87,7 @@
 
                         <a href="#"
                            class="next-button">
-
                             Next ▶
-
                         </a>
 
                     {% endif %}
@@ -115,16 +97,13 @@
             </div>
 
             <!-- ==========================================
-                        FOOTER
+                            FOOTER
             =========================================== -->
 
             <div class="video-footer">
 
                 <span>
-
-                    Προβολές:
-                    {{ video.views }}
-
+                    Προβολές: {{ video.views }}
                 </span>
 
             </div>
@@ -132,21 +111,19 @@
         </main>
 
         <!-- ==========================================
-                        PLAYLIST
+                            PLAYLIST
         =========================================== -->
 
         <aside class="playlist-wrapper">
 
             <div class="playlist-title">
-
                 Videos Κεφαλαίου
-
             </div>
 
             <ul class="playlist">
 
                 {% for item in chapter_videos %}
-                    
+
                     <li>
 
                         <a href="#"
@@ -159,9 +136,7 @@
                                     alt="{{ item.activity_title }}">
 
                                 <div class="playlist-play">
-
                                     ▶
-
                                 </div>
 
                             </div>
@@ -169,9 +144,7 @@
                             <div class="playlist-content">
 
                                 <div class="playlist-video-title">
-
                                     {{ item.activity_title }}
-
                                 </div>
 
                                 <div class="playlist-video-part">
@@ -179,9 +152,7 @@
                                     Σελίδα {{ item.page }}
 
                                     {% if item.part %}
-
                                         • {{ item.get_part_display }}
-
                                     {% endif %}
 
                                 </div>
@@ -195,9 +166,7 @@
                 {% empty %}
 
                     <li class="playlist-empty">
-
                         Δεν υπάρχουν videos.
-
                     </li>
 
                 {% endfor %}
@@ -210,62 +179,92 @@
 
 </div>
 
+
+<!-- ==========================================
+                SHAKA PLAYER
+=========================================== -->
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.15.12/shaka-player.compiled.js"></script>
 
 <script>
 
 document.addEventListener("DOMContentLoaded", async () => {
 
-    shaka.polyfill.installAll();
+    // Έλεγχος φόρτωσης του Shaka Player
+    if (typeof shaka === "undefined") {
 
-    if (!shaka.Player.isBrowserSupported()) {
-
-        alert("Ο browser δεν υποστηρίζεται.");
+        console.error(
+            "Shaka Player library failed to load."
+        );
 
         return;
-
     }
 
+    shaka.polyfill.installAll();
+
+    // Έλεγχος υποστήριξης browser
+    if (!shaka.Player.isBrowserSupported()) {
+
+        console.error(
+            "Ο browser δεν υποστηρίζει τον Shaka Player."
+        );
+
+        return;
+    }
+
+    // Εντοπισμός του video element
     const video = document.getElementById("video");
 
+    if (!video) {
+
+        console.error(
+            "Video element not found."
+        );
+
+        return;
+    }
+
+    // Δημιουργία του player
     const player = new shaka.Player(video);
 
+    // Καταγραφή σφαλμάτων
     player.addEventListener("error", function(event) {
 
-        console.error("Shaka Error:", event.detail);
+        console.error(
+            "Shaka Player Error:",
+            event.detail
+        );
 
     });
 
+    // Φόρτωση προστατευμένου βίντεο
     try {
 
-        await player.load("{{ secure_video_url }}");
+        const videoUrl = "{{ secure_video_url|escapejs }}";
+
+        if (!videoUrl) {
+
+            console.error(
+                "Cloudflare Signed URL is missing."
+            );
+
+            return;
+        }
+
+        await player.load(videoUrl);
+
+        console.log(
+            "Video loaded successfully."
+        );
 
     }
 
     catch(error) {
 
-        console.error(error);
-
-    }
-
-});
-
-document.addEventListener("contextmenu", function(event) {
-
-    event.preventDefault();
-
-});
-
-document.addEventListener("keydown", function(e) {
-
-    if (
-        e.key === "F12" ||
-        (e.ctrlKey && e.shiftKey &&
-            ["I","J","C"].includes(e.key.toUpperCase())) ||
-        (e.ctrlKey && e.key.toUpperCase() === "U")
-    ) {
-
-        e.preventDefault();
+        console.error(
+            "Video loading failed:",
+            error
+        );
 
     }
 
