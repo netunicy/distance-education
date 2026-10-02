@@ -22,6 +22,7 @@ User = get_user_model()
 
 def register_stripe_purchase(session):
 
+    session = session.to_dict()
     # Επεξεργαζόμαστε μόνο ολοκληρωμένες πληρωμές.
     if session.get("payment_status") != "paid":
         return
