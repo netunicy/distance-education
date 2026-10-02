@@ -313,9 +313,9 @@ TINYMCE_DEFAULT_CONFIG = {
     "toolbar_mode": "wrap",
     "contextmenu": "link image table",
 }
-STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY") or read_secret("stripe_key.txt")
-STRIPE_PUBLISHABLE_KEY = os.environ.get("STRIPE_PUBLISHABLE_KEY") or read_secret("stripe_publishable.txt")
-
+STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY") or read_secret ("stripe_key.txt")
+STRIPE_PUBLISHABLE_KEY = os.environ.get("STRIPE_PUBLISHABLE_KEY") or read_secret ("stripe_publishable.txt")
+STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET") or read_secret ("stripe_webhook.txt") 
 stripe.api_key = STRIPE_SECRET_KEY
 
 RECAPTCHA_PUBLIC_KEY = os.environ.get("RECAPTCHA_PUBLIC_KEY") or read_secret ("recaptcha_public.txt") 
