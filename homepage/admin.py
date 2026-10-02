@@ -3,6 +3,7 @@ import logging
 from django.contrib import admin, messages
 
 from homepage.helpers.media.processor import VideoProcessor
+from homepage.cloudflare.client import CloudflareStreamClient
 
 from .models import (
     Logo,
@@ -106,14 +107,30 @@ class CloudflareVideoUploadMixin:
                 "Το βίντεο ανέβηκε και αποθηκεύτηκε, αλλά δεν διαγράφηκε "
                 "το προσωρινό αρχείο.",
             )
-            return
 
+        # Delete the previous Cloudflare video only after the new one is
+        # protected, its UID is saved, and the temporary file is removed.
         if old_uid and old_uid != uid:
-            logger.warning(
-                "%s video replaced: id=%s old_uid=%s new_uid=%s; "
-                "old Cloudflare video was NOT deleted",
-                model_name, obj.pk, old_uid, uid,
-            )
+            try:
+                deletion = CloudflareStreamClient().delete(f"/stream/{old_uid}")
+                if deletion is not None and deletion.get("success") is False:
+                    raise RuntimeError(f"Cloudflare rejected deletion: {deletion}")
+                logger.warning(
+                    "%s previous Cloudflare video deleted: id=%s old_uid=%s new_uid=%s",
+                    model_name, obj.pk, old_uid, uid,
+                )
+            except Exception:
+                logger.exception(
+                    "%s old Cloudflare video deletion failed: id=%s old_uid=%s new_uid=%s",
+                    model_name, obj.pk, old_uid, uid,
+                )
+                messages.warning(
+                    request,
+                    "Το νέο βίντεο αποθηκεύτηκε και προστατεύτηκε, αλλά δεν "
+                    "διαγράφηκε το παλιό από το Cloudflare. Ελέγξτε τα Render Logs.",
+                )
+                return
+
         messages.success(
             request,
             "Το βίντεο ανέβηκε στο Cloudflare και επαληθεύτηκε η προστασία Signed URLs.",
