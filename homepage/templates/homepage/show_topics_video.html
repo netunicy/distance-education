@@ -11,6 +11,10 @@
 
     <section class="topics-content-wrapper">
 
+        <!-- ==========================================
+                        MAIN CONTENT
+        =========================================== -->
+
         <main class="topics-main-content">
 
             <!-- HEADER -->
@@ -18,39 +22,34 @@
             <div class="topics-video-header-card">
 
                 <h1 class="topics-book-title">
-                    Topics Video
+                    {{ material.title }}
                 </h1>
 
                 <h2 class="topics-chapter-title">
                     Υλικό
                 </h2>
 
-                <div class="topics-material-info">
+                <div class="topics-video-info">
 
-                    <p>
-                        <strong>Τίτλος:</strong>
-                        {{ material.title }}
-                    </p>
+                    <span>
+                        Τίτλος: {{ material.title }}
+                    </span>
 
-                    <p>
-                        <strong>Τύπος:</strong>
-                        {{ material.get_material_type_display }}
-                    </p>
+                    <span>
+                        Τύπος: {{ material.get_material_type_display }}
+                    </span>
 
-                    <p>
-                        <strong>Δωρεάν:</strong>
-                        {{ material.is_free }}
-                    </p>
+                    <span>
+                        Δωρεάν: {{ material.is_free }}
+                    </span>
 
                 </div>
 
             </div>
 
-            <!-- VIDEO PLAYER -->
-
-            <h2 class="topics-player-title">
-                Video
-            </h2>
+            <!-- ==========================================
+                            VIDEO PLAYER
+            =========================================== -->
 
             <div class="topics-player-wrapper">
 
@@ -60,20 +59,125 @@
                     controlsList="nodownload"
                     disablePictureInPicture
                     disableRemotePlayback
-                    preload="metadata"
-                    width="900">
+                    preload="metadata">
                 </video>
 
             </div>
 
+            <!-- ==========================================
+                            NAVIGATION
+            =========================================== -->
+
+            {% if previous_material or next_material %}
+
+                <div class="topics-navigation-wrapper">
+
+                    <div class="topics-previous-wrapper">
+
+                        {% if previous_material %}
+
+                            <a href="#"
+                               class="topics-previous-button">
+                                ◀ Previous
+                            </a>
+
+                        {% endif %}
+
+                    </div>
+
+                    <div class="topics-next-wrapper">
+
+                        {% if next_material %}
+
+                            <a href="#"
+                               class="topics-next-button">
+                                Next ▶
+                            </a>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+            <!-- ==========================================
+                            FOOTER
+            =========================================== -->
+
+            <div class="topics-video-footer">
+
+                <span>
+                    Σειρά: {{ material.order }}
+                </span>
+
+            </div>
+
         </main>
+
+        <!-- ==========================================
+                            PLAYLIST
+        =========================================== -->
+
+        <aside class="topics-playlist-wrapper">
+
+            <div class="topics-playlist-title">
+                Videos Topics
+            </div>
+
+            <ul class="topics-playlist">
+
+                {% for item in topic_materials %}
+
+                    <li>
+
+                        <div class="topics-playlist-item">
+
+                            <div class="topics-playlist-thumbnail">
+
+                                <div class="topics-playlist-play">
+                                    ▶
+                                </div>
+
+                            </div>
+
+                            <div class="topics-playlist-content">
+
+                                <div class="topics-playlist-video-title">
+                                    {{ item.title }}
+                                </div>
+
+                                <div class="topics-playlist-video-part">
+                                    {{ item.get_material_type_display }}
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </li>
+
+                {% empty %}
+
+                    <li class="topics-playlist-empty">
+                        Δεν υπάρχουν videos.
+                    </li>
+
+                {% endfor %}
+
+            </ul>
+
+        </aside>
 
     </section>
 
 </div>
 
 
-<!-- SHAKA PLAYER -->
+<!-- ==========================================
+                SHAKA PLAYER
+=========================================== -->
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.15.12/shaka-player.compiled.js"></script>
 
