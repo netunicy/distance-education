@@ -19,8 +19,8 @@ class CloudflareUploader:
         if meta is None:
             meta = {}
 
-        # Αποστολή του αρχικού αρχείου.
-        # Καμία συμπίεση στο Render.
+        # Αποστολή του αρχικού αρχείου στο Cloudflare.
+        # Δεν πραγματοποιείται συμπίεση στο Render.
 
         with open(file_path, "rb") as video:
 
@@ -56,10 +56,21 @@ class CloudflareUploader:
                 "Cloudflare did not return a video UID."
             )
 
-        # Ενεργοποίηση της προστασίας.
-        # Το UID καταγράφεται για πιθανή ανάκτηση.
+        logger.warning(
+            "CLOUDFLARE VIDEO UPLOADED: %s",
+            uid,
+        )
+
+        # Ενεργοποίηση και επαλήθευση
+        # της προστασίας Signed URLs.
 
         try:
+
+            logger.warning(
+                "CLOUDFLARE SIGNED URL UPDATE STARTED: %s",
+                uid,
+            )
+
             update = self.client.post(
                 f"/stream/{uid}",
                 json={
@@ -67,12 +78,17 @@ class CloudflareUploader:
                 },
             )
 
+            logger.warning(
+                "CLOUDFLARE SIGNED URL UPDATE RESPONSE: %s",
+                update,
+            )
+
             if not update.get("success"):
                 raise RuntimeError(
                     "Cloudflare rejected signed URL protection."
                 )
 
-            # Ανεξάρτητη επαλήθευση.
+            # Επαλήθευση απευθείας από το Cloudflare.
 
             verification = self.client.get(
                 f"/stream/{uid}"
@@ -96,11 +112,18 @@ class CloudflareUploader:
                     "Signed URL protection was not confirmed."
                 )
 
+            logger.warning(
+                "CLOUDFLARE SIGNED URL VERIFIED: %s",
+                uid,
+            )
+
         except Exception:
+
             logger.exception(
                 "Cloudflare protection failed for UID: %s",
                 uid,
             )
+
             raise
 
         # Επιστρέφουμε τα επαληθευμένα στοιχεία.
@@ -122,8 +145,10 @@ class CloudflareUploader:
             )
 
         except Exception:
+
             logger.exception(
                 "Cloudflare video deletion failed: %s",
                 uid,
             )
+
             return None
