@@ -1,6 +1,12 @@
+
 import os
 import json
+import logging
+
 from .client import CloudflareStreamClient
+
+
+logger = logging.getLogger(__name__)
 
 
 class CloudflareUploader:
@@ -12,6 +18,9 @@ class CloudflareUploader:
 
         if meta is None:
             meta = {}
+
+        # Αποστολή του αρχικού αρχείου.
+        # Καμία συμπίεση στο Render.
 
         with open(file_path, "rb") as video:
 
@@ -34,17 +43,87 @@ class CloudflareUploader:
                 data=data,
             )
 
-        if not response["success"]:
-            raise Exception(response)
+        if not response.get("success"):
+            raise RuntimeError(
+                "Cloudflare video upload failed."
+            )
 
-        return response
-    
-    def delete_video(self, uid):
+        result = response.get("result") or {}
+        uid = result.get("uid")
+
+        if not uid:
+            raise RuntimeError(
+                "Cloudflare did not return a video UID."
+            )
+
+        # Ενεργοποίηση της προστασίας.
+        # Το UID καταγράφεται για πιθανή ανάκτηση.
+
         try:
-            response = self.client.delete(
+            update = self.client.post(
+                f"/stream/{uid}",
+                json={
+                    "requireSignedURLs": True,
+                },
+            )
+
+            if not update.get("success"):
+                raise RuntimeError(
+                    "Cloudflare rejected signed URL protection."
+                )
+
+            # Ανεξάρτητη επαλήθευση.
+
+            verification = self.client.get(
                 f"/stream/{uid}"
             )
-            return response
+
+            if not verification.get("success"):
+                raise RuntimeError(
+                    "Cloudflare verification failed."
+                )
+
+            verified_video = (
+                verification.get("result") or {}
+            )
+
+            if (
+                verified_video.get("uid") != uid
+                or verified_video.get("requireSignedURLs")
+                is not True
+            ):
+                raise RuntimeError(
+                    "Signed URL protection was not confirmed."
+                )
+
         except Exception:
-            # Το video δεν υπάρχει ήδη στο Cloudflare.
+            logger.exception(
+                "Cloudflare protection failed for UID: %s",
+                uid,
+            )
+            raise
+
+        # Επιστρέφουμε τα επαληθευμένα στοιχεία.
+
+        response["result"] = verified_video
+
+        logger.info(
+            "Cloudflare video protected: %s",
+            uid,
+        )
+
+        return response
+
+    def delete_video(self, uid):
+
+        try:
+            return self.client.delete(
+                f"/stream/{uid}"
+            )
+
+        except Exception:
+            logger.exception(
+                "Cloudflare video deletion failed: %s",
+                uid,
+            )
             return None
