@@ -1,132 +1,94 @@
-
 {% extends "homepage/base.html" %}
-
+{% load static %}
 {% block content %}
-
-<h1>Topics Video</h1>
-
-<hr>
-
-<h2>Υλικό</h2>
-
-<p>
-    <strong>Τίτλος:</strong>
-    {{ material.title }}
-</p>
-
-<p>
-    <strong>Τύπος:</strong>
-    {{ material.get_material_type_display }}
-</p>
-
-<p>
-    <strong>Δωρεάν:</strong>
-    {{ material.is_free }}
-</p>
-
-<hr>
-
-<h2>Video</h2>
-
-<video
-    id="video"
-    controls
-    controlsList="nodownload"
-    disablePictureInPicture
-    disableRemotePlayback
-    preload="metadata"
-    width="900">
-</video>
-
-
-<!-- SHAKA PLAYER -->
+<link rel="stylesheet" href="{% static 'homepage/css/show_topics_video.css' %}">
+<div class="topics-video-page">
+  <section class="topics-content-wrapper">
+    <main class="topics-main-content">
+      <div class="topics-video-header-card">
+        <h1 class="topics-book-title">{{ material.title }}</h1>
+        <h2 class="topics-chapter-title">Υλικό</h2>
+        <div class="topics-video-info">
+          <span>Τύπος: {{ material.get_material_type_display }}</span>
+          <span>Δωρεάν: {% if material.is_free %}Ναι{% else %}Όχι{% endif %}</span>
+        </div>
+      </div>
+      <div class="topics-player-wrapper">
+        <video id="video" controls controlsList="nodownload" disablePictureInPicture disableRemotePlayback preload="metadata"></video>
+      </div>
+      {% if previous_material_url or next_material_url %}
+      <div class="topics-navigation-wrapper">
+        <div class="topics-previous-wrapper">
+          {% if previous_material_url %}<a href="{{ previous_material_url }}" class="topics-previous-button">◀ Previous</a>{% endif %}
+        </div>
+        <div class="topics-next-wrapper">
+          {% if next_material_url %}<a href="{{ next_material_url }}" class="topics-next-button">Next ▶</a>{% endif %}
+        </div>
+      </div>
+      {% endif %}
+      <div class="topics-video-footer"><span>{{ material.title }}</span></div>
+    </main>
+    <aside class="topics-playlist-wrapper">
+      <div class="topics-playlist-title">Videos Topics</div>
+      <ul class="topics-playlist">
+        {% if topic_materials %}
+          {% for item in topic_materials %}
+          <li>
+            {% if item.playback_url %}<a href="{{ item.playback_url }}" class="topics-playlist-item">{% else %}<div class="topics-playlist-item">{% endif %}
+              <div class="topics-playlist-thumbnail"><span class="topics-playlist-play">▶</span></div>
+              <div class="topics-playlist-content">
+                <div class="topics-playlist-video-title">{{ item.title }}</div>
+                <div class="topics-playlist-video-part">{{ item.get_material_type_display }}</div>
+              </div>
+            {% if item.playback_url %}</a>{% else %}</div>{% endif %}
+          </li>
+          {% endfor %}
+        {% else %}
+          <li><div class="topics-playlist-item">
+            <div class="topics-playlist-thumbnail"><span class="topics-playlist-play">▶</span></div>
+            <div class="topics-playlist-content">
+              <div class="topics-playlist-video-title">{{ material.title }}</div>
+              <div class="topics-playlist-video-part">{{ material.get_material_type_display }}</div>
+            </div>
+          </div></li>
+        {% endif %}
+      </ul>
+    </aside>
+  </section>
+</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.15.12/shaka-player.compiled.js"></script>
-
 <script>
-
 document.addEventListener("DOMContentLoaded", async () => {
-
-    // Έλεγχος φόρτωσης της βιβλιοθήκης
     if (typeof shaka === "undefined") {
-
-        console.error(
-            "Shaka Player library failed to load."
-        );
-
+        console.error("Shaka Player library failed to load.");
         return;
     }
-
     shaka.polyfill.installAll();
-
-    // Έλεγχος υποστήριξης του browser
     if (!shaka.Player.isBrowserSupported()) {
-
-        console.error(
-            "Ο browser δεν υποστηρίζει τον Shaka Player."
-        );
-
+        console.error("Ο browser δεν υποστηρίζει τον Shaka Player.");
         return;
     }
-
-    // Εντοπισμός του video element
     const video = document.getElementById("video");
-
     if (!video) {
-
-        console.error(
-            "Video element not found."
-        );
-
+        console.error("Video element not found.");
         return;
     }
-
-    // Δημιουργία του player
     const player = new shaka.Player(video);
-
-    // Καταγραφή σφαλμάτων
-    player.addEventListener("error", function(event) {
-
-        console.error(
-            "Shaka Player Error:",
-            event.detail
-        );
-
+    player.addEventListener("error", event => {
+        console.error("Shaka Player Error:", event.detail);
     });
-
-    // Φόρτωση προστατευμένου βίντεο
     try {
-
         const videoUrl = "{{ secure_video_url|escapejs }}";
-
         if (!videoUrl) {
-
-            console.error(
-                "Cloudflare Signed URL is missing."
-            );
-
+            console.error("Cloudflare Signed URL is missing.");
             return;
         }
-
         await player.load(videoUrl);
-
-        console.log(
-            "Video loaded successfully."
-        );
-
+        console.log("Video loaded successfully.");
+    } catch (error) {
+        console.error("Video loading failed:", error);
     }
-
-    catch(error) {
-
-        console.error(
-            "Video loading failed:",
-            error
-        );
-
-    }
-
 });
-
 </script>
-
 {% endblock %}
