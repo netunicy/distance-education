@@ -1,38 +1,37 @@
 
-import time
-import jwt
-
 from django.conf import settings
+
+from .client import CloudflareStreamClient
 
 
 def create_signed_playback_url(uid, expires_in=3600):
-    """
-    Δημιουργεί προστατευμένο Cloudflare Stream HLS URL.
-
-    uid: Cloudflare Stream video UID
-    expires_in: Χρόνος λήξης του token σε δευτερόλεπτα
-                (προεπιλογή: 1 ώρα)
-    """
 
     if not uid:
         raise ValueError("Cloudflare video UID is missing.")
 
-    payload = {
-        "sub": uid,
-        "kid": settings.CLOUDFLARE_STREAM_KEY_ID,
-        "exp": int(time.time()) + expires_in,
-    }
+    client = CloudflareStreamClient()
 
-    token = jwt.encode(
-        payload,
-        settings.CLOUDFLARE_STREAM_PRIVATE_KEY,
-        algorithm="RS256",
-        headers={
-            "kid": settings.CLOUDFLARE_STREAM_KEY_ID,
-        },
+    response = client.post(
+        f"/stream/{uid}/token"
     )
 
+    if not response.get("success"):
+        raise RuntimeError(
+            "Cloudflare failed to generate playback token."
+        )
+
+    token = response.get("result", {}).get("token")
+
+    if not token:
+        raise RuntimeError(
+            "Cloudflare did not return a playback token."
+        )
+
+    customer_domain = (
+        settings.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN
+    ).strip().removeprefix("https://").rstrip("/")
+
     return (
-        f"https://{settings.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN}/"
+        f"https://{customer_domain}/"
         f"{token}/manifest/video.m3u8"
     )
