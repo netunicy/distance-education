@@ -88,26 +88,11 @@ def has_active_promocode(user):
 # Έλεγχος Πρόσβασης Video
 # ==========================================
 
+# ==========================================
+# Έλεγχος Πρόσβασης School Video
+# ==========================================
+
 def can_view_video(user, video, book):
-    
-    """
-    Ελέγχει αν ο χρήστης
-    μπορεί να δει το video.
-
-    Args:
-        user:
-            Ο συνδεδεμένος χρήστης.
-
-        video:
-            Το video.
-
-        book:
-            Το βιβλίο.
-
-    Returns:
-        True αν επιτρέπεται η πρόσβαση.
-        False διαφορετικά.
-    """
 
     # Administrator
     if is_admin(user):
@@ -125,6 +110,17 @@ def can_view_video(user, video, book):
     if has_purchased_chapter(user, video.chapter):
         return True
 
+    # Αγορά Topic
+    if user.is_authenticated:
+
+        has_topic_access = TopicPurchase.objects.filter(
+            user=user,
+            topic__topics_contents__school_videos=video,
+        ).exists()
+
+        if has_topic_access:
+            return True
+
     # Ενεργή Συνδρομή
     if has_active_subscription(user):
         return True
@@ -135,7 +131,6 @@ def can_view_video(user, video, book):
 
     # Δεν επιτρέπεται η πρόσβαση
     return False
-
 # ==========================================
 # Έλεγχος Αγοράς Topic
 # ==========================================

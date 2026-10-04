@@ -13,6 +13,7 @@ from homepage.models.topics_video import TopicsVideo
 from homepage.cloudflare.signed_playback import create_signed_playback_url
 from django.http import HttpResponse
 from homepage.context_builder import build_base_context
+from .models import TopicPurchase
 # Helpers
 from homepage.helpers.video_service import get_video
 from homepage.helpers.video_service import increment_video_views
@@ -268,12 +269,25 @@ def topics_contents(request, topics_id):
     )
 
     # ==========================================
+    # Έλεγχος αγοράς Topics
+    # ==========================================
+
+    has_topics_access = False
+
+    if request.user.is_authenticated:
+
+        has_topics_access = TopicPurchase.objects.filter(
+            user=request.user,
+            topic=topic,
+        ).exists()
+
+    # ==========================================
     # Τι περιλαμβάνει
     # ==========================================
 
     includes = [
         line.strip()
-        for line in topic.includes.splitlines()
+        for line in (topic.includes or "").splitlines()
         if line.strip()
     ]
 
@@ -295,7 +309,7 @@ def topics_contents(request, topics_id):
         videos = []
 
         # ======================================
-        # Topics Videos
+        # TOPICS VIDEOS
         # ======================================
 
         for video in (
@@ -306,6 +320,12 @@ def topics_contents(request, topics_id):
             .order_by("order")
         ):
 
+            has_access = can_view_topics_video(
+                request.user,
+                video,
+                topic,
+            )
+
             videos.append({
 
                 "id": video.id,
@@ -314,12 +334,14 @@ def topics_contents(request, topics_id):
 
                 "is_free": video.is_free,
 
+                "has_access": has_access,
+
                 "url": (
                     reverse(
                         "homepage:show_topics_video",
                         args=[video.id],
                     )
-                    if video.is_free else ""
+                    if has_access else ""
                 ),
 
                 "source": "topics",
@@ -327,12 +349,15 @@ def topics_contents(request, topics_id):
             })
 
         # ======================================
-        # School Videos
+        # SCHOOL VIDEOS
         # ======================================
 
         for video in (
             content.school_videos
-            .select_related("chapter")
+            .select_related(
+                "chapter",
+                "chapter__context",
+            )
             .order_by(
                 "chapter__order",
                 "page",
@@ -340,11 +365,18 @@ def topics_contents(request, topics_id):
             )
         ):
 
-            # Τίτλος School Video
-            title = video.activity_title.strip()
+            title = (video.activity_title or "").strip()
 
             if not title:
                 title = f"Σελίδα {video.page}"
+
+            book = video.chapter.context
+
+            has_access = can_view_video(
+                request.user,
+                video,
+                book,
+            )
 
             videos.append({
 
@@ -354,12 +386,14 @@ def topics_contents(request, topics_id):
 
                 "is_free": video.is_free,
 
+                "has_access": has_access,
+
                 "url": (
                     reverse(
                         "homepage:show_video",
                         args=[video.id],
                     )
-                    if video.is_free else ""
+                    if has_access else ""
                 ),
 
                 "source": "school",
@@ -367,7 +401,7 @@ def topics_contents(request, topics_id):
             })
 
         # ======================================
-        # Ενότητα
+        # ΕΝΟΤΗΤΑ
         # ======================================
 
         contents.append({
@@ -385,7 +419,7 @@ def topics_contents(request, topics_id):
         })
 
     # ==========================================
-    # Επιστροφή JSON
+    # ΕΠΙΣΤΡΟΦΗ JSON
     # ==========================================
 
     return JsonResponse({
@@ -413,24 +447,31 @@ def topics_contents(request, topics_id):
 
         "contents": contents,
 
+        "has_topics_access": has_topics_access,
+
+        "topics_view_url": "",
+
     })
 
 @login_required
 def show_topics_video(request, material_id):
 
-    # Αναζητά το video
+    # ==========================================
+    # Αναζήτηση Video
+    # ==========================================
+
     material = get_object_or_404(
         TopicsVideo,
         id=material_id,
     )
 
-    # Παίρνει το περιεχόμενο
     topics_content = material.topics_content
-
-    # Παίρνει το Topic
     topic = topics_content.topics
 
-    # Ελέγχει αν ο χρήστης μπορεί να δει το video
+    # ==========================================
+    # Έλεγχος πρόσβασης
+    # ==========================================
+
     if not can_view_topics_video(
         request.user,
         material,
@@ -438,26 +479,113 @@ def show_topics_video(request, material_id):
     ):
         return redirect("homepage:homepage")
 
-    # Αυξάνει τις προβολές του video
+    # ==========================================
+    # Προβολές και Cloudflare
+    # ==========================================
+
     increment_video_views(material)
 
-    # Δημιουργεί το προστατευμένο Cloudflare Signed Playback URL
     secure_video_url = create_signed_playback_url(
         material.cloudflare_uid,
     )
 
-    # Δημιουργία Context
+    # ==========================================
+    # Videos της ίδιας ενότητας
+    # ==========================================
+
+    materials = list(
+        topics_content.materials.filter(
+            material_type=TopicsVideo.MaterialType.VIDEO
+        ).order_by("order", "id")
+    )
+
+    topic_materials = []
+
+    previous_material = None
+    next_material = None
+
+    previous_material_url = ""
+    next_material_url = ""
+
+    accessible_materials = []
+
+    for item in materials:
+
+        has_access = can_view_topics_video(
+            request.user,
+            item,
+            topic,
+        )
+
+        topic_materials.append({
+            "id": item.id,
+            "title": item.title,
+            "cloudflare_uid": item.cloudflare_uid,
+            "material_type": item.get_material_type_display(),
+            "has_access": has_access,
+            "video_url": (
+                reverse(
+                    "homepage:show_topics_video",
+                    args=[item.id],
+                )
+                if has_access else ""
+            ),
+        })
+
+        if has_access:
+            accessible_materials.append(item)
+
+    # ==========================================
+    # Previous / Next
+    # Μόνο βίντεο με δικαίωμα πρόσβασης
+    # ==========================================
+
+    for index, item in enumerate(accessible_materials):
+
+        if item.id != material.id:
+            continue
+
+        if index > 0:
+
+            previous_material = accessible_materials[index - 1]
+
+            previous_material_url = reverse(
+                "homepage:show_topics_video",
+                args=[previous_material.id],
+            )
+
+        if index < len(accessible_materials) - 1:
+
+            next_material = accessible_materials[index + 1]
+
+            next_material_url = reverse(
+                "homepage:show_topics_video",
+                args=[next_material.id],
+            )
+
+        break
+
+    # ==========================================
+    # Context
+    # ==========================================
+
     context = build_base_context()
 
     context.update({
 
         "material": material,
-
         "topics_content": topics_content,
-
         "topic": topic,
 
         "secure_video_url": secure_video_url,
+
+        "topic_materials": topic_materials,
+
+        "previous_material": previous_material,
+        "previous_material_url": previous_material_url,
+
+        "next_material": next_material,
+        "next_material_url": next_material_url,
 
     })
 

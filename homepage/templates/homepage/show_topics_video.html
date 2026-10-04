@@ -3,257 +3,347 @@
 
 {% block content %}
 
-    <div class="topics-video-page">
+<div class="topics-video-page">
 
-        <section class="topics-content-wrapper">
+    <section class="topics-content-wrapper">
 
-            <!-- MAIN CONTENT -->
+        <!-- ==========================================
+                        MAIN CONTENT
+        =========================================== -->
 
-            <main class="topics-main-content">
+        <main class="topics-main-content">
 
-                <!-- VIDEO HEADER -->
+            <!-- ==========================================
+                        VIDEO HEADER
+            =========================================== -->
 
-                <div class="topics-video-header-card">
+            <div class="topics-video-header-card">
 
-                    <h1 class="topics-book-title">
-                        {{ material.topics_content }}
-                    </h1>
+                <h1 class="topics-book-title">
+                    {{ topic.title }}
+                </h1>
 
-                    <h2 class="topics-chapter-title">
-                        {{ material.title }}
-                    </h2>
+                <h2 class="topics-chapter-title">
+                    {{ topics_content.content }}
+                </h2>
 
-                    <div class="topics-video-info">
-
-                        <span>
-                            {{ material.title }}
-                        </span>
-
-                        <span>
-                            {{ material.get_material_type_display }}
-                        </span>
-
-                        <span>
-                            Δωρεάν: {{ material.is_free }}
-                        </span>
-
-                    </div>
-
-                </div>
-
-
-                <!-- VIDEO PLAYER -->
-
-                <div class="topics-player-wrapper">
-
-                    <video
-                        id="video"
-                        controls
-                        controlsList="nodownload"
-                        disablePictureInPicture
-                        disableRemotePlayback
-                        preload="metadata">
-                    </video>
-
-                </div>
-
-
-                <!-- NAVIGATION -->
-
-                <div class="topics-navigation-wrapper">
-
-                    <div class="topics-previous-wrapper">
-
-                        {% if previous_material %}
-
-                            <a href="{{ previous_material_url }}"
-                            class="topics-previous-button">
-                                ◀ Previous
-                            </a>
-
-                        {% endif %}
-
-                    </div>
-
-                    <div class="topics-next-wrapper">
-
-                        {% if next_material %}
-
-                            <a href="{{ next_material_url }}"
-                            class="topics-next-button">
-                                Next ▶
-                            </a>
-
-                        {% endif %}
-
-                    </div>
-
-                </div>
-
-
-                <!-- VIDEO FOOTER -->
-
-                <div class="topics-video-footer">
+                <div class="topics-video-info">
 
                     <span>
-                        Προβολές: {{ material.views }}
+                        {{ material.title }}
                     </span>
 
+                    <span>
+                        {{ material.get_material_type_display }}
+                    </span>
+
+                    {% if material.is_free %}
+                        <span>Δωρεάν</span>
+                    {% else %}
+                        <span>Πλήρης πρόσβαση</span>
+                    {% endif %}
+
                 </div>
 
-            </main>
+            </div>
 
+            <!-- ==========================================
+                        VIDEO PLAYER
+            =========================================== -->
 
-            <!-- PLAYLIST -->
+            <div class="topics-player-wrapper">
 
-            <aside class="topics-playlist-wrapper">
+                <video
+                    id="video"
+                    controls
+                    controlsList="nodownload"
+                    disablePictureInPicture
+                    disableRemotePlayback
+                    preload="metadata">
+                </video>
 
-                <div class="topics-playlist-title">
-                    Videos Κεφαλαίου
+            </div>
+
+            <!-- ==========================================
+                        NAVIGATION
+            =========================================== -->
+
+            <div class="topics-navigation-wrapper">
+
+                <!-- PREVIOUS -->
+
+                <div class="topics-previous-wrapper">
+
+                    {% if previous_material %}
+
+                        <a
+                            href="{{ previous_material_url }}"
+                            class="topics-previous-button"
+                        >
+                            ◀ Previous
+                        </a>
+
+                    {% endif %}
+
                 </div>
 
-                <ul class="topics-playlist">
+                <!-- NEXT -->
 
-                    {% for item in topic_materials %}
+                <div class="topics-next-wrapper">
 
-                        <li>
+                    {% if next_material %}
 
-                            <a href="{{ item.video_url }}"
-                            class="topics-playlist-item">
+                        <a
+                            href="{{ next_material_url }}"
+                            class="topics-next-button"
+                        >
+                            Next ▶
+                        </a>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+            <!-- ==========================================
+                        VIDEO FOOTER
+            =========================================== -->
+
+            <div class="topics-video-footer">
+
+                <span>
+                    Προβολές: {{ material.views }}
+                </span>
+
+            </div>
+
+        </main>
+
+        <!-- ==========================================
+                        PLAYLIST
+        =========================================== -->
+
+        <aside class="topics-playlist-wrapper">
+
+            <div class="topics-playlist-title">
+                Videos Κεφαλαίου
+            </div>
+
+            <ul class="topics-playlist">
+
+                {% for item in topic_materials %}
+
+                    <li>
+
+                        {% if item.has_access %}
+
+                            <!-- Διαθέσιμο βίντεο -->
+
+                            <a
+                                href="{{ item.video_url }}"
+                                class="topics-playlist-item"
+                            >
+
+                        {% else %}
+
+                            <!-- Κλειδωμένο βίντεο -->
+
+                            <div
+                                class="topics-playlist-item locked"
+                            >
+
+                        {% endif %}
+
+                                <!-- THUMBNAIL -->
 
                                 <div class="topics-playlist-thumbnail">
 
                                     <img
                                         src="https://videodelivery.net/{{ item.cloudflare_uid }}/thumbnails/thumbnail.jpg"
-                                        alt="{{ item.title }}">
+                                        alt="{{ item.title }}"
+                                        loading="lazy"
+                                    >
 
                                     <div class="topics-playlist-play">
-                                        ▶
+
+                                        {% if item.has_access %}
+                                            ▶
+                                        {% else %}
+                                            🔒
+                                        {% endif %}
+
                                     </div>
 
                                 </div>
+
+                                <!-- VIDEO INFORMATION -->
 
                                 <div class="topics-playlist-content">
 
                                     <div class="topics-playlist-video-title">
+
                                         {{ item.title }}
+
                                     </div>
 
                                     <div class="topics-playlist-video-part">
-                                        {{ item.get_material_type_display }}
+
+                                        {{ item.material_type }}
+
                                     </div>
+
+                                    {% if not item.has_access %}
+
+                                        <div class="topics-video-locked">
+                                            Κλειδωμένο
+                                        </div>
+
+                                    {% endif %}
 
                                 </div>
 
+                        {% if item.has_access %}
+
                             </a>
 
-                        </li>
+                        {% else %}
 
-                    {% empty %}
+                            </div>
 
-                        <li class="topics-playlist-empty">
-                            Δεν υπάρχουν videos.
-                        </li>
+                        {% endif %}
 
-                    {% endfor %}
+                    </li>
 
-                </ul>
+                {% empty %}
 
-            </aside>
+                    <li class="topics-playlist-empty">
+                        Δεν υπάρχουν videos.
+                    </li>
 
-        </section>
+                {% endfor %}
 
-    </div>
+            </ul>
+
+        </aside>
+
+    </section>
+
+</div>
 
 
-    <!-- SHAKA PLAYER -->
+<!-- ==========================================
+                SHAKA PLAYER
+=========================================== -->
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.15.12/shaka-player.compiled.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.15.12/shaka-player.compiled.js"></script>
 
-    <script>
+<script>
 
-    document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("DOMContentLoaded", async () => {
 
-        // Έλεγχος φόρτωσης της βιβλιοθήκης
-        if (typeof shaka === "undefined") {
+    // ==========================================
+    // Έλεγχος φόρτωσης Shaka Player
+    // ==========================================
 
-            console.error(
-                "Shaka Player library failed to load."
-            );
+    if (typeof shaka === "undefined") {
 
-            return;
-        }
+        console.error(
+            "Shaka Player library failed to load."
+        );
 
-        shaka.polyfill.installAll();
+        return;
+    }
 
-        // Έλεγχος υποστήριξης του browser
-        if (!shaka.Player.isBrowserSupported()) {
+    // ==========================================
+    // Εγκατάσταση Polyfills
+    // ==========================================
 
-            console.error(
-                "Ο browser δεν υποστηρίζει τον Shaka Player."
-            );
+    shaka.polyfill.installAll();
 
-            return;
-        }
+    // ==========================================
+    // Έλεγχος υποστήριξης Browser
+    // ==========================================
 
-        // Εντοπισμός του video element
-        const video = document.getElementById("video");
+    if (!shaka.Player.isBrowserSupported()) {
 
-        if (!video) {
+        console.error(
+            "Ο browser δεν υποστηρίζει τον Shaka Player."
+        );
 
-            console.error(
-                "Video element not found."
-            );
+        return;
+    }
 
-            return;
-        }
+    // ==========================================
+    // Εντοπισμός Video Element
+    // ==========================================
 
-        // Δημιουργία του player
-        const player = new shaka.Player(video);
+    const video = document.getElementById("video");
 
-        // Καταγραφή σφαλμάτων
-        player.addEventListener("error", function(event) {
+    if (!video) {
 
-            console.error(
-                "Shaka Player Error:",
-                event.detail
-            );
+        console.error(
+            "Video element not found."
+        );
 
-        });
+        return;
+    }
 
-        // Φόρτωση προστατευμένου βίντεο
-        try {
+    // ==========================================
+    // Δημιουργία Shaka Player
+    // ==========================================
 
-            const videoUrl = "{{ secure_video_url|escapejs }}";
+    const player = new shaka.Player(video);
 
-            if (!videoUrl) {
+    // ==========================================
+    // Καταγραφή Σφαλμάτων
+    // ==========================================
 
-                console.error(
-                    "Cloudflare Signed URL is missing."
-                );
+    player.addEventListener("error", function(event) {
 
-                return;
-            }
-
-            await player.load(videoUrl);
-
-            console.log(
-                "Video loaded successfully."
-            );
-
-        }
-
-        catch(error) {
-
-            console.error(
-                "Video loading failed:",
-                error
-            );
-
-        }
+        console.error(
+            "Shaka Player Error:",
+            event.detail
+        );
 
     });
 
-    </script>
+    // ==========================================
+    // Φόρτωση Προστατευμένου Video
+    // ==========================================
+
+    try {
+
+        const videoUrl = "{{ secure_video_url|escapejs }}";
+
+        if (!videoUrl) {
+
+            console.error(
+                "Cloudflare Signed URL is missing."
+            );
+
+            return;
+        }
+
+        await player.load(videoUrl);
+
+        console.log(
+            "Video loaded successfully."
+        );
+
+    }
+
+    catch(error) {
+
+        console.error(
+            "Video loading failed:",
+            error
+        );
+
+    }
+
+});
+
+</script>
 
 {% endblock %}
