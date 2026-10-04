@@ -237,11 +237,20 @@ def book_contents(request, book_id):
                     "id": video.id,
                     "page": video.page,
                     "part": video.part,
+
                     "url": reverse(
                         "homepage:show_video",
                         args=[video.id],
                     ),
+
                     "is_free": video.is_free,
+
+                    "has_access": can_view_video(
+                        request.user,
+                        video,
+                        book,
+                    ),
+
                     "activity_title": video.activity_title,
                 }
 

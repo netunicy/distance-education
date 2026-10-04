@@ -137,25 +137,40 @@ document.querySelectorAll(".details-btn").forEach(btn => {
                     chapter.videos.forEach(video => {
 
                         videosHtml += `
+
                             <div class="video-item">
 
-                                <span class="video-icon">🎥</span>
-
-                                <span class="video-title">
-                                    ${
-                                        video.is_free
-                                            ? `<a href="/video/${video.id}/">Σελίδα ${video.page} - ${video.activity_title}</a>`
-                                            : `Σελίδα ${video.page} - ${video.activity_title}`
-                                    }
+                                <span class="video-icon">
+                                    🎥
                                 </span>
 
-                                <span class="video-lock ${video.is_free ? 'free' : 'locked'}">
-                                    ${video.is_free ? '🔓 Free' : '🔒 Locked'}
+                                <span class="video-title">
+
+                                    ${
+                                        video.has_access
+
+                                            ? `<a href="${video.url}">
+                                                Σελίδα ${video.page} - ${video.activity_title}
+                                            </a>`
+
+                                            : `Σελίδα ${video.page} - ${video.activity_title}`
+                                    }
+
+                                </span>
+
+                                <span class="video-lock ${video.has_access ? 'free' : 'locked'}">
+
+                                    ${
+                                        video.has_access
+                                            ? '🔓 Διαθέσιμο'
+                                            : '🔒 Locked'
+                                    }
+
                                 </span>
 
                             </div>
-                        `;
 
+                        `;
                     });
 
                     chapters.innerHTML += `
