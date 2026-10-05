@@ -25,6 +25,7 @@ ALLOWED_HOSTS = [
     'www.turnonlearning.com',
     'localhost',
     '127.0.0.1',
+    'turnonlearning-10351e9eb4e7.herokuapp.com',
 ]
 
 
