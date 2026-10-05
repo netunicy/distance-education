@@ -249,7 +249,8 @@ MAILTRAP_TOKEN = os.environ.get("MAILTRAP_KEY") or read_secret ("mailtrap_key.tx
 CSRF_TRUSTED_ORIGINS = [
     "https://www.turnonlearning.com",
     "https://turnonlearning.com",
-    "https://distance-education.onrender.com",
+    "https://turnonlearning-10351e9eb4e7.herokuapp.com",
+    
 ]
 TINYMCE_DEFAULT_CONFIG = {
     "height": 600,

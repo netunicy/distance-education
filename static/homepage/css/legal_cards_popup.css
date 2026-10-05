@@ -40,7 +40,7 @@
 
 .information-card img {
     width:100%;
-    height:240px;
+    height:200px;
     object-fit:cover;
     display:block;
     /* Smooth transition για το zoom in της εικόνας */
