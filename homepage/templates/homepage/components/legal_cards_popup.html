@@ -3,7 +3,7 @@
         {% for card, info in second_row %}
             <!-- ΚΑΡΤΑ (από το InformationPage) -->
             <div class="information-card" onclick="openInfoModal('{{ info.id }}')">
-                <img src="{{ card.path_image }}" alt="{{ card.title }}">
+                <img src="{{ card.path_image.url }}" alt="{{ card.title }}">
                 <div class="information-overlay">
                     <h3>{{ card.title }}</h3>
                 </div>
@@ -15,7 +15,7 @@
                     <button type="button" class="information-close" onclick="closeInfoModal('{{ info.id }}')">&times;</button>
                     
                     {% if info.image %}
-                        <img id="information-modal-image" src="{{ info.image }}" alt="{{ info.title }}">
+                        <img id="information-modal-image" src="{{ info.image.url }}" alt="{{ info.title }}">
                     {% endif %}
 
                     <div class="information-body">
