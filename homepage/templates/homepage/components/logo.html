@@ -1,5 +1,5 @@
 {% for i in logo %}
     <a href="{% url 'homepage:homepage' %}" class="only-logo-link">
-        <img class="logo" src="{{ i.mylogo }}" alt="Education logo">
+        <img class="logo" src="{{ i.mylogo.url }}" alt="Education logo">
     </a>
 {% endfor %}
