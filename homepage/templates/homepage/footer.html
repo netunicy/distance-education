@@ -9,12 +9,12 @@
         <div class="footer-top">
 
             <a href="/" class="footer-logo-link">
-                {% if footer_logo %}
+                {% for i in footer_logo %}
                     <img
-                        src="{{ footer_logo.url }}"
+                        src="{{ i.footer_logo.url }}"
                         class="footer-logo"
                         alt="TurnOnLearning">
-                {% endif %}
+                {% endfor %}
 
             </a>
 
