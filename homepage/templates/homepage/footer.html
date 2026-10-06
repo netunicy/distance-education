@@ -50,21 +50,15 @@
 
         <nav class="footer-nav">
 
-            <a href="/">Home</a>
+            {% for info in footer_infos %}
+                <a href="#"
+                class="footer-info-link"
+                data-id="{{ info.id }}">
+                    {{ info.title }}
+                </a>
+            {% endfor %}
 
-            <a href="#">Books</a>
-
-            <a href="#">Training</a>
-
-            <a href="#">FAQ</a>
-
-            <a href="#">Contact</a>
-
-            <a href="#">Privacy Policy</a>
-
-            <a href="#">Terms</a>
-
-            <a href="#">Refund</a>
+            <a href="#">Επικοινωνία</a>
 
         </nav>
 

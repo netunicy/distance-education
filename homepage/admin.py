@@ -8,6 +8,7 @@ from homepage.cloudflare.client import CloudflareStreamClient
 from .models import (
     Logo,
     FooterLogo,
+    BackgroundImage,
     Schoolcontexts,
     Chapter,
     SchoolVideo,
@@ -22,6 +23,7 @@ from .forms import TopicsVideoAdminForm, VideoAdminForm
 logger = logging.getLogger(__name__)
 
 admin.site.register(FooterLogo)
+admin.site.register(BackgroundImage)
 # Other registrations (unchanged)
 admin.site.register(Logo)
 admin.site.register(Chapter)

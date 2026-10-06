@@ -1,3 +1,4 @@
+from .background_image import BackgroundImage
 from .logo import Logo, FooterLogo
 from .school import Schoolcontexts
 from .school_chapter import Chapter
