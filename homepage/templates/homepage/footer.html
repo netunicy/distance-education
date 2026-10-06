@@ -9,11 +9,12 @@
         <div class="footer-top">
 
             <a href="/" class="footer-logo-link">
-
-                <img
-                    src="https://res.cloudinary.com/dslcy91ah/image/upload/v1783370671/footers_logo_ow2koz.png"
-                    class="footer-logo"
-                    alt="TurnOnLearning">
+                {% if footer_logo %}
+                    <img
+                        src="{{ footer_logo.url }}"
+                        class="footer-logo"
+                        alt="TurnOnLearning">
+                {% endif %}
 
             </a>
 
