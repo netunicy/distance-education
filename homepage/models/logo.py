@@ -21,4 +21,4 @@ class FooterLogo(models.Model):
     )
 
     def __str__(self):
-        return f"Success Logo {self.id}"
+        return f"Footer Logo {self.id}"
