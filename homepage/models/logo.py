@@ -12,7 +12,7 @@ class Logo(models.Model):
         return f"Logo {self.id}"
 
 
-class SuccessLogo(models.Model):
+class FooterLogo(models.Model):
     mylogo = models.ImageField(
         upload_to="logos/",
         storage=get_r2_storage,
