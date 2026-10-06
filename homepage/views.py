@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from homepage.models.topics import Topics
-from .models import Logo, Schoolcontexts,InformationPage,Informations
+from .models import Logo, Schoolcontexts,InformationPage,Informations,FooterLogo
 from django.urls import reverse
 from django.contrib import messages
 from django.shortcuts import render
@@ -41,7 +41,7 @@ from homepage.models.user_purchases import UserPurchase
 
 def homepage(request):
     logo = Logo.objects.all()
-    messages.success(request, "Welcome to the Homepage!")
+    footer_logo = FooterLogo.objects.all()
 
     contexts = Schoolcontexts.objects.prefetch_related("chapters")
 
@@ -99,9 +99,10 @@ def homepage(request):
     else:
 
         user_purchases = UserPurchase.objects.none()
-
+        
     return render(request, "homepage/homepage.html", {
         "logo": logo,
+        "footer_logo": footer_logo,
         "contexts": contexts,
         "school_levels": filtered_levels,
         "school_subjects": filtered_subjects,
