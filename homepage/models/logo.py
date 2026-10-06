@@ -10,3 +10,15 @@ class Logo(models.Model):
 
     def __str__(self):
         return f"Logo {self.id}"
+
+
+class SuccessLogo(models.Model):
+    mylogo = models.ImageField(
+        upload_to="logos/",
+        storage=get_r2_storage,
+        blank=True,
+        null=True,
+    )
+
+    def __str__(self):
+        return f"Success Logo {self.id}"

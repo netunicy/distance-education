@@ -1,4 +1,4 @@
-from .logo import Logo
+from .logo import Logo, SuccessLogo
 from .school import Schoolcontexts
 from .school_chapter import Chapter
 from .school_video import SchoolVideo
