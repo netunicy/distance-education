@@ -35,3 +35,35 @@ def create_signed_playback_url(uid, expires_in=3600):
         f"https://{customer_domain}/"
         f"{token}/manifest/video.m3u8"
     )
+
+def create_signed_thumbnail_url(uid):
+
+    if not uid:
+        return ""
+
+    client = CloudflareStreamClient()
+
+    response = client.post(
+        f"/stream/{uid}/token"
+    )
+
+    if not response.get("success"):
+        raise RuntimeError(
+            "Cloudflare failed to generate thumbnail token."
+        )
+
+    token = response.get("result", {}).get("token")
+
+    if not token:
+        raise RuntimeError(
+            "Cloudflare did not return a thumbnail token."
+        )
+
+    customer_domain = (
+        settings.CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN
+    ).strip().removeprefix("https://").rstrip("/")
+
+    return (
+        f"https://{customer_domain}/"
+        f"{token}/thumbnails/thumbnail.jpg"
+    )

@@ -10,7 +10,7 @@ from django.shortcuts import get_object_or_404,redirect
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from homepage.models.topics_video import TopicsVideo
-from homepage.cloudflare.signed_playback import create_signed_playback_url
+from homepage.cloudflare.signed_playback import (create_signed_playback_url,create_signed_thumbnail_url,)
 from django.http import HttpResponse
 from homepage.context_builder import build_base_context
 from .models import TopicPurchase
@@ -537,6 +537,11 @@ def show_topics_video(request, material_id):
             "cloudflare_uid": item.cloudflare_uid,
             "material_type": item.get_material_type_display(),
             "has_access": has_access,
+            "thumbnail_url": (
+                create_signed_thumbnail_url(item.cloudflare_uid)
+                if item.cloudflare_uid and has_access
+                else ""
+            ),
             "video_url": (
                 reverse(
                     "homepage:show_topics_video",

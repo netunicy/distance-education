@@ -159,11 +159,13 @@
 
                                 <div class="topics-playlist-thumbnail">
 
-                                    <img
-                                        src="https://videodelivery.net/{{ item.cloudflare_uid }}/thumbnails/thumbnail.jpg"
-                                        alt="{{ item.title }}"
-                                        loading="lazy"
-                                    >
+                                    {% if item.thumbnail_url %}
+                                        <img
+                                            src="{{ item.thumbnail_url }}"
+                                            alt="{{ item.title }}"
+                                            loading="lazy"
+                                        >
+                                    {% endif %}
 
                                     <div class="topics-playlist-play">
 
@@ -189,7 +191,7 @@
 
                                     <div class="topics-playlist-video-part">
 
-                                        {{ item.material_type }}
+                                        {{ item.material_type. }}
 
                                     </div>
 

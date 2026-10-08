@@ -1,6 +1,4 @@
-
 import os
-import json
 import logging
 
 from .client import CloudflareStreamClient
@@ -11,6 +9,9 @@ logger = logging.getLogger(__name__)
 
 class CloudflareUploader:
 
+    # 5 MiB - συμβατό μέγεθος τμήματος για Cloudflare TUS.
+    CHUNK_SIZE = 5 * 1024 * 1024
+
     def __init__(self):
         self.client = CloudflareStreamClient()
 
@@ -19,41 +20,68 @@ class CloudflareUploader:
         if meta is None:
             meta = {}
 
-        # Αποστολή του αρχικού αρχείου στο Cloudflare.
-        # Δεν πραγματοποιείται συμπίεση στο Render.
+        file_size = os.path.getsize(file_path)
+
+        if file_size <= 0:
+            raise ValueError("Video file is empty.")
+
+        # Δημιουργία συνεδρίας TUS.
+        # Δεν πραγματοποιείται τοπική συμπίεση.
+
+        session = self.client.create_tus_upload(
+            file_size=file_size,
+            meta=meta,
+        )
+
+        upload_url = session["upload_url"]
+        uid = session["uid"]
+
+        logger.info(
+            "CLOUDFLARE TUS UPLOAD STARTED: %s",
+            uid,
+        )
+
+        # Μεταφόρτωση του αρχικού αρχείου σε τμήματα.
+
+        offset = 0
 
         with open(file_path, "rb") as video:
 
-            files = {
-                "file": (
-                    os.path.basename(file_path),
-                    video,
-                    "video/mp4",
+            while offset < file_size:
+
+                video.seek(offset)
+
+                chunk = video.read(self.CHUNK_SIZE)
+
+                if not chunk:
+                    raise RuntimeError(
+                        "Unexpected end of video file."
+                    )
+
+                new_offset = self.client.upload_tus_chunk(
+                    upload_url=upload_url,
+                    chunk=chunk,
+                    offset=offset,
                 )
-            }
 
-            data = {
-                "meta": json.dumps(meta),
-                "requireSignedURLs": "true",
-            }
+                if not (
+                    offset < new_offset <= offset + len(chunk)
+                ):
+                    raise RuntimeError(
+                        "Invalid Cloudflare TUS upload offset."
+                    )
 
-            response = self.client.upload(
-                "/stream",
-                files=files,
-                data=data,
-            )
+                offset = new_offset
 
-        if not response.get("success"):
+                logger.info(
+                    "CLOUDFLARE UPLOAD PROGRESS: %s/%s",
+                    offset,
+                    file_size,
+                )
+
+        if offset != file_size:
             raise RuntimeError(
-                "Cloudflare video upload failed."
-            )
-
-        result = response.get("result") or {}
-        uid = result.get("uid")
-
-        if not uid:
-            raise RuntimeError(
-                "Cloudflare did not return a video UID."
+                "Cloudflare video upload incomplete."
             )
 
         logger.warning(
@@ -61,34 +89,10 @@ class CloudflareUploader:
             uid,
         )
 
-        # Ενεργοποίηση και επαλήθευση
-        # της προστασίας Signed URLs.
+        # Επαλήθευση προστασίας Signed URLs.
+        # Η προστασία ζητήθηκε ήδη κατά τη δημιουργία TUS.
 
         try:
-
-            logger.warning(
-                "CLOUDFLARE SIGNED URL UPDATE STARTED: %s",
-                uid,
-            )
-
-            update = self.client.post(
-                f"/stream/{uid}",
-                json={
-                    "requireSignedURLs": True,
-                },
-            )
-
-            logger.warning(
-                "CLOUDFLARE SIGNED URL UPDATE RESPONSE: %s",
-                update,
-            )
-
-            if not update.get("success"):
-                raise RuntimeError(
-                    "Cloudflare rejected signed URL protection."
-                )
-
-            # Επαλήθευση απευθείας από το Cloudflare.
 
             verification = self.client.get(
                 f"/stream/{uid}"
@@ -126,16 +130,18 @@ class CloudflareUploader:
 
             raise
 
-        # Επιστρέφουμε τα επαληθευμένα στοιχεία.
-
-        response["result"] = verified_video
-
         logger.info(
             "Cloudflare video protected: %s",
             uid,
         )
 
-        return response
+        # Ίδια δομή επιστροφής με την προηγούμενη υλοποίηση,
+        # ώστε να παραμείνει συμβατό το VideoProcessor.
+
+        return {
+            "success": True,
+            "result": verified_video,
+        }
 
     def delete_video(self, uid):
 

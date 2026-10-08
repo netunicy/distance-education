@@ -84,23 +84,38 @@ class CloudflareStreamClient:
         return response.json()
 
     
-    def create_tus_upload(self, file_size):
+    def create_tus_upload(self, file_size, meta=None):
+
+        import base64
 
         if not isinstance(file_size, int) or file_size <= 0:
             raise ValueError("Invalid video file size.")
+
+        if meta is None:
+            meta = {}
+
+        metadata = {
+            "requiresignedurls": "true",
+            "maxDurationSeconds": "600",
+        }
+
+        if meta.get("name"):
+            metadata["name"] = str(meta["name"])
+
+        encoded_metadata = ",".join(
+            f"{key} {base64.b64encode(value.encode('utf-8')).decode('ascii')}"
+            for key, value in metadata.items()
+        )
 
         headers = {
             **self.headers,
             "Tus-Resumable": "1.0.0",
             "Upload-Length": str(file_size),
-            "Upload-Metadata": (
-            "maxDurationSeconds NjAw,requiresignedurls dHJ1ZQ=="
-            ),
+            "Upload-Metadata": encoded_metadata,
         }
 
         response = requests.post(
             self.base_url + "/stream",
-            params={"direct_user": "true"},
             headers=headers,
             timeout=30,
         )
@@ -119,3 +134,30 @@ class CloudflareStreamClient:
             "upload_url": upload_url,
             "uid": uid,
         }
+
+    def upload_tus_chunk(self, upload_url, chunk, offset):
+
+        headers = {
+            **self.headers,
+            "Tus-Resumable": "1.0.0",
+            "Upload-Offset": str(offset),
+            "Content-Type": "application/offset+octet-stream",
+        }
+
+        response = requests.patch(
+            upload_url,
+            headers=headers,
+            data=chunk,
+            timeout=600,
+        )
+
+        response.raise_for_status()
+
+        new_offset = response.headers.get("Upload-Offset")
+
+        if new_offset is None:
+            raise RuntimeError(
+                "Cloudflare did not return Upload-Offset."
+            )
+
+        return int(new_offset)
